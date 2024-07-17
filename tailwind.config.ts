@@ -19,9 +19,9 @@ const config = {
     },
     extend: {
       colors: {
+        "th-white": "#F6F5F5",
         "th-black": "#252525",
         "th-black-2": "#2C3333",
-        "th-white": "#F6F5F5",
         "th-accent": "#64DFDF",
         "th-accent-2": "#76ABAE",
       },
