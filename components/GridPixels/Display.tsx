@@ -5,89 +5,64 @@ import CanvasGrid from "./CanvasGrid"
 import { ISelectedSquares } from "@/types/grid"
 import InfoDrawer from "./InfoDrawer"
 import { useSelection } from "@/hooks/useSelectioin"
-
-const drawnPixels = {
-  "0-0": {
-    image: "/pixel.png",
-    color: "#E8B4F8",
-  },
-  "0-1": {
-    image: "/pixel.png",
-    color: "#E8B4F8",
-  },
-  "0-2": {
-    image: "/pixel.png",
-    color: "#E8B4F8",
-  },
-  "0-3": {
-    image: "/pixel.png",
-    color: "#E8B4F8",
-  },
-  "1-0": {
-    image: "/pixel.png",
-    color: "#E8B4F8",
-  },
-  "1-1": {
-    image: "/pixel.png",
-    color: "#E8B4F8",
-  },
-  "1-2": {
-    image: "/pixel.png",
-    color: "#E8B4F8",
-  },
-  "1-3": {
-    image: "/pixel.png",
-    color: "#E8B4F8",
-  },
-  "2-0": {
-    image: "/pixel.png",
-    color: "#E8B4F8",
-  },
-  "2-1": {
-    image: "/pixel.png",
-    color: "#E8B4F8",
-  },
-  "2-2": {
-    image: "/pixel.png",
-    color: "#E8B4F8",
-  },
-  "2-3": {
-    image: "/pixel.png",
-    color: "#E8B4F8",
-  },
-  "3-0": {
-    image: "/pixel.png",
-    color: "#E8B4F8",
-  },
-  "3-1": {
-    image: "/pixel.png",
-    color: "#E8B4F8",
-  },
-  "3-2": {
-    image: "/pixel.png",
-    color: "#E8B4F8",
-  },
-  "3-3": {
-    image: "/pixel.png",
-    color: "#E8B4F8",
-  },
-}
-
-// const drawnPixels = () => {
-
-// }
+import { PixelService } from "@/services/pixel"
+import { BlokData, DrawnPixels } from "@/types/services/pixel"
+import { useReadContract, useReadContracts } from "wagmi"
+import { contractAbi } from "@/lib/contractAbi"
+import { contractAddress } from "@/lib/payment"
 
 export default function Display() {
   const gridWidth = window.innerWidth * 0.75
   const gridHeight = gridWidth * (10 / 16)
   const squareSize = gridHeight / 250
   const [open, setOpen] = useState(false)
+  const [drawnPixels, setDrawnPixels] = useState<DrawnPixels>({})
   const { selectedSquares, setSelectedSquares, handleSelectSquare } =
     useSelection()
+  const imageCache: { [key: string]: HTMLImageElement } = {}
+
+  const { data: plan } = useReadContract({
+    abi: contractAbi,
+    address: contractAddress,
+    functionName: "planDetails",
+    args: [0],
+  })
+
+  const getAllBloks = async () => {
+    try {
+      const pixelService = new PixelService()
+      const res: BlokData[] = await pixelService.getAllBloks()
+      console.log({ res })
+
+      const drawn: DrawnPixels = res.reduce(
+        (acc, { x, y, image, id, blokId, metadata }) => {
+          const key = `${x}-${y}`
+          //@ts-ignore
+          acc[key] = {
+            id,
+            blokId,
+            metadata,
+            image: image.url,
+            color: image.colorCode,
+          }
+          return acc
+        },
+        {} as DrawnPixels,
+      )
+
+      setDrawnPixels(drawn)
+    } catch (error) {
+      console.log({ error })
+    }
+  }
 
   useEffect(() => {
     if (Object.keys(selectedSquares).length > 0) setOpen(true)
   }, [selectedSquares])
+
+  useEffect(() => {
+    getAllBloks()
+  }, [])
 
   return (
     <>
@@ -99,8 +74,15 @@ export default function Display() {
         setSelectedSquares={setSelectedSquares}
         onSelectSquare={handleSelectSquare}
         drawnPixels={drawnPixels}
+        imageCache={imageCache}
       />
-      <InfoDrawer selected={selectedSquares} open={open} setOpen={setOpen} />
+      <InfoDrawer
+        pricePerMonth={plan ? (plan as bigint[])[0] : BigInt(0)}
+        selected={selectedSquares}
+        open={open}
+        setOpen={setOpen}
+        drawnPixels={drawnPixels}
+      />
     </>
   )
 }

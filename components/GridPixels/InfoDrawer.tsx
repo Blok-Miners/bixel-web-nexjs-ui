@@ -18,15 +18,24 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import { Separator } from "../ui/separator"
 import Loader from "../Shared/Loader"
+import { object } from "zod"
+import { PixelService } from "@/services/pixel"
+import { formatUnits } from "viem"
 
-export default function InfoDrawer({ selected, open, setOpen }: IInfoDrawer) {
+export default function InfoDrawer({
+  pricePerMonth,
+  selected,
+  open,
+  setOpen,
+  drawnPixels,
+}: IInfoDrawer) {
   const [info, setInfo] = useState({
-    title: "Bixel.io",
-    image: "https://bixel-uploads.s3.amazonaws.com/Bixel.png",
-    description:
-      "Bixel is a pixel art editor that helps you create beautiful and engaging pixel art in minutes.",
+    title: "",
+    image: "",
+    website: "",
+    description: "",
   })
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [selectedInfo, setSelectedInfo] = useState({
     totalPixels: Object.keys(selected).length,
     totalPrice: Object.keys(selected).length * 10,
@@ -37,19 +46,51 @@ export default function InfoDrawer({ selected, open, setOpen }: IInfoDrawer) {
   const router = useRouter()
   const getSelectedInfo = async () => {
     try {
+      const blokMetaIds: string[] = Object.keys(selected).map((key) => {
+        if (!drawnPixels[key]) return "_"
+        return drawnPixels[key].metadata
+      })
+      const blokSet = new Set(blokMetaIds)
+      if (blokSet.size === 0) {
+        setSelectedType(InfoStateEnum.NO_OWNER)
+        setIsLoading(false)
+        return
+      } else if (blokSet.size > 1) {
+        setSelectedType(InfoStateEnum.MULTI_OWNER)
+        setIsLoading(false)
+        return
+      } else {
+        if (blokSet.has("_")) {
+          setSelectedType(InfoStateEnum.NO_OWNER)
+          return
+        } else {
+          setSelectedType(InfoStateEnum.SINGLE_OWNER)
+          const blokMeta = Array.from(blokSet)[0]
+          const pixelService = new PixelService()
+          const blok = await pixelService.getMetadataInfo(blokMeta)
+          setInfo({
+            title: blok.title,
+            image: "https://bixel-uploads.s3.amazonaws.com/Bixel.png",
+            description: blok.description,
+            website: blok.website,
+          })
+          setIsLoading(false)
+        }
+      }
     } catch (error) {
       console.log({ InfoDrawerError: error })
     }
   }
 
-  const handleBuy = () => {
+  const handleRent = () => {
     router.push("/purchase")
   }
 
   useEffect(() => {
     setSelectedInfo({
       totalPixels: Object.keys(selected).length,
-      totalPrice: Object.keys(selected).length * 10,
+      totalPrice:
+        Object.keys(selected).length * Number(formatUnits(pricePerMonth, 18)),
     })
     getSelectedInfo()
   }, [selected])
@@ -123,8 +164,8 @@ export default function InfoDrawer({ selected, open, setOpen }: IInfoDrawer) {
         )}
         {!isLoading && selectedType === InfoStateEnum.NO_OWNER && (
           <DrawerFooter className="flex w-full flex-row gap-4">
-            <Button className="w-full">Rent</Button>
-            <Button onClick={handleBuy} className="w-full" variant={"outline"}>
+            <Button onClick={handleRent} className="w-full">Rent</Button>
+            <Button className="w-full" variant={"outline"}>
               Buy
             </Button>
           </DrawerFooter>
