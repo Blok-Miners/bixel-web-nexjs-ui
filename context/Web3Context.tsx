@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 
 import { State, WagmiProvider } from "wagmi"
 import { config, projectId } from "@/lib/wagmi"
+import { bscTestnet } from "viem/chains"
 
 const queryClient = new QueryClient()
 
@@ -18,6 +19,7 @@ createWeb3Modal({
   projectId,
   enableAnalytics: true,
   enableOnramp: true,
+  defaultChain: bscTestnet,
 })
 
 export default function Web3ModalProvider({

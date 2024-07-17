@@ -1,7 +1,6 @@
 "use client"
 
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { UseFormReturn } from "react-hook-form"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import {
@@ -16,39 +15,38 @@ import {
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader } from "../ui/card"
 import { Textarea } from "../ui/textarea"
-import { ChangeEvent, useEffect, useRef, useState } from "react"
+import { ChangeEvent, Dispatch, useEffect, useRef, useState } from "react"
 import { useSelection } from "@/hooks/useSelectioin"
 import Loader from "../Shared/Loader"
-import { IImage } from "@/types/services/pixel"
+import {
+  IBuyPixel,
+  IImage,
+  IImageUploadResponse,
+  IPixel,
+  Listing_Status,
+} from "@/types/services/pixel"
 import { generateTokenId } from "@/lib/utils"
 import { PixelService } from "@/services/pixel"
+import { formSchema } from "@/types/forms"
+import { useRouter } from "next/navigation"
 
-const formSchema = z.object({
-  brandName: z.string().min(2, {
-    message: "brandName must be at least 2 characters.",
-  }),
-  website: z.string().url({
-    message: "Invalid URL format.",
-  }),
-  description: z.string().min(10, {
-    message: "Description must be at least 10 characters.",
-  }),
-})
+interface Props {
+  submit: (values: z.infer<typeof formSchema>) => Promise<void>
+  form: UseFormReturn<z.infer<typeof formSchema>>
+  setUploadedImages: Dispatch<IImageUploadResponse[]>
+}
 
-export default function ProductPageForm() {
+export default function ProductPageForm({
+  submit,
+  form,
+  setUploadedImages,
+}: Props) {
   const { selectedSquares } = useSelection()
   const [info, setInfo] = useState({
     rows: 1,
-    cols: 2,
+    cols: 1,
   })
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      brandName: "",
-      website: "",
-      description: "",
-    },
-  })
+  const router = useRouter()
   const [imageLoading, setImageLoading] = useState(false)
   const [imageParts, setImageParts] = useState<
     {
@@ -63,7 +61,11 @@ export default function ProductPageForm() {
 
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files
-    if (!files) return
+
+    const maxWidth = 10 * info.cols
+    const maxHeight = 10 * info.rows
+
+    if (!files?.length) return
     setImageLoading(true)
     const file = files[0]
     if (file) {
@@ -71,6 +73,16 @@ export default function ProductPageForm() {
       reader.onload = (e) => {
         const img = new Image()
         img.onload = () => {
+          console.log({
+            width: img.width,
+            height: img.height,
+            aspectRatio: img.width / img.height,
+            info,
+          })
+          if (img.width > maxWidth || img.height > maxHeight) {
+            setImageLoading(false)
+            return
+          }
           divideImage(img, info.rows, info.cols) // For example, divide into 4x4 grid
         }
         img.src = e.target.result
@@ -104,7 +116,7 @@ export default function ProductPageForm() {
         const pixelId = generateTokenId(row, col)
         return {
           base64String: dataUrl,
-          filename: `${pixelId}-${Date.now()}.png`,
+          filename: `${pixelId}-${Date.now()}`,
           colorCode,
           pixelId,
         }
@@ -112,6 +124,7 @@ export default function ProductPageForm() {
       const pixelService = new PixelService()
       const res = await pixelService.uploadImages({ images })
       console.log({ data: res.data })
+      setUploadedImages(res.data)
       setImageLoading(false)
     } catch (error) {
       setImageLoading(false)
@@ -190,11 +203,8 @@ export default function ProductPageForm() {
     setImageParts(parts)
   }
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
-  }
-
   useEffect(() => {
+    if(Object.keys(selectedSquares).length === 0) return router.push('/')
     getGridDimensions()
   }, [selectedSquares])
 
@@ -208,12 +218,12 @@ export default function ProductPageForm() {
       <CardContent>
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={form.handleSubmit(submit)}
             className="grid grid-cols-2 gap-x-8 gap-y-4"
           >
             <FormField
               control={form.control}
-              name="brandName"
+              name="title"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Title</FormLabel>
@@ -272,7 +282,8 @@ export default function ProductPageForm() {
                 disabled={imageLoading}
               />
               <FormDescription>
-                Image to be displayed on the Bloks
+                Image to be displayed on the Bloks. Image cannot be more than (
+                {info.cols * 10}x{info.rows * 10})
               </FormDescription>
               <FormMessage />
             </FormItem>
