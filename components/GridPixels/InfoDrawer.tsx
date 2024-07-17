@@ -105,6 +105,7 @@ export default function InfoDrawer({
             website: blok.website,
           })
           setIsLoading(false)
+          getOwner()
         }
       }
     } catch (error) {
@@ -124,7 +125,6 @@ export default function InfoDrawer({
         Object.keys(selected).length * Number(formatUnits(pricePerMonth, 18)),
     })
     getSelectedInfo()
-    getOwner()
   }, [selected])
 
   return (
