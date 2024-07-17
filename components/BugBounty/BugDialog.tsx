@@ -29,11 +29,15 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 
 const formSchema = z.object({
-  summary: z.string().min(2, {
+  summary: z.string().min(10, {
     message: "Summary must be at least 10 characters.",
+  }).max(300, {
+    message: "Summary must be at most 300 characters.",
   }),
   steps: z.string().min(10, {
     message: "Steps must be at least 10 characters.",
+  }).max(500, {
+    message: "Summary must be at most 500 characters.",
   }),
 })
 
