@@ -47,7 +47,7 @@ export default async function page({
         <Actions id={params.id} />
       </div>
       <div className="flex">
-        <div className="h-full min-w-[280px] bg-th-black-2 p-8">
+        <div className="h-full min-h-[80vh] min-w-[280px] bg-th-black-2 p-8">
           <Info
             about={product.about}
             socials={JSON.parse(product.socialMediaLinks)}
@@ -60,6 +60,10 @@ export default async function page({
           <Box />
           <Iframe />
           <Video src={product.video} />
+          <div></div>
+          <div></div>
+          <div></div>
+          <div></div>
         </div>
       </div>
     </div>
