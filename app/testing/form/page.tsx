@@ -35,7 +35,6 @@ interface ProfileFormData {
   banner?: FileList
   name: string
   about?: string
-  follow?: string
   team: {
     memberImage?: FileList
     memberName: string
@@ -59,7 +58,6 @@ const profileSchema = z.object({
   banner: z.any() ,
   name: z.string().min(1, "Name is required"),
   about: z.string() ,
-  follow: z.string() ,
   team: z
     .array(
       z.object({
@@ -247,29 +245,6 @@ export default function ProfileCreation() {
                 {errors.about && (
                   <FormMessage className="text-red-500">
                     {errors.about.message as string}
-                  </FormMessage>
-                )}
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={control}
-            name="follow"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Follow</FormLabel>
-                <FormControl>
-                  <Input
-                    className="rounded-md border border-th-accent-2 bg-th-black-2 px-4 py-2 focus:outline-none"
-                    type="text"
-                    id="follow"
-                    {...field}
-                  />
-                </FormControl>
-                {errors.follow && (
-                  <FormMessage className="text-red-500">
-                    {errors.follow.message as string}
                   </FormMessage>
                 )}
               </FormItem>
