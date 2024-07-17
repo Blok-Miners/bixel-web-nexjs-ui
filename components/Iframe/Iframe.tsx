@@ -1,6 +1,6 @@
 export default function Iframe() {
   return (
-    <div className=" max-w-[500px] h-fit w-full overflow-hidden border border-th-accent-2 rounded-lg">
+    <div className="w-full h-fit overflow-hidden rounded-lg border border-th-accent-2">
       {/* <video controls className="aspect-video h-full w-full rounded-lg">
         <source src="/videos/explaination.mp4" />
       </video> */}
@@ -11,7 +11,7 @@ export default function Iframe() {
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
         title="Embedded YouTube"
-        className="w-full h-[300px]"
+        className="h-[300px] w-full"
       />
     </div>
   )

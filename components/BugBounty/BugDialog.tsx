@@ -84,7 +84,7 @@ export function BugDialog({ open, setOpen }: any) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Submit</Button>
+        <Button className="w-full">Submit</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogTitle className="mx-auto">Bug Report</DialogTitle>
