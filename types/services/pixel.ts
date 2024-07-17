@@ -66,6 +66,7 @@ export interface DrawnPixels {
     image: string
     color: string
     metadata: string
+    owner: Address
   }
 }
 
@@ -89,6 +90,6 @@ export interface BlokData {
   currentOwner: {
     id: string
     email: string
-    walletAddress: string
+    walletAddress: Address
   }
 }

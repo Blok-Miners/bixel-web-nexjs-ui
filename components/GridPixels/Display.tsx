@@ -35,7 +35,7 @@ export default function Display() {
       console.log({ res })
 
       const drawn: DrawnPixels = res.reduce(
-        (acc, { x, y, image, id, blokId, metadata }) => {
+        (acc, { x, y, image, id, blokId, metadata, currentOwner }) => {
           const key = `${x}-${y}`
           //@ts-ignore
           acc[key] = {
@@ -44,6 +44,7 @@ export default function Display() {
             metadata,
             image: image.url,
             color: image.colorCode,
+            owner: currentOwner.walletAddress,
           }
           return acc
         },
