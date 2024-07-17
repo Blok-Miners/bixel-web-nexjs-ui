@@ -55,33 +55,33 @@ interface ProfileFormData {
 }
 
 const profileSchema = z.object({
-  logo: z.any().optional(),
-  banner: z.any().optional(),
+  logo: z.any() ,
+  banner: z.any() ,
   name: z.string().min(1, "Name is required"),
-  about: z.string().optional(),
-  follow: z.string().optional(),
+  about: z.string() ,
+  follow: z.string() ,
   team: z
     .array(
       z.object({
-        memberImage: z.any().optional(),
+        memberImage: z.any() ,
         memberName: z.string().min(1, "Team member name is required"),
         memberEmail: z.string().email("Invalid email"),
       }),
     )
-    .optional(),
-  websiteUrl: z.string().url("Invalid URL").optional(),
+     ,
+  websiteUrl: z.string().url("Invalid URL") ,
   registeredEmail: z.string().email("Invalid email"),
   phoneNumber: z.string(),
   socialMediaLinks: z
     .object({
-      facebookUrl: z.string().url("Invalid URL").optional(),
-      linkedinUrl: z.string().url("Invalid URL").optional(),
-      twitterUrl: z.string().url("Invalid URL").optional(),
+      facebookUrl: z.string().url("Invalid URL") ,
+      linkedinUrl: z.string().url("Invalid URL") ,
+      twitterUrl: z.string().url("Invalid URL") ,
     })
-    .optional(),
-  contractAuditReportUrl: z.string().url("Invalid URL").optional(),
+     ,
+  contractAuditReportUrl: z.string().url("Invalid URL") ,
   registeredCountry: z.string().min(1, "Country is required"),
-  githubUrl: z.string().url("Invalid URL").optional(),
+  githubUrl: z.string().url("Invalid URL") ,
 })
 
 export default function ProfileCreation() {
