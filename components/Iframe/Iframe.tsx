@@ -1,6 +1,6 @@
 export default function Iframe() {
   return (
-    <div className=" w-[500px] overflow-hidden border border-th-accent-2 rounded-lg">
+    <div className=" max-w-[500px] h-fit w-full overflow-hidden border border-th-accent-2 rounded-lg">
       {/* <video controls className="aspect-video h-full w-full rounded-lg">
         <source src="/videos/explaination.mp4" />
       </video> */}
