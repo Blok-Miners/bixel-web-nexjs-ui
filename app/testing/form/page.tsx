@@ -30,6 +30,8 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 
+const MAX_FILE_SIZE = 5000000;
+
 interface ProfileFormData {
   logo?: FileList
   banner?: FileList
@@ -79,7 +81,10 @@ const profileSchema = z.object({
   registeredCountry: z.string().min(1, "Country is required"),
   githubUrl: z.string().url("Invalid URL"),
   moreLinks: z.array(z.string().url("Invalid URL")),
-  video: z.any(),
+  video: z
+    .any()
+    .refine((file: FileList) => file?.length !== 0, "File is required")
+    .refine((file) => file.size < MAX_FILE_SIZE, "Max size is 5MB.")
 })
 
 export default function ProfileCreation() {
@@ -483,40 +488,6 @@ export default function ProfileCreation() {
 
             <FormField
               control={control}
-              name="video"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Video Upload</FormLabel>
-                  <FormControl>
-                    <Input
-                      className="rounded-md border border-th-accent-2 bg-th-black-2 px-4 py-2 focus:outline-none"
-                      type="file"
-                      accept="video/*"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0]
-                        if (file) {
-                          field.onChange(file)
-                        }
-                      }}
-                    />
-                  </FormControl>
-                  {field.value && (
-                    <div className="mt-2">
-                      <span className="text-gray-500">Selected Video:</span>{" "}
-                      {File.name}
-                    </div>
-                  )}
-                  {errors.video && (
-                    <FormMessage className="text-red-500">
-                      {errors.video.message as string}
-                    </FormMessage>
-                  )}
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={control}
               name="moreLinks"
               render={({ field }) => (
                 <FormItem className="flex flex-col justify-between">
@@ -556,6 +527,43 @@ export default function ProfileCreation() {
                 </FormItem>
               )}
             />
+            <div className="col-span-2 flex flex-col gap-4">
+              <FormField
+                control={control}
+                name="video"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Video Upload</FormLabel>
+                    <FormControl>
+                      {/* @ts-ignore */}
+                      <Input
+                        className="rounded-md border border-th-accent-2 bg-th-black-2 px-4 py-2 focus:outline-none"
+                        type="file"
+                        accept="video/*"
+                        {...field}
+                      />
+                    </FormControl>
+                    {field.value && (
+                      <div className="mt-2">
+                        <span className="text-gray-500">Selected Video:</span>{" "}
+                        {File.name}
+                      </div>
+                    )}
+                    {errors.video && (
+                      <FormMessage className="text-red-500">
+                        {errors.video.message as string}
+                      </FormMessage>
+                    )}
+                  </FormItem>
+                )}
+              />
+              {methods.getValues("video") && (
+                <video
+                  controls
+                  src={URL.createObjectURL(methods.getValues("video") as any)}
+                />
+              )}
+            </div>
 
             {team.map((member, index) => (
               <div
