@@ -29,8 +29,9 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form"
+import { ProfileService } from "@/services/profile"
 
-const MAX_FILE_SIZE = 5000000;
+const MAX_FILE_SIZE = 5000000
 
 interface ProfileFormData {
   logo?: FileList
@@ -45,11 +46,13 @@ interface ProfileFormData {
   websiteUrl?: string
   registeredEmail: string
   phoneNumber: string
-  socialMediaLinks?: {
-    facebookUrl?: string
-    linkedinUrl?: string
-    twitterUrl?: string
-  }
+
+  facebookUrl?: string
+  linkedinUrl?: string
+  twitterUrl?: string
+  telegramUrl?: string
+  youtubeUrl?: string
+
   contractAuditReportUrl?: string
   registeredCountry: string
   githubUrl?: string
@@ -62,21 +65,23 @@ const profileSchema = z.object({
   banner: z.any(),
   name: z.string().min(1, "Name is required"),
   about: z.string(),
-  team: z.array(
-    z.object({
-      memberImage: z.any(),
-      memberName: z.string().min(1, "Team member name is required"),
-      memberEmail: z.string().email("Invalid email"),
-    }),
-  ),
+  // team: z.array(
+  //   z.object({
+  //     memberImage: z.any(),
+  //     memberName: z.string().min(1, "Team member name is required"),
+  //     memberEmail: z.string().email("Invalid email"),
+  //   }),
+  // ),
   websiteUrl: z.string().url("Invalid URL"),
   registeredEmail: z.string().email("Invalid email"),
   phoneNumber: z.string(),
-  socialMediaLinks: z.object({
-    facebookUrl: z.string().url("Invalid URL"),
-    linkedinUrl: z.string().url("Invalid URL"),
-    twitterUrl: z.string().url("Invalid URL"),
-  }),
+
+  facebookUrl: z.string().url("Invalid URL"),
+  linkedinUrl: z.string().url("Invalid URL"),
+  twitterUrl: z.string().url("Invalid URL"),
+  telegramUrl: z.string().url("Invalid URL"),
+  youtubeUrl: z.string().url("Invalid URL"),
+
   contractAuditReportUrl: z.string().url("Invalid URL"),
   registeredCountry: z.string().min(1, "Country is required"),
   githubUrl: z.string().url("Invalid URL"),
@@ -84,8 +89,9 @@ const profileSchema = z.object({
   video: z
     .any()
     .refine((file: FileList) => file?.length !== 0, "File is required")
-    .refine((file) => file.size < MAX_FILE_SIZE, "Max size is 5MB.")
+    // .refine((file) => file.size < MAX_FILE_SIZE, "Max size is 5MB."),
 })
+
 
 export default function ProfileCreation() {
   const methods = useForm<ProfileFormData>({
@@ -141,8 +147,42 @@ export default function ProfileCreation() {
     }
   }
 
-  const onSubmit: SubmitHandler<ProfileFormData> = (data) => {
-    console.log(data)
+ 
+
+  const onSubmit: SubmitHandler<ProfileFormData> = async (data) => {
+    const profile  = new ProfileService() 
+    const formData = new FormData()
+
+    if (data.logo) {
+      formData.append("logo", data.logo[0])
+    }
+    if (data.banner) {
+      formData.append("banner", data.banner[0])
+    }
+    if (data.video) {
+      formData.append("video", data.video[0])
+    }
+
+    formData.append("name", data.name)
+    formData.append("about", data.about || "")
+    formData.append("websiteUrl", data.websiteUrl || "")
+    formData.append("email", data.registeredEmail)
+    formData.append("phone", data.phoneNumber)
+    formData.append("contractAuditReportUrl", data.contractAuditReportUrl || "")
+    formData.append("country", data.registeredCountry)
+    formData.append("github", data.githubUrl || "")
+
+    const socialMediaLinks = {
+      facebookUrl: data.facebookUrl || "",
+      linkedinUrl: data.linkedinUrl || "",
+      twitterUrl: data.twitterUrl || "",
+      telegramUrl: data.telegramUrl || "",
+      youtubeUrl: data.youtubeUrl || "",
+    }
+    formData.append("socialMediaLinks", JSON.stringify(socialMediaLinks))
+     const response = await profile.createProfile(formData)
+    if (response)
+      console.log(response) 
   }
 
   return (
@@ -331,7 +371,7 @@ export default function ProfileCreation() {
 
             <FormField
               control={control}
-              name="socialMediaLinks.facebookUrl"
+              name="facebookUrl"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Facebook URL</FormLabel>
@@ -343,9 +383,9 @@ export default function ProfileCreation() {
                       {...field}
                     />
                   </FormControl>
-                  {errors.socialMediaLinks?.facebookUrl && (
+                  {errors.facebookUrl && (
                     <FormMessage className="text-red-500">
-                      {errors.socialMediaLinks.facebookUrl.message as string}
+                      {errors.facebookUrl.message as string}
                     </FormMessage>
                   )}
                 </FormItem>
@@ -354,7 +394,7 @@ export default function ProfileCreation() {
 
             <FormField
               control={control}
-              name="socialMediaLinks.linkedinUrl"
+              name="linkedinUrl"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>LinkedIn URL</FormLabel>
@@ -366,9 +406,9 @@ export default function ProfileCreation() {
                       {...field}
                     />
                   </FormControl>
-                  {errors.socialMediaLinks?.linkedinUrl && (
+                  {errors.linkedinUrl && (
                     <FormMessage className="text-red-500">
-                      {errors.socialMediaLinks.linkedinUrl.message as string}
+                      {errors.linkedinUrl.message as string}
                     </FormMessage>
                   )}
                 </FormItem>
@@ -377,7 +417,7 @@ export default function ProfileCreation() {
 
             <FormField
               control={control}
-              name="socialMediaLinks.twitterUrl"
+              name="twitterUrl"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Twitter URL</FormLabel>
@@ -389,9 +429,55 @@ export default function ProfileCreation() {
                       {...field}
                     />
                   </FormControl>
-                  {errors.socialMediaLinks?.twitterUrl && (
+                  {errors.twitterUrl && (
                     <FormMessage className="text-red-500">
-                      {errors.socialMediaLinks.twitterUrl.message as string}
+                      {errors.twitterUrl.message as string}
+                    </FormMessage>
+                  )}
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="telegramUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Telegram URL</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="rounded-md border border-th-accent-2 bg-th-black-2 px-4 py-2 focus:outline-none"
+                      type="url"
+                      id="telegram Url"
+                      {...field}
+                    />
+                  </FormControl>
+                  {errors.telegramUrl && (
+                    <FormMessage className="text-red-500">
+                      {errors.telegramUrl.message as string}
+                    </FormMessage>
+                  )}
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="youtubeUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Youtube URL</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="rounded-md border border-th-accent-2 bg-th-black-2 px-4 py-2 focus:outline-none"
+                      type="url"
+                      id="youtube Url"
+                      {...field}
+                    />
+                  </FormControl>
+                  {errors.youtubeUrl && (
+                    <FormMessage className="text-red-500">
+                      {errors.youtubeUrl.message as string}
                     </FormMessage>
                   )}
                 </FormItem>
@@ -557,15 +643,10 @@ export default function ProfileCreation() {
                   </FormItem>
                 )}
               />
-              {methods.getValues("video") && (
-                <video
-                  controls
-                  src={URL.createObjectURL(methods.getValues("video") as any)}
-                />
-              )}
+            
             </div>
 
-            {team.map((member, index) => (
+            {/* {team.map((member, index) => (
               <div
                 key={index}
                 className="col-span-2 rounded-lg border border-th-accent-2 p-4"
@@ -664,7 +745,7 @@ export default function ProfileCreation() {
               >
                 Add Team Member
               </Button>
-            </div>
+            </div> */}
 
             <div className="flex w-full items-center justify-end">
               <Button type="submit" className="text-white">

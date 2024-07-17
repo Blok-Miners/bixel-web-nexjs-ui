@@ -28,3 +28,4 @@ export class PixelService extends BindService {
     }
   }
 }
+
