@@ -39,3 +39,17 @@ body {
   border-color: #252525;
   outline: none;
 }
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #252525;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #76ABAE;
+  border-radius: 999999999px;
+}
