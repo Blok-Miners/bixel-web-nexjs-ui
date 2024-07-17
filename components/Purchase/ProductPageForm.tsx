@@ -85,6 +85,7 @@ export default function ProductPageForm({
           }
           divideImage(img, info.rows, info.cols) // For example, divide into 4x4 grid
         }
+        //@ts-ignore
         img.src = e.target.result
       }
       reader.readAsDataURL(file)
@@ -204,7 +205,7 @@ export default function ProductPageForm({
   }
 
   useEffect(() => {
-    if(Object.keys(selectedSquares).length === 0) return router.push('/')
+    if (Object.keys(selectedSquares).length === 0) return router.push("/")
     getGridDimensions()
   }, [selectedSquares])
 
