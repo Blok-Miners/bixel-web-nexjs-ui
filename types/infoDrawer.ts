@@ -1,10 +1,13 @@
 import { Dispatch } from "react"
 import { ISelectedSquares } from "./grid"
+import { DrawnPixels } from "./services/pixel"
 
 export interface IInfoDrawer {
+  pricePerMonth: bigint
   selected: ISelectedSquares
   open: boolean
   setOpen: Dispatch<boolean>
+  drawnPixels: DrawnPixels
 }
 
 export enum InfoStateEnum {

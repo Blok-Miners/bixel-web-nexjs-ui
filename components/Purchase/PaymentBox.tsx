@@ -17,10 +17,25 @@ import { StatusEnum } from "@/types/confirmationTypes"
 import { useSelection } from "@/hooks/useSelectioin"
 import { contractAddress, tokens } from "@/lib/payment"
 import Image from "next/image"
-import { useAccount, useReadContracts } from "wagmi"
+import {
+  useAccount,
+  useReadContracts,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi"
 import { tokenAbi } from "@/lib/tokenAbi"
 import { formatUnits, getAddress, parseEther, parseUnits } from "viem"
-import { formatArray } from "@/lib/utils"
+import { formatArray, generateTokenId } from "@/lib/utils"
+import { Address } from "@/types/web3"
+import { contractAbi } from "@/lib/contractAbi"
+import {
+  IImageUploadResponse,
+  IIntentPixel,
+  ITransactionIntent,
+  Listing_Status,
+} from "@/types/services/pixel"
+import { PixelService } from "@/services/pixel"
+import axios from "axios"
 
 const plans = [
   {
@@ -28,18 +43,21 @@ const plans = [
     title: "1 Month Plan",
     description: "One Month Rental of the Selected Bloks",
     price: 100,
+    tenure: 100,
   },
   {
     id: "0x2",
     title: "6 Month Plan",
     description: "Six Month Rental of the Selected Bloks",
     price: 90,
+    tenure: 100000,
   },
   {
     id: "0x3",
     title: "1 Year Plan",
     description: "One Year Rental of the Selected Bloks",
     price: 80,
+    tenure: 1000000,
   },
 ]
 
@@ -68,11 +86,15 @@ const paymentMethods = [
 // ]
 
 export default function PaymentBox({
-  disabled,
   metadata,
+  getMetadataUrls,
+  uploadedImages,
+  metadataId,
 }: {
-  disabled: boolean
-  metadata: string | undefined
+  metadata: string[]
+  getMetadataUrls: any
+  uploadedImages: IImageUploadResponse[]
+  metadataId: string | undefined
 }) {
   const { address } = useAccount()
   const { selectedSquares } = useSelection()
@@ -81,8 +103,30 @@ export default function PaymentBox({
   const [token, setToken] = useState<string | undefined>()
   // const [selectedChain, setSelectedChain] = useState<string | undefined>()
   const [total, setTotal] = useState(0)
+  const [tx, setTx] = useState<Address | undefined>()
+  const [approvalHash, setApprovalHash] = useState<Address | undefined>()
+  const [loading, setLoading] = useState<boolean>(false)
 
-  const { data: balances, isLoading: balancesLoading } = useReadContracts({
+  const {
+    data: receipt,
+    isLoading: receiptLoading,
+    error: receiptError,
+  } = useWaitForTransactionReceipt({
+    hash: tx,
+  })
+
+  const {
+    data: receiptApproval,
+    isLoading: receiptLoadingApproval,
+    error: receiptErrorApproval,
+  } = useWaitForTransactionReceipt({
+    hash: approvalHash,
+  })
+  const {
+    data: balances,
+    isLoading: balancesLoading,
+    refetch,
+  } = useReadContracts({
     allowFailure: true,
     contracts: [
       {
@@ -112,6 +156,29 @@ export default function PaymentBox({
     ],
   })
 
+  const { writeContractAsync } = useWriteContract()
+
+  const callWebhook = async () => {
+    const res = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/webhook/payment-received`,
+      {
+        data: [
+          {
+            id: "\\x1fd245cbace0b02819a6c113f584c3caf774497e3686ef29e0a10b9c7bc682ad4a000000",
+            vid: 1,
+            user: `\\${address?.slice(1)}`,
+            token: "\\x55d398326f99059fF775485246999027B3197955",
+            amount: 1000000000000000000000,
+            block$: 40319572,
+            block_number: 40319572,
+            block_timestamp: 1720520478,
+            transaction_hash: `\\${tx?.slice(1)}`,
+          },
+        ],
+      },
+    )
+  }
+
   useEffect(() => {
     if (selectedPlan) {
       const plan = plans.find((plan) => plan.id === selectedPlan)
@@ -125,6 +192,128 @@ export default function PaymentBox({
   useEffect(() => {
     console.log(balances)
   }, [balances, balancesLoading])
+
+  const initBuy = async () => {
+    if (!token) return
+    try {
+      setLoading(true)
+      await getMetadataUrls()
+    } catch (e) {
+      setLoading(false)
+    }
+  }
+
+  const handleApprove = async () => {
+    try {
+      if (!token) return
+      const allowance = await writeContractAsync({
+        abi: tokenAbi,
+        address: getAddress(tokens[0].address),
+        functionName: "approve",
+        args: [contractAddress, parseEther("10000000")],
+      })
+      setApprovalHash(allowance)
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+    }
+  }
+
+  const checkApproval = () => {
+    const idx = tokens.findIndex((tok) => tok.address === token)
+    if (idx === -1) return false
+    if (!balances) return false
+    const allowance = formatUnits(
+      balances[idx * 2 + 1].result as bigint,
+      tokens[idx].decimals,
+    )
+    if (Number(allowance) < total) return false
+    return true
+  }
+
+  const handleIntent = async (hash: Address) => {
+    const data: IIntentPixel[] = Object.keys(selectedSquares).map((key, i) => {
+      const [column, row] = key.split("-").map(Number)
+      const blokId = generateTokenId(row, column)
+      const pixel: IIntentPixel = {
+        x: column,
+        y: row,
+        image: uploadedImages[i].id,
+        blokId,
+        listing_status: Listing_Status.Rental,
+        metadataUrl: metadata[i],
+      }
+      return pixel
+    })
+    const body: ITransactionIntent = {
+      data,
+      metadata: metadataId!,
+      txHash: hash,
+      listing_status: Listing_Status.Rental,
+      planId: Number(selectedPlan),
+      expiryDate: new Date(
+        Date.now() + plans[Number(selectedPlan)].tenure * 1000,
+      ),
+    }
+
+    const pixelService = new PixelService()
+    await pixelService.transactionIntent(body)
+  }
+
+  const handleBuyBloks = async () => {
+    try {
+      if (!token) return
+      if (metadata.length === 0) return
+      setLoading(true)
+      const approval = checkApproval()
+      if (!approval) return handleApprove()
+      const reqTuple = metadata.map((uri, i) => {
+        const [col, row] = Object.keys(selectedSquares)
+          [i].split("-")
+          .map(Number)
+        return {
+          uri,
+          id: generateTokenId(row, col),
+          plan: Number(selectedPlan),
+          startTime: Math.floor(Date.now() / 1000),
+        }
+      })
+      console.log({ args: [reqTuple, getAddress(token)] })
+      const hash = await writeContractAsync({
+        abi: contractAbi,
+        address: contractAddress,
+        functionName: "buyPixel",
+        args: [reqTuple, getAddress(token)],
+      })
+      setTx(hash)
+      handleIntent(hash)
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (!tx) return
+    if (!receipt) return
+    if (receiptError) return
+    if (receiptLoading) return
+    setLoading(false)
+    callWebhook()
+  }, [receipt, receiptLoading, receiptError])
+
+  useEffect(() => {
+    handleBuyBloks()
+  }, [metadata])
+
+  useEffect(() => {
+    if (!approvalHash) return
+    if (!receiptApproval) return
+    if (receiptErrorApproval) return
+    if (receiptLoadingApproval) return
+    refetch()
+    handleBuyBloks()
+  }, [receiptApproval, receiptErrorApproval, receiptLoadingApproval])
 
   return (
     <>
@@ -145,7 +334,9 @@ export default function PaymentBox({
             <SelectContent>
               <SelectGroup>
                 {plans.map((plan) => (
-                  <SelectItem value={plan.id}>{plan.title}</SelectItem>
+                  <SelectItem key={plan.id} value={plan.id}>
+                    {plan.title}
+                  </SelectItem>
                 ))}
               </SelectGroup>
             </SelectContent>
@@ -181,7 +372,9 @@ export default function PaymentBox({
             <SelectContent>
               <SelectGroup>
                 {paymentMethods.map((pay) => (
-                  <SelectItem value={pay.id}>{pay.title}</SelectItem>
+                  <SelectItem key={pay.id} value={pay.id}>
+                    {pay.title}
+                  </SelectItem>
                 ))}
               </SelectGroup>
             </SelectContent>
@@ -193,7 +386,11 @@ export default function PaymentBox({
             <SelectContent>
               <SelectGroup>
                 {tokens.map((pay) => (
-                  <SelectItem value={pay.address} className="w-full">
+                  <SelectItem
+                    value={pay.address}
+                    key={pay.address}
+                    className="w-full"
+                  >
                     <div className="flex items-center justify-between gap-20">
                       <div className="flex items-center gap-2">
                         <Image
@@ -232,7 +429,12 @@ export default function PaymentBox({
             </SelectGroup>
           </SelectContent>
         </Select> */}
-          <Button disabled={disabled || !metadata} className="w-full">
+          <Button
+            onClick={initBuy}
+            disabled={!selectedPlan || !token || loading}
+            className="w-full"
+            isLoading={loading}
+          >
             Pay Now
           </Button>
         </CardFooter>

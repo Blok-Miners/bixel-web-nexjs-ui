@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState, Dispatch } from "react"
 import { Button } from "../ui/button"
 import { Minus, Plus } from "lucide-react"
 import { Checkbox } from "../ui/checkbox"
+import { DrawnPixels } from "@/types/services/pixel"
 
 interface CanvasGridProps {
   gridWidth: number
@@ -10,12 +11,8 @@ interface CanvasGridProps {
   selectedSquares: { [key: string]: boolean }
   onSelectSquare: (coords: { x: number; y: number }) => void
   setSelectedSquares: Dispatch<{ [key: string]: boolean }>
-  drawnPixels: {
-    [pair: string]: {
-      image: string
-      color: string
-    }
-  }
+  drawnPixels: DrawnPixels
+  imageCache: { [key: string]: HTMLImageElement }
 }
 
 const threshold: number = 4
@@ -28,6 +25,7 @@ const CanvasGrid: React.FC<CanvasGridProps> = ({
   onSelectSquare,
   setSelectedSquares,
   drawnPixels,
+  imageCache
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [context, setContext] = useState<CanvasRenderingContext2D | null>(null)
@@ -43,7 +41,6 @@ const CanvasGrid: React.FC<CanvasGridProps> = ({
   const [lastPanX, setLastPanX] = useState(0)
   const [lastPanY, setLastPanY] = useState(0)
 
-  const imageCache: { [key: string]: HTMLImageElement } = {}
 
   useEffect(() => {
     const canvas = canvasRef.current
