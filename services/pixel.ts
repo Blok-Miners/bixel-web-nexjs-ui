@@ -89,5 +89,20 @@ export class PixelService extends BindService {
       throw error
     }
   }
+
+  public async getLastTransactionByGroupId(groupId: string) {
+    try {
+      return (
+        await this.http.get("/last-transaction-for-groupId", {
+          params: {
+            groupId,
+          },
+          headers: { Authorization: getAccessToken() },
+        })
+      ).data
+    } catch (error) {
+      throw error
+    }
+  }
 }
 
