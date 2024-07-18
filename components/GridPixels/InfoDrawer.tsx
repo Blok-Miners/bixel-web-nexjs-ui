@@ -131,8 +131,8 @@ export default function InfoDrawer({
     <Drawer open={open} onOpenChange={setOpen} direction="right">
       <DrawerContent className="bg-th-black-2 text-[#CBE4DE] after:hidden md:!inset-y-0 md:inset-x-auto md:!right-0 md:m-4 md:max-w-[12rem] md:rounded-xl md:border-none md:!shadow md:outline-none">
         <DrawerHeader>
-          <DrawerTitle>Pixel Insight</DrawerTitle>
-          <DrawerDescription>Get to know the Pixel</DrawerDescription>
+          <DrawerTitle>Bixel Insight</DrawerTitle>
+          <DrawerDescription>Get to know the Bixel</DrawerDescription>
           <DrawerClose className="absolute right-4 top-4">
             <CircleX />
           </DrawerClose>
@@ -150,7 +150,7 @@ export default function InfoDrawer({
               You have selected {selectedInfo.totalPixels} pixels
             </div> */}
             <div className="text-sm">
-              You can buy or rent pixels for following prices. Click on the
+              You can buy or rent bixels for following prices. Click on the
               button below to proceed.
             </div>
             <div className="flex items-center justify-between text-lg">

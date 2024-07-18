@@ -19,3 +19,21 @@ export const generateTokenId = (x: number, y: number) => {
 }
 
 export const getAccessToken = () => `Bearer ${localStorage.getItem("access_token")}`
+
+export const extractUsername = (url: string): string | null => {
+  try {
+    const parsedUrl = new URL(url)
+    const pathParts = parsedUrl.pathname.split("/").filter(Boolean)
+    if (pathParts.length > 1) {
+      // Remove known prefixes
+      if (pathParts[0] === "in" || pathParts[0] === "user") {
+        return pathParts[1]
+      }
+      return pathParts[0]
+    }
+    return pathParts.length > 0 ? pathParts[0] : null
+  } catch (error) {
+    console.error("Invalid URL:", url)
+    return null
+  }
+}

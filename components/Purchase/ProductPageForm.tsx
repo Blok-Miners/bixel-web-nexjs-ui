@@ -215,7 +215,7 @@ export default function ProductPageForm({
 
   return (
     <Card className="col-span-2 row-span-2 flex flex-col rounded-xl">
-      <CardHeader className="text-2xl font-bold">Nft Metadata Info</CardHeader>
+      <CardHeader className="text-2xl font-bold">Bixel Info</CardHeader>
       <CardContent>
         <Form {...form}>
           <form
@@ -227,7 +227,7 @@ export default function ProductPageForm({
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Title</FormLabel>
+                  <FormLabel>How would you like to name your BIXEL?</FormLabel>
                   <FormControl>
                     <Input placeholder="Bixel ltd." {...field} />
                   </FormControl>

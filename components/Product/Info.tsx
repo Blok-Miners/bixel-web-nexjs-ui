@@ -1,53 +1,11 @@
-import { Earth, MapPin } from "lucide-react"
-import { FaFacebookF, FaMapMarkerAlt } from "react-icons/fa"
-import {
-  FaEarthAsia,
-  FaGithub,
-  FaInstagram,
-  FaLinkedinIn,
-  FaTelegram,
-  FaXTwitter,
-  FaYoutube,
-} from "react-icons/fa6"
-
-// const socials: { [key: string]: string } = {
-//   twitter: "https://twitter.com/elon",
-//   linkedin: "https://linkedin.com/in/elonmusk",
-//   youtube: "https://www.youtube.com/@Zellsis",
-//   telegram: "https://telegram.me/elonmusk",
-//   instagram: "https://instagram.com/elonmusk",
-// }
-
-const icons: { [key: string]: () => JSX.Element } = {
-  twitter: () => <FaXTwitter />,
-  linkedin: () => <FaLinkedinIn />,
-  youtube: () => <FaYoutube />,
-  facebook: () => <FaFacebookF />,
-  telegram: () => <FaTelegram />,
-  instagram: () => <FaInstagram />,
-}
-
-const extractUsername = (url: string): string | null => {
-  try {
-    const parsedUrl = new URL(url)
-    const pathParts = parsedUrl.pathname.split("/").filter(Boolean)
-    if (pathParts.length > 1) {
-      // Remove known prefixes
-      if (pathParts[0] === "in" || pathParts[0] === "user") {
-        return pathParts[1]
-      }
-      return pathParts[0]
-    }
-    return pathParts.length > 0 ? pathParts[0] : null
-  } catch (error) {
-    console.error("Invalid URL:", url)
-    return null
-  }
-}
+import { icons } from "@/lib/socials"
+import { extractUsername } from "@/lib/utils"
+import { FaMapMarkerAlt } from "react-icons/fa"
+import { FaEarthAsia, FaGithub } from "react-icons/fa6"
 
 export default function Info({
   about,
-  socials,
+  // socials,
   country,
   github,
   website,
@@ -56,7 +14,7 @@ export default function Info({
   country: string
   github: string
   website: string
-  socials: { [key: string]: string }
+  // socials: { [key: string]: string }
 }) {
   return (
     <div className="flex flex-col gap-4">
@@ -79,7 +37,7 @@ export default function Info({
           </a>
         </div>
       </div>
-      <div className="flex flex-col gap-2">
+      {/* <div className="flex flex-col gap-2">
         <div className="text-xl font-bold">Socials:</div>
         {Object.entries(socials).map((item) => {
           const [key, value]: string[] = item
@@ -92,7 +50,7 @@ export default function Info({
             </div>
           )
         })}
-      </div>
+      </div> */}
     </div>
   )
 }
