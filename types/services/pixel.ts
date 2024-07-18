@@ -55,6 +55,7 @@ export interface IIntentPixel {
   y: number
   image: string
   blokId: number
+  planId: number
   listing_status: Listing_Status
   metadataUrl: string
 }
@@ -67,6 +68,7 @@ export interface DrawnPixels {
     color: string
     metadata: string
     owner: Address
+    groupId: string
   }
 }
 
@@ -78,6 +80,7 @@ export interface BlokData {
   metadataUrl: string
   blokId: number
   listing_status: string
+  groupId: string
   image: {
     id: string
     url: string

@@ -10,6 +10,7 @@ export default function Socials({
     <div className="flex gap-1 rounded-md bg-th-black-2 p-1">
       {Object.entries(socials).map((item) => {
         const [key, value] = item
+        console.log(key, value)
         return (
           <a key={key} href={value} target="_blank" rel="noopener noreferrer">
             <Button className="h-10 w-10 bg-th-black px-2 text-lg !text-white hover:bg-th-black/40">

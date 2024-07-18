@@ -3,7 +3,12 @@ import { ISelectedSquares } from "./grid"
 import { DrawnPixels } from "./services/pixel"
 
 export interface IInfoDrawer {
-  pricePerMonth: bigint
+  plans: {
+    id: number
+    duration: number
+    title: string
+    price: number
+  }[]
   selected: ISelectedSquares
   open: boolean
   setOpen: Dispatch<boolean>

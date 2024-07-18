@@ -28,6 +28,36 @@ export class ProductService extends BindService {
     }
   }
 
+  public async approveProduct(id: string) {
+    try {
+      return (
+        await this.http.post(
+          `/approve/${id}`,
+          {},
+          {
+            headers: {
+              Authorization: getAccessToken(),
+            },
+          },
+        )
+      ).data
+    } catch (error) {
+      throw error
+    }
+  }
+
+  public async getProductFromGroupId(groupId: string) {
+    try {
+      return (
+        await this.http.get("/group-id", {
+          params: { groupId },
+        })
+      ).data
+    } catch (error) {
+      throw error
+    }
+  }
+
   public async getFollowStatus(id: string) {
     try {
       return (

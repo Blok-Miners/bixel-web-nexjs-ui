@@ -11,6 +11,12 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { Button } from "../ui/button"
 import { CircleX, Link2 } from "lucide-react"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -22,18 +28,23 @@ import { PixelService } from "@/services/pixel"
 import { formatUnits } from "viem"
 import { useAccount } from "wagmi"
 import { Address } from "@/types/web3"
+import { ProductService } from "@/services/product"
+import { CompanyProfile } from "@/types/services/product"
+import Link from "next/link"
+import { useWallet } from "@/hooks/useWallet"
+import { UserTypeEnum } from "@/types/services/user"
 
 export default function InfoDrawer({
-  pricePerMonth,
+  plans,
   selected,
   open,
   setOpen,
   drawnPixels,
 }: IInfoDrawer) {
   const { address } = useAccount()
+  const { user } = useWallet()
   const [info, setInfo] = useState({
     title: "",
-    image: "",
     website: "",
     description: "",
   })
@@ -46,6 +57,8 @@ export default function InfoDrawer({
     totalPixels: Object.keys(selected).length,
     totalPrice: Object.keys(selected).length * 10,
   })
+  const [group, setGroup] = useState("")
+  const [product, setProduct] = useState<CompanyProfile | undefined>()
   const [selectedType, setSelectedType] = useState<InfoStateEnum>(
     InfoStateEnum.NO_OWNER,
   )
@@ -69,9 +82,32 @@ export default function InfoDrawer({
     })
   }
 
-  const getOwner = () => {
-    if (selectedType !== InfoStateEnum.SINGLE_OWNER) return
+  const getProduct = async (groupId: string) => {
+    if (!groupId) return
+    const productService = new ProductService()
+    try {
+      const res = await productService.getProductFromGroupId(groupId)
+      console.log({ res })
+      if (!res) return
+
+      setProduct(res)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const getOwner = async () => {
+    console.log({
+      owner: drawnPixels[Object.keys(selected)[0]].owner,
+      group: drawnPixels[Object.keys(selected)[0]].groupId,
+      address,
+      user,
+    })
     setOwner(drawnPixels[Object.keys(selected)[0]].owner)
+    const groupId = drawnPixels[Object.keys(selected)[0]].groupId
+    setGroup(groupId)
+    if (!groupId) return setProduct(undefined)
+    await getProduct(groupId)
   }
 
   const getSelectedInfo = async () => {
@@ -100,12 +136,11 @@ export default function InfoDrawer({
           const blok = await pixelService.getMetadataInfo(blokMeta)
           setInfo({
             title: blok.title,
-            image: "https://bixel-uploads.s3.amazonaws.com/Bixel.png",
             description: blok.description,
             website: blok.website,
           })
           setIsLoading(false)
-          getOwner()
+          await getOwner()
         }
       }
     } catch (error) {
@@ -117,12 +152,20 @@ export default function InfoDrawer({
     router.push("/purchase")
   }
 
+  const reset = () => {
+    setGrid({ rows: 1, cols: 1 })
+    setInfo({ title: "", description: "", website: "" })
+    setSelectedType(InfoStateEnum.NO_OWNER)
+    setOwner(undefined)
+    setSelectedInfo({ totalPixels: 0, totalPrice: 0 })
+  }
+
   useEffect(() => {
+    reset()
     getGridDimensions()
     setSelectedInfo({
       totalPixels: Object.keys(selected).length,
-      totalPrice:
-        Object.keys(selected).length * Number(formatUnits(pricePerMonth, 18)),
+      totalPrice: 0,
     })
     getSelectedInfo()
   }, [selected])
@@ -145,29 +188,41 @@ export default function InfoDrawer({
         )}
         {!isLoading && selectedType === InfoStateEnum.NO_OWNER && (
           <div className="mt-4 flex flex-col gap-4 px-4">
-            <div className="text-2xl font-semibold">Buy/Rent Pixels</div>
+            <div className="text-2xl font-semibold">Buy/Lease Bixels</div>
             {/* <div className="text-sm">
               You have selected {selectedInfo.totalPixels} pixels
             </div> */}
             <div className="text-sm">
-              You can buy or rent bixels for following prices. Click on the
+              You can buy or lease bixels for following prices. Click on the
               button below to proceed.
             </div>
             <div className="flex items-center justify-between text-lg">
               <span>Pixels:</span>
               <span className="font-semibold">{selectedInfo.totalPixels}</span>
             </div>
-            <div className="flex items-center justify-between text-lg">
-              <span>Rental Price:</span>
-              <span className="font-semibold">
-                $ {selectedInfo.totalPrice.toLocaleString("en-US")}
-              </span>
+            <div className="flex flex-col justify-between gap-2 text-lg">
+              <span>Lease Price:</span>
+              <div className="grid grid-cols-3 gap-2">
+                {plans.map((plan) => (
+                  <div
+                    key={plan.id}
+                    className="flex flex-col items-center justify-center rounded-lg bg-th-black p-4 text-center text-lg"
+                  >
+                    <span className="text-xs">{plan.title}</span>
+                    <span className="text-sm font-bold">
+                      ${" "}
+                      {(selectedInfo.totalPixels * plan.price).toLocaleString(
+                        "en-US",
+                      )}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
             <div className="flex items-center justify-between text-lg">
-              <span>Purchase Price:</span>
+              <span>Buy Price:</span>
               <span className="font-semibold">
-                ${" "}
-                {(selectedInfo.totalPrice * 10 * 1.18).toLocaleString("en-US")}
+                $ {(selectedInfo.totalPixels * 10_000).toLocaleString("en-US")}
               </span>
             </div>
           </div>
@@ -194,7 +249,17 @@ export default function InfoDrawer({
             </div>
             <div className="flex flex-col gap-2">
               <span className="text-xl font-bold">About</span>
-              <div className="">{info.description}</div>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger className="text-left">
+                    {info.description.substring(0, 200)}...
+                  </TooltipTrigger>
+                  <TooltipContent className="w-64 border-none bg-th-black">
+                    <div className="text-white">{info.description}</div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
               <div className="flex items-center gap-2 font-light">
                 <Link2 />
                 <a
@@ -219,25 +284,32 @@ export default function InfoDrawer({
         {!isLoading && selectedType === InfoStateEnum.NO_OWNER && (
           <DrawerFooter className="flex w-full flex-row gap-4">
             <Button onClick={handleRent} className="w-full">
-              Rent
+              Lease
             </Button>
             <Button className="w-full" variant={"outline"}>
               Buy
             </Button>
           </DrawerFooter>
         )}
-        {!isLoading &&
-          selectedType === InfoStateEnum.SINGLE_OWNER &&
-          owner === address && (
-            <DrawerFooter className="flex w-full flex-col gap-4">
-              <Button onClick={handleRent} className="w-full">
-                Active Events
-              </Button>
-              <Button className="w-full" variant={"outline"}>
-                Create Product Page
-              </Button>
-            </DrawerFooter>
-          )}
+        {!isLoading && selectedType === InfoStateEnum.SINGLE_OWNER && (
+          <DrawerFooter className="flex w-full flex-col gap-4">
+            {product &&
+              (user?.userType === UserTypeEnum.ADMIN || product.approved) && (
+                <Link href={`/product/${product.id}`}>
+                  <Button onClick={handleRent} className="w-full">
+                    Active Events
+                  </Button>
+                </Link>
+              )}
+            {!product && owner === address && (
+              <Link href={`/product/create/${group}`}>
+                <Button className="w-full" variant={"outline"}>
+                  Create Product Page
+                </Button>
+              </Link>
+            )}
+          </DrawerFooter>
+        )}
       </DrawerContent>
     </Drawer>
   )

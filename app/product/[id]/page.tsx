@@ -19,6 +19,7 @@ export default async function page({
   }
 }) {
   const product = await productService.getProduct(params.id)
+  console.log(product)
   return (
     <div className="flex flex-col">
       <div className="relative h-64 overflow-hidden">
@@ -27,14 +28,14 @@ export default async function page({
           logo={product.logo}
           name={product.name}
         />
-        <Actions id={params.id} />
+        <Actions id={params.id} owner={product.owner} />
         <div className="absolute bottom-8 right-8 z-10 flex gap-4">
-          <Socials socials={JSON.parse(product.socialMediaLinks)} />
+          <Socials socials={product.socialMediaLinks} />
           <Follow id={params.id} />
         </div>
       </div>
       <div className="flex">
-        <div className="h-full min-h-[80vh] min-w-[280px] bg-th-black-2 p-8">
+        <div className="h-full min-h-[80vh] max-w-[320px] min-w-[320px] bg-th-black-2 p-8">
           <Info
             about={product.about}
             // socials={JSON.parse(product.socialMediaLinks)}

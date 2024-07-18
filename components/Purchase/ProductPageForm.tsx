@@ -34,12 +34,14 @@ interface Props {
   submit: (values: z.infer<typeof formSchema>) => Promise<void>
   form: UseFormReturn<z.infer<typeof formSchema>>
   setUploadedImages: Dispatch<IImageUploadResponse[]>
+  renewId: string | undefined
 }
 
 export default function ProductPageForm({
   submit,
   form,
   setUploadedImages,
+  renewId,
 }: Props) {
   const { selectedSquares } = useSelection()
   const [info, setInfo] = useState({

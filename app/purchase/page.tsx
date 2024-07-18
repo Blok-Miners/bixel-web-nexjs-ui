@@ -18,7 +18,13 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
-export default function PurchaseInfoPage() {
+export default function PurchaseInfoPage({
+  searchParams,
+}: {
+  searchParams: {
+    renewId?: string
+  }
+}) {
   const { selectedSquares } = useSelection()
   const [disabled, setDisabled] = useState(false)
   const [metadata, setMetadata] = useState<string[]>([])
@@ -67,17 +73,18 @@ export default function PurchaseInfoPage() {
   }
   return (
     <div className="grid grid-cols-3 gap-4 p-8">
-      <PurchaseHeader />
+      {/* <PurchaseHeader /> */}
+      <ProductPageForm
+        form={form}
+        submit={buyPixel}
+        setUploadedImages={setUploadedImages}
+        renewId={searchParams.renewId}
+      />
       <PaymentBox
         uploadedImages={uploadedImages}
         metadata={metadata}
         getMetadataUrls={form.handleSubmit(buyPixel)}
         metadataId={metadataId}
-      />
-      <ProductPageForm
-        form={form}
-        submit={buyPixel}
-        setUploadedImages={setUploadedImages}
       />
     </div>
   )

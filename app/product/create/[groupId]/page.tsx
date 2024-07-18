@@ -31,6 +31,7 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { ProfileService } from "@/services/profile"
+import { useRouter } from "next/navigation"
 
 const MAX_FILE_SIZE = 5000000
 
@@ -98,10 +99,16 @@ const profileSchema = z.object({
   // .refine((file) => file.size < MAX_FILE_SIZE, "Max size is 5MB."),
 })
 
-export default function ProfileCreation() {
+export default function ProfileCreation({
+  params,
+}: {
+  params: { groupId: string }
+}) {
+  const [loading, setLoading] = useState(false)
   const methods = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
   })
+  const router = useRouter()
 
   const {
     control,
@@ -153,6 +160,7 @@ export default function ProfileCreation() {
   }
 
   const onSubmit: SubmitHandler<ProfileFormData> = async (data) => {
+    setLoading(true)
     const profile = new ProfileService()
     const formData = new FormData()
 
@@ -194,12 +202,11 @@ export default function ProfileCreation() {
     console.log(formData)
 
     try {
-      const response = await profile.createProfile(formData)
-      if (response) {
-        alert("Profile created successfully!")
-      }
+      const response = await profile.createProfile(formData, params.groupId)
+      setLoading(false)
+      router.push(`/product/${response.productId}`)
     } catch (error) {
-      alert("Failed to create profile. Please try again.")
+      setLoading(false)
     }
   }
 
@@ -704,7 +711,12 @@ export default function ProfileCreation() {
             />
           </div>
           <div className="flex w-full items-center justify-end">
-            <Button type="submit" className="text-white">
+            <Button
+              isLoading={loading}
+              disabled={loading}
+              type="submit"
+              className="text-white"
+            >
               Submit
             </Button>
           </div>

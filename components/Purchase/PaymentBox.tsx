@@ -40,22 +40,22 @@ import { useRouter } from "next/navigation"
 
 const plans = [
   {
-    id: "0x1",
-    title: "1 Month Plan",
+    id: "0",
+    title: "1 Month",
     description: "One Month Rental of the Selected Bloks",
     price: 100,
     tenure: 100,
   },
   {
-    id: "0x2",
-    title: "6 Month Plan",
+    id: "1",
+    title: "6 Month",
     description: "Six Month Rental of the Selected Bloks",
     price: 90,
     tenure: 100000,
   },
   {
-    id: "0x3",
-    title: "1 Year Plan",
+    id: "2",
+    title: "1 Year",
     description: "One Year Rental of the Selected Bloks",
     price: 80,
     tenure: 1000000,
@@ -107,7 +107,7 @@ export default function PaymentBox({
   const [tx, setTx] = useState<Address | undefined>()
   const [approvalHash, setApprovalHash] = useState<Address | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
-  const [groupId, setGroupId] = useState<string | undefined>() 
+  const [groupId, setGroupId] = useState<string | undefined>()
   const router = useRouter()
 
   const {
@@ -243,6 +243,7 @@ export default function PaymentBox({
         y: row,
         image: uploadedImages[i].id,
         blokId,
+        planId: Number(selectedPlan),
         listing_status: Listing_Status.Rental,
         metadataUrl: metadata[i],
       }
@@ -261,7 +262,7 @@ export default function PaymentBox({
 
     const pixelService = new PixelService()
     const intent = await pixelService.transactionIntent(body)
-    console.log({intent})
+    console.log({ intent })
     setGroupId(intent.groupId)
   }
 
@@ -333,7 +334,23 @@ export default function PaymentBox({
             </div>
           </div>
 
-          <Select value={selectedPlan} onValueChange={setSelectedPlan}>
+          <div className="grid grid-cols-3 gap-2">
+            {plans.map((plan) => (
+              <button
+                onClick={() => setSelectedPlan(plan.id)}
+                key={plan.id}
+                className={`flex flex-col items-center justify-center rounded-lg p-4 text-center text-lg ${selectedPlan === plan.id ? "bg-th-black" : "border border-th-black bg-th-black/40"}`}
+              >
+                <span className="text-xs">{plan.title}</span>
+                <span className="text-sm font-bold">
+                  $ {plan.price.toLocaleString("en-US")}
+                  <span className="text-[10px] font-light">/bixel</span>
+                </span>
+              </button>
+            ))}
+          </div>
+
+          {/* <Select value={selectedPlan} onValueChange={setSelectedPlan}>
             <SelectTrigger className="w-full text-lg font-medium">
               <SelectValue placeholder="Select Plan" />
             </SelectTrigger>
@@ -346,7 +363,7 @@ export default function PaymentBox({
                 ))}
               </SelectGroup>
             </SelectContent>
-          </Select>
+          </Select> */}
           {selectedPlan && (
             <div className="flex flex-col gap-2 rounded-md border border-th-accent-2 p-4">
               {/* <div className="flex justify-between">
@@ -387,7 +404,7 @@ export default function PaymentBox({
           </Select>
           <Select value={token} onValueChange={setToken}>
             <SelectTrigger className="w-full text-lg font-medium">
-              <SelectValue placeholder="Payment Method" />
+              <SelectValue placeholder="Currency" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>

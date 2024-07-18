@@ -1,6 +1,7 @@
 import axios from "axios"
 import BindService from "./bind"
-import { ILogin } from "@/types/services/user"
+import { ILogin, IRegister } from "@/types/services/user"
+import { getAccessToken } from "@/lib/utils"
 
 export class UserService extends BindService {
   private http
@@ -18,6 +19,26 @@ export class UserService extends BindService {
   public async login(body: ILogin) {
     try {
       return (await this.http.post("/login", body)).data
+    } catch (error) {
+      throw error
+    }
+  }
+
+  public async getUser(){
+    try {
+      return (await this.http.get("/", {
+        headers: {
+          Authorization: getAccessToken(),
+        },
+      })).data
+    } catch (error) {
+      throw error
+    }
+  }
+
+  public async register(body: IRegister) {
+    try {
+      return (await this.http.post("/register", body)).data
     } catch (error) {
       throw new Error("Failed to login")
     }
