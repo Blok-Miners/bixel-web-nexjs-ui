@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
+import PhoneInput from "react-phone-number-input"
 import { useState } from "react"
 import Image from "next/image"
 import {
@@ -53,18 +54,21 @@ interface ProfileFormData {
   telegramUrl?: string
   youtubeUrl?: string
 
-  contractAuditReportUrl?: string
+  contractAuditReportUrl: string
   registeredCountry: string
   githubUrl?: string
   moreLinks?: string[]
   video?: FileList
+
+  email: string
+  phone: string
 }
 
 const profileSchema = z.object({
   logo: z.any(),
   banner: z.any(),
   name: z.string().min(1, "Name is required"),
-  about: z.string(),
+  about: z.string().min(1).max(300),
   // team: z.array(
   //   z.object({
   //     memberImage: z.any(),
@@ -81,6 +85,8 @@ const profileSchema = z.object({
   twitterUrl: z.string().url("Invalid URL"),
   telegramUrl: z.string().url("Invalid URL"),
   youtubeUrl: z.string().url("Invalid URL"),
+  email: z.string().email("Invalid email"),
+  phone: z.string(),
 
   contractAuditReportUrl: z.string().url("Invalid URL"),
   registeredCountry: z.string().min(1, "Country is required"),
@@ -88,10 +94,9 @@ const profileSchema = z.object({
   moreLinks: z.array(z.string().url("Invalid URL")),
   video: z
     .any()
-    .refine((file: FileList) => file?.length !== 0, "File is required")
-    // .refine((file) => file.size < MAX_FILE_SIZE, "Max size is 5MB."),
+    .refine((file: FileList) => file?.length !== 0, "File is required"),
+  // .refine((file) => file.size < MAX_FILE_SIZE, "Max size is 5MB."),
 })
-
 
 export default function ProfileCreation() {
   const methods = useForm<ProfileFormData>({
@@ -147,10 +152,8 @@ export default function ProfileCreation() {
     }
   }
 
- 
-
   const onSubmit: SubmitHandler<ProfileFormData> = async (data) => {
-    const profile  = new ProfileService() 
+    const profile = new ProfileService()
     const formData = new FormData()
 
     if (data.logo) {
@@ -168,7 +171,7 @@ export default function ProfileCreation() {
     formData.append("websiteUrl", data.websiteUrl || "")
     formData.append("email", data.registeredEmail)
     formData.append("phone", data.phoneNumber)
-    formData.append("contractAuditReportUrl", data.contractAuditReportUrl || "")
+    formData.append("contractAuditReport", data.contractAuditReportUrl || "")
     formData.append("country", data.registeredCountry)
     formData.append("github", data.githubUrl || "")
 
@@ -180,9 +183,24 @@ export default function ProfileCreation() {
       youtubeUrl: data.youtubeUrl || "",
     }
     formData.append("socialMediaLinks", JSON.stringify(socialMediaLinks))
-     const response = await profile.createProfile(formData)
-    if (response)
-      console.log(response) 
+
+    const directContact = {
+      email: data.email,
+      number: data.phone,
+    }
+
+    formData.append("directContact", JSON.stringify(directContact))
+
+    console.log(formData)
+
+    try {
+      const response = await profile.createProfile(formData)
+      if (response) {
+        alert("Profile created successfully!")
+      }
+    } catch (error) {
+      alert("Failed to create profile. Please try again.")
+    }
   }
 
   return (
@@ -254,7 +272,7 @@ export default function ProfileCreation() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
             <FormField
               control={control}
               name="name"
@@ -353,9 +371,9 @@ export default function ProfileCreation() {
                 <FormItem>
                   <FormLabel>Phone Number</FormLabel>
                   <FormControl>
-                    <Input
+                    <PhoneInput
                       className="rounded-md border border-th-accent-2 bg-th-black-2 px-4 py-2 focus:outline-none"
-                      type="tel"
+                      type="phone"
                       id="phoneNumber"
                       {...field}
                     />
@@ -486,6 +504,52 @@ export default function ProfileCreation() {
 
             <FormField
               control={control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      className="rounded-md border border-th-accent-2 bg-th-black-2 px-4 py-2 focus:outline-none"
+                      type="email"
+                      id="email"
+                      {...field}
+                    />
+                  </FormControl>
+                  {errors.email && (
+                    <FormMessage className="text-red-500">
+                      {errors.email.message as string}
+                    </FormMessage>
+                  )}
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone</FormLabel>
+                  <FormControl>
+                    <PhoneInput
+                      className="rounded-md border border-th-accent-2 bg-th-black-2 px-4 py-2 focus:outline-none"
+                      type="phone"
+                      id="phone"
+                      {...field}
+                    />
+                  </FormControl>
+                  {errors.phone && (
+                    <FormMessage className="text-red-500">
+                      {errors.phone.message as string}
+                    </FormMessage>
+                  )}
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={control}
               name="contractAuditReportUrl"
               render={({ field }) => (
                 <FormItem>
@@ -572,6 +636,31 @@ export default function ProfileCreation() {
               )}
             />
 
+            <div className="col-span-1 flex flex-col gap-4">
+              <FormField
+                control={control}
+                name="video"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Video</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="cursor-pointer rounded-md border border-th-accent-2 bg-th-black-2 px-4 py-2"
+                        type="file"
+                        id="video"
+                        accept="video/*"
+                        {...register("video")}
+                      />
+                    </FormControl>
+                    {errors.video && (
+                      <FormMessage className="text-red-500">
+                        {errors.video.message as string}
+                      </FormMessage>
+                    )}
+                  </FormItem>
+                )}
+              />
+            </div>
             <FormField
               control={control}
               name="moreLinks"
@@ -613,145 +702,11 @@ export default function ProfileCreation() {
                 </FormItem>
               )}
             />
-            <div className="col-span-2 flex flex-col gap-4">
-              <FormField
-                control={control}
-                name="video"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Video Upload</FormLabel>
-                    <FormControl>
-                      {/* @ts-ignore */}
-                      <Input
-                        className="rounded-md border border-th-accent-2 bg-th-black-2 px-4 py-2 focus:outline-none"
-                        type="file"
-                        accept="video/*"
-                        {...field}
-                      />
-                    </FormControl>
-                    {field.value && (
-                      <div className="mt-2">
-                        <span className="text-gray-500">Selected Video:</span>{" "}
-                        {File.name}
-                      </div>
-                    )}
-                    {errors.video && (
-                      <FormMessage className="text-red-500">
-                        {errors.video.message as string}
-                      </FormMessage>
-                    )}
-                  </FormItem>
-                )}
-              />
-            
-            </div>
-
-            {/* {team.map((member, index) => (
-              <div
-                key={index}
-                className="col-span-2 rounded-lg border border-th-accent-2 p-4"
-              >
-                <h3 className="mb-2 text-lg font-medium">
-                  Team Member {index + 1}
-                </h3>
-
-                <FormField
-                  control={control}
-                  name={`team.${index}.memberImage` as const}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Member Image</FormLabel>
-                      <FormControl>
-                        <Input
-                          className="rounded-md border border-th-accent-2 bg-th-black-2 px-4 py-2 focus:outline-none"
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => {
-                            const fileList = e.target.files
-                            field.onChange(fileList)
-                          }}
-                        />
-                      </FormControl>
-                      {errors.team?.[index]?.memberImage && (
-                        <FormMessage className="text-red-500">
-                          {errors.team?.[index]?.memberImage?.message as string}
-                        </FormMessage>
-                      )}
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={control}
-                  name={`team.${index}.memberName` as const}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Member Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          className="rounded-md border border-th-accent-2 bg-th-black-2 px-4 py-2 focus:outline-none"
-                          type="text"
-                          {...field}
-                        />
-                      </FormControl>
-                      {errors.team?.[index]?.memberName && (
-                        <FormMessage className="text-red-500">
-                          {errors.team?.[index]?.memberName?.message as string}
-                        </FormMessage>
-                      )}
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={control}
-                  name={`team.${index}.memberEmail` as const}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Member Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          className="rounded-md border border-th-accent-2 bg-th-black-2 px-4 py-2 focus:outline-none"
-                          type="email"
-                          {...field}
-                        />
-                      </FormControl>
-                      {errors.team?.[index]?.memberEmail && (
-                        <FormMessage className="text-red-500">
-                          {errors.team?.[index]?.memberEmail?.message as string}
-                        </FormMessage>
-                      )}
-                    </FormItem>
-                  )}
-                />
-
-                <Button
-                  type="button"
-                  onClick={() => removeTeamMember(index)}
-                  className="mt-4 bg-red-500 text-white hover:bg-red-700"
-                >
-                  Remove Member
-                </Button>
-              </div>
-            ))}
-
-            <div className="col-span-2 flex w-full flex-col gap-3 py-2">
-              <Label>Add Team Member</Label>
-              <Button
-                type="button"
-                variant={"outline"}
-                onClick={addTeamMember}
-                className="w-fit border-th-accent-2 bg-transparent text-white"
-              >
-                Add Team Member
-              </Button>
-            </div> */}
-
-            <div className="flex w-full items-center justify-end">
-              <Button type="submit" className="text-white">
-                Submit
-              </Button>
-            </div>
+          </div>
+          <div className="flex w-full items-center justify-end">
+            <Button type="submit" className="text-white">
+              Submit
+            </Button>
           </div>
         </div>
       </form>

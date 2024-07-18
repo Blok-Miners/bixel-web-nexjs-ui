@@ -77,5 +77,17 @@ export class PixelService extends BindService {
       throw new Error("Failed to upload images")
     }
   }
+
+  public async getMyPixels() {
+    try {
+      return (
+        await this.http.get("/get-my-pixels", {
+          headers: { Authorization: getAccessToken() },
+        })
+      ).data
+    } catch (error) {
+      throw error
+    }
+  }
 }
 
