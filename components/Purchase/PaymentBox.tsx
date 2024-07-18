@@ -36,6 +36,7 @@ import {
 } from "@/types/services/pixel"
 import { PixelService } from "@/services/pixel"
 import axios from "axios"
+import { useRouter } from "next/navigation"
 
 const plans = [
   {
@@ -106,6 +107,8 @@ export default function PaymentBox({
   const [tx, setTx] = useState<Address | undefined>()
   const [approvalHash, setApprovalHash] = useState<Address | undefined>()
   const [loading, setLoading] = useState<boolean>(false)
+  const [groupId, setGroupId] = useState<string | undefined>() 
+  const router = useRouter()
 
   const {
     data: receipt,
@@ -257,7 +260,9 @@ export default function PaymentBox({
     }
 
     const pixelService = new PixelService()
-    await pixelService.transactionIntent(body)
+    const intent = await pixelService.transactionIntent(body)
+    console.log({intent})
+    setGroupId(intent.groupId)
   }
 
   const handleBuyBloks = async () => {
@@ -300,6 +305,7 @@ export default function PaymentBox({
     if (receiptLoading) return
     setLoading(false)
     callWebhook()
+    router.push(`/product/create/${groupId}`)
   }, [receipt, receiptLoading, receiptError])
 
   useEffect(() => {
