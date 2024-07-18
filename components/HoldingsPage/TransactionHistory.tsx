@@ -41,7 +41,7 @@ export const TransactionHistory = () => {
   }, [])
 
   return (
-    <ScrollArea className="my-6 h-[400px] rounded-2xl bg-th-accent-2/10 p-4">
+    <ScrollArea className="h-[400px] rounded-2xl bg-th-accent-2/10 p-4">
       <Table>
         {/* <TableCaption></TableCaption> */}
         <TableHeader>

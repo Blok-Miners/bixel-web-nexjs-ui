@@ -10,11 +10,12 @@ import LoginDialog from "./LoginDialog"
 import { AxiosError } from "axios"
 import { useWallet } from "@/hooks/useWallet"
 import { ILoginError } from "@/types/services/user"
+import Link from "next/link"
 
 export default function ConnectWallet() {
   const { open } = useWeb3Modal()
   const { isConnected, address } = useAccount()
-  const {disconnect} = useDisconnect()
+  const { disconnect } = useDisconnect()
   const [openDialog, setOpenDialog] = useState(false)
   const { isLoggedIn, setIsLoggedIn } = useWallet()
 
@@ -46,11 +47,18 @@ export default function ConnectWallet() {
 
   return (
     <>
-      <Button onClick={() => open()}>
-        {isConnected && address && isLoggedIn
-          ? shortenAddress(address)
-          : "Connect Wallet"}
-      </Button>
+      <div className="flex gap-2">
+        {isLoggedIn && (
+          <Link href={"/dashboard"}>
+            <Button variant={"outline"}>Dashboard</Button>
+          </Link>
+        )}
+        <Button onClick={() => open()}>
+          {isConnected && address && isLoggedIn
+            ? shortenAddress(address)
+            : "Connect Wallet"}
+        </Button>
+      </div>
       <LoginDialog open={openDialog} setOpen={setOpenDialog} />
     </>
   )
