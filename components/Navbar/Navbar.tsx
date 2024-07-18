@@ -13,8 +13,6 @@ export default function Navbar() {
         Bixel
       </Link>
       <div className="flex items-center gap-4">
-        <Button onClick={() => Router.push("/dashboard")}>Dashboard</Button>
-
         <ConnectWallet />
       </div>
     </nav>
