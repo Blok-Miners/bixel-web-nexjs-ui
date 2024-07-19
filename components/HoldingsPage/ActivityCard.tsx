@@ -32,9 +32,9 @@ export const ActivityCard = () => {
         <Table>
           <TableHeader>
             <TableRow className="border-th-accent-2">
-              <TableHead className="text-th-accent-2">Product</TableHead>
-              <TableHead className="text-th-accent-2">Activity</TableHead>
-              <TableHead className="text-th-accent-2">Reward</TableHead>
+              <TableHead className="text-th-accent">Product</TableHead>
+              <TableHead className="text-th-accent">Activity</TableHead>
+              <TableHead className="text-th-accent">Reward</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
