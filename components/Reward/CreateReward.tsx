@@ -33,7 +33,7 @@ export default function CreateReward() {
     <div className="mx-auto mt-6 max-w-6xl">
       <div className="mx-auto text-2xl font-bold">Create Reward</div>
       <div className="mt-6 flex gap-4">
-        <div className="h-[80vh] w-[250px] rounded-xl bg-th-black-2 p-4">
+        <div className="h-[80vh] w-[350px] rounded-xl bg-th-black-2 p-4">
           {/* <div className="text-lg font-bold">Reward type</div> */}
           <div className="mt-6 flex flex-col gap-4 text-lg font-bold">
             <div
@@ -44,7 +44,7 @@ export default function CreateReward() {
                 setReward("blockchain")
               }}
             >
-              Blockchain
+              Contract Interaction
             </div>
             <div
               className={` ${

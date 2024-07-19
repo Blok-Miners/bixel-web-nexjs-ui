@@ -13,6 +13,8 @@ export default function CreateBlockchainReward() {
     abi: "",
     chainDeployed: "",
     eventName: "",
+    url: "",
+    description: "",
   })
   const [userType, setUserType] = useState("")
   const [rewardType, setRewardType] = useState("")
@@ -84,16 +86,16 @@ export default function CreateBlockchainReward() {
         </button>
         <button
           onClick={() => setStep(2)}
-          className={`font-medium ${step === 2 && "border-b border-th-accent-2 text-th-accent-2"} cursor-pointer p-2 text-sm flex items-center gap-2 `}
+          className={`font-medium ${step === 2 && "border-b border-th-accent-2 text-th-accent-2"} flex cursor-pointer items-center gap-2 p-2 text-sm`}
         >
-         <div>
+          <div>
             <FaLongArrowAltRight />
           </div>
           <div>Contest type</div>
         </button>
         <button
           onClick={() => setStep(3)}
-          className={`font-medium ${step === 3 && "border-b border-th-accent-2 text-th-accent-2"} cursor-pointer p-2 text-sm flex items-center gap-2`}
+          className={`font-medium ${step === 3 && "border-b border-th-accent-2 text-th-accent-2"} flex cursor-pointer items-center gap-2 p-2 text-sm`}
         >
           <div>
             <FaLongArrowAltRight />
@@ -102,7 +104,7 @@ export default function CreateBlockchainReward() {
         </button>
         <button
           onClick={() => setStep(4)}
-          className={`font-medium ${step === 4 && "border-b border-th-accent-2 text-th-accent-2"} cursor-pointer p-2 text-sm flex items-center gap-2`}
+          className={`font-medium ${step === 4 && "border-b border-th-accent-2 text-th-accent-2"} flex cursor-pointer items-center gap-2 p-2 text-sm`}
         >
           <div>
             <FaLongArrowAltRight />
@@ -160,6 +162,28 @@ export default function CreateBlockchainReward() {
                   />
                 </div>
               </div>
+              <div className="flex flex-col gap-2">
+                <div>Interaction URL</div>
+                <Input
+                  onChange={handleChange}
+                  value={blockchainData.url}
+                  name="url"
+                  type="text"
+                  placeholder="Enter url"
+                  className="w-full rounded-lg border border-th-accent-2 px-4 py-6"
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <div>Description/Steps to participate</div>
+                <Input
+                  onChange={handleChange}
+                  value={blockchainData.description}
+                  name="description"
+                  type="text"
+                  placeholder="Enter description"
+                  className="w-full rounded-lg border border-th-accent-2 px-4 py-6"
+                />
+              </div>
               <Button
                 onClick={() => setStep(2)}
                 className="flex w-fit items-center gap-2"
@@ -176,7 +200,7 @@ export default function CreateBlockchainReward() {
           <div className="flex flex-col gap-6">
             <div className="text-lg font-bold">Select Contest</div>
             <div className="flex flex-col gap-6">
-              <div
+              {/* <div
                 onClick={() => {
                   setStep2Error("")
                   setUserType("first100")
@@ -191,7 +215,7 @@ export default function CreateBlockchainReward() {
                     <FaCheck />
                   </div>
                 )}
-              </div>
+              </div> */}
               <div
                 onClick={() => {
                   setStep2Error("")
@@ -224,6 +248,19 @@ export default function CreateBlockchainReward() {
                   </div>
                 )}
               </div>
+              {userType && (
+                <div className="flex flex-col gap-2">
+                  <div>No. of users</div>
+                  <Input
+                    // onChange={handleChange}
+                    // value={blockchainData.contractAddress}
+                    // name="contractAddress"
+                    type="text"
+                    placeholder="Enter no. of users"
+                    className="w-full rounded-lg border border-th-accent-2 px-4 py-6"
+                  />
+                </div>
+              )}
             </div>
             <div className="flex gap-4">
               <Button
@@ -276,6 +313,22 @@ export default function CreateBlockchainReward() {
                   <FaLongArrowAltRight /> <div>Token</div>
                 </div>
                 {rewardType === "token" && (
+                  <div className="text-green-500">
+                    <FaCheck />
+                  </div>
+                )}
+              </div>
+              <div
+                onClick={() => {
+                  setStep3Error("")
+                  setRewardType("nft")
+                }}
+                className={`${rewardType === "nft" ? "bg-th-accent-2 text-black" : "bg-th-black-2"} flex cursor-pointer items-center justify-between rounded-lg border border-th-black p-4 shadow-md transition-all duration-200 hover:bg-[#3c4646]`}
+              >
+                <div className="flex items-center gap-2">
+                  <FaLongArrowAltRight /> <div>NFT</div>
+                </div>
+                {rewardType === "nft" && (
                   <div className="text-green-500">
                     <FaCheck />
                   </div>
