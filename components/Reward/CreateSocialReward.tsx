@@ -64,7 +64,7 @@ export default function CreateSocialReward() {
             </div>
             <div className="flex items-center gap-4">
               {socialLinks.map((item, index) => (
-                <button className={`flex items-center gap-2 rounded-lg bg-[${item.color}] p-2 px-4 font-semibold shadow-lg`}>
+                <button style={{ backgroundColor: item.color }} className={`flex items-center gap-2 rounded-lg p-2 px-4 font-semibold shadow-lg`}>
                   {item.icon} <div>{item.name}</div>
                 </button>
               ))}

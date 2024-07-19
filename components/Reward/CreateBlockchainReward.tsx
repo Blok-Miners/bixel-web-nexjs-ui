@@ -313,7 +313,7 @@ export default function CreateBlockchainReward() {
                 value={tokenAmount}
                 type="number"
                 placeholder="Enter token amount"
-                className="w-full rounded-lg border border-th-accent-2 p-2"
+                className="w-full rounded-lg border border-th-accent-2 px-4 py-6"
               />
             </div>
             <div className="flex gap-4">
