@@ -9,7 +9,6 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
 } from "@/components/ui/drawer"
 import {
   Tooltip,
@@ -19,13 +18,12 @@ import {
 } from "@/components/ui/tooltip"
 import { Button } from "../ui/button"
 import { CircleX, Link2 } from "lucide-react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { Separator } from "../ui/separator"
 import Loader from "../Shared/Loader"
 import { PixelService } from "@/services/pixel"
-import { formatUnits } from "viem"
 import { useAccount } from "wagmi"
 import { Address } from "@/types/web3"
 import { ProductService } from "@/services/product"

@@ -1,12 +1,9 @@
-import Box from "@/components/BugBounty/Box"
-import Iframe from "@/components/Iframe/Iframe"
 import Actions from "@/components/Product/Actions"
 import Banner from "@/components/Product/Banner"
+import Contests from "@/components/Product/Contests/Contests"
 import Follow from "@/components/Product/Follow"
 import Info from "@/components/Product/Info"
 import Socials from "@/components/Product/Socials"
-import Video from "@/components/Shared/Video"
-import { icons } from "@/lib/socials"
 import { ProductService } from "@/services/product"
 
 const productService = new ProductService()
@@ -35,7 +32,7 @@ export default async function page({
         </div>
       </div>
       <div className="flex">
-        <div className="h-full min-h-[80vh] max-w-[320px] min-w-[320px] bg-th-black-2 p-8">
+        <div className="h-full min-h-[80vh] min-w-[320px] max-w-[320px] bg-th-black-2 p-8">
           <Info
             about={product.about}
             // socials={JSON.parse(product.socialMediaLinks)}
@@ -44,15 +41,7 @@ export default async function page({
             github={product.github}
           />
         </div>
-        <div className="grid grid-cols-2 gap-4 bg-th-black p-6">
-          <Box />
-          {/* <Iframe /> */}
-          <Video src={product.video} />
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-        </div>
+        <Contests id={product.id} videoUrl={product.video} />
       </div>
     </div>
   )
