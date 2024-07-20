@@ -82,7 +82,6 @@ export default function CreateSocialReward() {
     },
   ]
   const [added, setAdded] = useState<AddedItem[]>([])
-  console.log(added)
   const [step, setStep] = useState(1)
 
   const handleAdd = (social: AddedItem) => {
