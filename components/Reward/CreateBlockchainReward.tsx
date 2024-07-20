@@ -38,6 +38,7 @@ export default function CreateBlockchainReward() {
     description: "",
   })
   const [depositAmount, setDepositAmount] = useState(0)
+  const [couponType, setCouponType] = useState("")
   const [userType, setUserType] = useState("")
   const [rewardType, setRewardType] = useState("")
   const [tokenAmount, setTokenAmount] = useState(0)
@@ -367,7 +368,7 @@ export default function CreateBlockchainReward() {
               </div>
               {rewardType === "couponcode" && (
                 <div className="flex flex-col gap-4 pl-6">
-                  <div className="flex flex-col gap-2">
+                  {/* <div className="flex flex-col gap-2">
                     <div>Single use coupons</div>
                     <Input
                       className="px-4 py-6"
@@ -380,7 +381,30 @@ export default function CreateBlockchainReward() {
                       className="px-4 py-6"
                       placeholder="Enter coupon code"
                     />
-                  </div>
+                  </div> */}
+                  <Select onValueChange={(e) => setCouponType(e)}>
+                    <SelectTrigger
+                      className={`flex h-full w-full items-center gap-2 rounded-lg border border-th-accent-2 bg-th-black-2 p-2 px-4 hover:bg-opacity-50`}
+                    >
+                      Select a Coupon Type
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="Generic" className="text-white">
+                          Generic
+                        </SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  {couponType === "Generic" && (
+                    <div className="flex flex-col gap-2">
+                      <div>Generic coupon</div>
+                      <Input
+                        className="px-4 py-6"
+                        placeholder="Enter coupon code"
+                      />
+                    </div>
+                  )}
                 </div>
               )}
               <div
