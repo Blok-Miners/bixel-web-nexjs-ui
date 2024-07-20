@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Input } from "../ui/input"
-import { MdOutlineDeleteOutline } from "react-icons/md";
+import { MdOutlineDeleteOutline } from "react-icons/md"
 
 interface AddedItem {
   name: string
@@ -128,20 +128,7 @@ export default function CreateSocialReward() {
                         <SelectGroup>
                           {item.content.map((content, index) => (
                             <SelectItem value={content.value}>
-                              <div
-                                // onClick={() => {
-                                //   setAdded((prevAdded) => [
-                                //     ...prevAdded,
-                                //     {
-                                //       name: item.name,
-                                //       value: content.value,
-                                //       color: item.color,
-                                //       icon: item.icon,
-                                //     },
-                                //   ])
-                                // }}
-                                className="flex items-center gap-2"
-                              >
+                              <div className="flex items-center gap-2">
                                 <div>{item.icon}</div> <div>{content.name}</div>
                               </div>
                             </SelectItem>
@@ -164,14 +151,15 @@ export default function CreateSocialReward() {
                       <div>
                         {item.value} on {item.name}
                       </div>
-                      <button className="flex items-center gap-1 bg-opacity-45" 
+                      <button
+                        className="flex items-center gap-1 bg-opacity-45"
                         onClick={() =>
                           setAdded((prevAdded) =>
                             prevAdded.filter((_, i) => i !== index),
                           )
                         }
                       >
-                        <MdOutlineDeleteOutline/>
+                        <MdOutlineDeleteOutline />
                         <div>Remove</div>
                       </button>
                     </div>

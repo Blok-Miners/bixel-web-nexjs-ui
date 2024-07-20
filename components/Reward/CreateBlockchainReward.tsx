@@ -6,6 +6,15 @@ import { Button } from "../ui/button"
 import { FaCheck } from "react-icons/fa"
 import { FaLongArrowAltRight } from "react-icons/fa"
 import { FaLongArrowAltLeft } from "react-icons/fa"
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 export default function CreateBlockchainReward() {
   const [step, setStep] = useState(1)
   const [blockchainData, setBlockchainData] = useState({
@@ -19,6 +28,7 @@ export default function CreateBlockchainReward() {
   const [userType, setUserType] = useState("")
   const [rewardType, setRewardType] = useState("")
   const [tokenAmount, setTokenAmount] = useState(0)
+  const [totalWinners, setTotalWineers] = useState(0)
   const handleChange = (e: any) => {
     const { name, value, type, files } = e.target
     setStep1Error("")
@@ -48,6 +58,13 @@ export default function CreateBlockchainReward() {
   const [step2Error, setStep2Error] = useState("")
   const [step3Error, setStep3Error] = useState("")
   const [step4Error, setStep4Error] = useState("")
+
+
+  const handleContestClick = () => {
+    console.log(blockchainData)
+    console.log("contestType", userType)
+    console.log("totalWinners", totalWinners)
+  }
 
   const handleSubmit = () => {
     if (
@@ -112,7 +129,7 @@ export default function CreateBlockchainReward() {
           <div>Final</div>
         </button>
       </div>
-      <div className="mt-8 overflow-y-auto h-[100%] px-4">
+      <div className="mt-8 h-[90%] overflow-y-auto px-4">
         {step === 1 && (
           <div className="flex flex-col gap-6">
             <div className="text-lg font-bold">Contract Details</div>
@@ -139,7 +156,7 @@ export default function CreateBlockchainReward() {
                 />
               </div>
               <div className="flex w-full gap-4">
-                <div className="flex w-1/2 flex-col gap-2">
+                {/* <div className="flex w-1/2 flex-col gap-2">
                   <div>Chain</div>
                   <Input
                     onChange={handleChange}
@@ -149,6 +166,36 @@ export default function CreateBlockchainReward() {
                     placeholder="Enter chain"
                     className="w-full rounded-lg border border-th-accent-2 px-4 py-6"
                   />
+                </div> */}
+                <div className="flex w-1/2 flex-col gap-2">
+                  <div>Chain</div>
+                  <Select
+                    onValueChange={(value) =>
+                      setBlockchainData({
+                        ...blockchainData,
+                        chainDeployed: value,
+                      })
+                    }
+                  >
+                    <SelectTrigger
+                      className={`flex h-full w-full items-center gap-2 rounded-lg border border-th-accent-2 bg-th-black-2 p-2 px-4 font-semibold hover:bg-opacity-50`}
+                    >
+                      <div>Select a chain</div>
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="Polygonmatic">
+                          <div>Polygonmatic</div>
+                        </SelectItem>
+                        <SelectItem value="Binance Smartchain">
+                          <div>Binance Smartchain</div>
+                        </SelectItem>
+                        <SelectItem value="Ethereum Mainnet">
+                          <div>Ethereum Mainnet</div>
+                        </SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="flex w-1/2 flex-col gap-2">
                   <div>Event Name</div>
@@ -180,7 +227,7 @@ export default function CreateBlockchainReward() {
                   value={blockchainData.description}
                   name="description"
                   placeholder="Enter description"
-                  className="w-full rounded-lg border border-th-accent-2 px-4 py-6"
+                  className="w-full rounded-lg border border-th-accent-2 p-4"
                 />
               </div>
               <Button
@@ -249,13 +296,16 @@ export default function CreateBlockchainReward() {
               </div>
               {userType && (
                 <div className="flex flex-col gap-2">
-                  <div>No. of users</div>
+                  <div>No. of winners</div>
                   <Input
                     // onChange={handleChange}
                     // value={blockchainData.contractAddress}
                     // name="contractAddress"
-                    type="text"
-                    placeholder="Enter no. of users"
+                    onChange={(e) => {
+                      setTotalWineers(parseInt(e.target.value))
+                    }}
+                    type="number"
+                    placeholder="Enter no. of winners"
                     className="w-full rounded-lg border border-th-accent-2 px-4 py-6"
                   />
                 </div>
@@ -270,7 +320,7 @@ export default function CreateBlockchainReward() {
                 <div>Back</div>
               </Button>
               <Button
-                onClick={() => setStep(3)}
+                onClick={handleContestClick}
                 className="flex w-fit items-center gap-2"
               >
                 <div>Next</div> <FaLongArrowAltRight />
