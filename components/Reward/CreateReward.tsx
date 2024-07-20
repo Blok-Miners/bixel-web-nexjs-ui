@@ -10,7 +10,7 @@ import Holdings from "./Holdings"
 import { ChainService } from "@/services/chain"
 
 export default function CreateReward({ productId }: { productId: string }) {
-  const chains = new ChainService();
+  const chains = new ChainService()
   const [chain, setChain] = useState([])
   const getAllChain = async () => {
     const allChain = await chains.getChains()
@@ -46,7 +46,6 @@ export default function CreateReward({ productId }: { productId: string }) {
   //     setBlockchainData({ ...blockchainData, [name]: value })
   //   }
   // }
-
 
   return (
     <div className="mx-auto mt-6 max-w-6xl">
@@ -116,15 +115,12 @@ export default function CreateReward({ productId }: { productId: string }) {
             <CreateBlockchainReward productId={productId} />
           ) : reward === "social" ? (
             <CreateSocialReward />
-
           ) : reward === "Project Submission" ? (
             <CreateProjectSubmission />
           ) : reward === "Bug Bounty" ? (
-            <BugBounty chain={chain}/>
-
+            <BugBounty chain={chain} productId={productId} />
           ) : reward === "holdings" ? (
-            <Holdings chain={chain}/>
-
+            <Holdings chain={chain} />
           ) : null}
         </div>
       </div>

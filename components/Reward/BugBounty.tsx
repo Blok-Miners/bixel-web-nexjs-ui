@@ -4,15 +4,27 @@ import React, { useState } from "react"
 import { FaLongArrowAltRight } from "react-icons/fa"
 import BountyDetails from "./BugBounty/BountyDetails"
 import ContestDetails from "./Blockchain/ContestDetails"
-import { ContestModeEnum } from "@/types/services/contest"
+import { ContestModeEnum, ICreateContest } from "@/types/services/contest"
+import { Address } from "viem"
+import { Description } from "@radix-ui/react-dialog"
+import { ContestService } from "@/services/contest"
 
-export const BugBounty = ({ chain }: any) => {
+export const BugBounty = ({
+  productId,
+  chain,
+}: {
+  productId: string
+  chain: any
+}) => {
+  const contestService = new ContestService()
   const [step, setStep] = useState(1)
   const [bugBounty, setBugBounty] = useState({
     description: "",
-    protocolUrl: "",
+    profileUrl: "",
     contractAddress: "",
     chain: "",
+    startDate: null,
+    endDate: null,
   })
 
   const [mode, setMode] = useState<ContestModeEnum>(ContestModeEnum.LEADERBOARD)
@@ -21,6 +33,12 @@ export const BugBounty = ({ chain }: any) => {
   const [step1Error, setStep1Error] = useState("")
   const [step2Error, setStep2Error] = useState("")
   const [step3Error, setStep3Error] = useState("")
+  const handleDateChange = (name: string, date: Date | undefined) => {
+    setBugBounty((prevState) => ({
+      ...prevState,
+      [name]: date,
+    }))
+  }
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -32,9 +50,32 @@ export const BugBounty = ({ chain }: any) => {
     }))
   }
 
-  const handleBountyClick = () => {
+  const handleBountyClick = async () => {
     console.log(bugBounty)
     console.log(totalWinners)
+    console.log(mode)
+    try {
+      const contestData: any = {
+        description: bugBounty.description,
+        profileURL: bugBounty.profileUrl,
+        productId,
+        mode,
+        noOfWinners: totalWinners,
+        startTime: bugBounty.startDate,
+        endTime: bugBounty.endDate,
+      }
+      if (bugBounty.contractAddress) {
+        contestData.contractAddress = bugBounty.contractAddress
+      }
+      if (bugBounty.chain) {
+        contestData.chain = bugBounty.chain
+      }
+      const res = await contestService.createBugBountyContest(contestData)
+      if (!res) return
+      console.log(res)
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
@@ -65,6 +106,7 @@ export const BugBounty = ({ chain }: any) => {
             setBugBounty={setBugBounty}
             handleChange={handleChange}
             chain={chain}
+            handleDateChange={handleDateChange}
           />
         )}
         {step === 2 && (

@@ -27,4 +27,15 @@ export class ContestService extends BindService {
       throw new Error("Failed to create contest")
     }
   }
+  public async createBugBountyContest(contestData: ICreateContest) {
+    try {
+      return (
+        await this.http.post("/create-bug-bounty-contest", contestData, {
+          headers: { Authorization: getAccessToken() },
+        })
+      ).data
+    } catch (error) {
+      throw new Error("Failed to create contest")
+    }
+  }
 }
