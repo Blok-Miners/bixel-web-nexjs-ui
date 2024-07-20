@@ -1,9 +1,9 @@
 "use client"
 import { useEffect, useState } from "react"
-import CreateBlockchainReward from "./CreateBlockchainReward"
-import CreateSocialReward from "./CreateSocialReward"
+import CreateBlockchainReward from "./BlockchainReward"
+import CreateSocialReward from "./SocialReward"
 
-import { CreateProjectSubmission } from "./CreateProjectSubmission"
+import { CreateProjectSubmission } from "./ProjectSubmission"
 import { BugBounty } from "./BugBounty"
 
 import Holdings from "./Holdings"
@@ -120,7 +120,7 @@ export default function CreateReward({ productId }: { productId: string }) {
           ) : reward === "Project Submission" ? (
             <CreateProjectSubmission />
           ) : reward === "Bug Bounty" ? (
-            <BugBounty />
+            <BugBounty chain={chain}/>
 
           ) : reward === "holdings" ? (
             <Holdings chain={chain}/>

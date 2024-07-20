@@ -72,9 +72,7 @@ export default function CreateBlockchainReward({
   const [step2Error, setStep2Error] = useState("")
   const [step3Error, setStep3Error] = useState("")
 
-
   const handleContestClick = async () => {
-
     console.log(blockchainData)
     try {
       const contestData: ICreateContest = {
@@ -190,12 +188,11 @@ export default function CreateBlockchainReward({
             step3Error={step3Error}
             couponCode={couponCode}
             setCouponCode={setCouponCode}
-            depositAmountNFT = {depositAmountNFT}
-            setDepositAmountNFT = {setDepositAmountNFT}
+            depositAmountNFT={depositAmountNFT}
+            setDepositAmountNFT={setDepositAmountNFT}
           />
         )}
       </div>
-
     </>
   )
 }
