@@ -84,6 +84,7 @@ export default function Display() {
 
   useEffect(() => {
     getAllBloks()
+    setSelectedSquares({})
   }, [])
 
   useEffect(() => {

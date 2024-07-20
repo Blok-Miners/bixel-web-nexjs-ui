@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from "react"
+import { Dispatch, useEffect, useState } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -23,25 +23,45 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
-import { Textarea } from "../ui/textarea"
+import { Textarea } from "../../../ui/textarea"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 
 const formSchema = z.object({
-  summary: z.string().min(10, {
-    message: "Summary must be at least 10 characters.",
-  }).max(300, {
-    message: "Summary must be at most 300 characters.",
-  }),
-  steps: z.string().min(10, {
-    message: "Steps must be at least 10 characters.",
-  }).max(500, {
-    message: "Summary must be at most 500 characters.",
-  }),
+  summary: z
+    .string()
+    .min(10, {
+      message: "Summary must be at least 10 characters.",
+    })
+    .max(300, {
+      message: "Summary must be at most 300 characters.",
+    }),
+  steps: z
+    .string()
+    .min(10, {
+      message: "Steps must be at least 10 characters.",
+    })
+    .max(500, {
+      message: "Summary must be at most 500 characters.",
+    }),
 })
 
-export function BugDialog({ open, setOpen }: any) {
+interface IBugDialog {
+  open: boolean
+  setOpen: Dispatch<boolean>
+  readonly?: boolean
+  summary?: string
+  steps?: string
+}
+
+export function BugDialog({
+  open,
+  setOpen,
+  readonly,
+  summary,
+  steps,
+}: IBugDialog) {
   const [image, setImage] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
 
@@ -92,7 +112,7 @@ export function BugDialog({ open, setOpen }: any) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogTitle className="mx-auto">Bug Report</DialogTitle>
-        <ScrollArea className="max-h-[80vh] scrollbar-hide">
+        <ScrollArea className="scrollbar-hide max-h-[80vh]">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
@@ -101,6 +121,7 @@ export function BugDialog({ open, setOpen }: any) {
               <FormItem>
                 <FormLabel>Choose Image</FormLabel>
                 <Input
+                  readOnly={readonly}
                   id="file-upload"
                   type="file"
                   accept="image/*"
@@ -126,7 +147,7 @@ export function BugDialog({ open, setOpen }: any) {
                   <FormItem>
                     <FormLabel className="text-white">Summary</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="" {...field} />
+                      <Textarea readOnly={readonly} placeholder="" {...field} />
                     </FormControl>
                     <div className="flex justify-between">
                       <FormMessage />
@@ -143,7 +164,7 @@ export function BugDialog({ open, setOpen }: any) {
                       Steps to replicate :
                     </FormLabel>
                     <FormControl>
-                      <Textarea placeholder="" {...field} />
+                      <Textarea readOnly={readonly} placeholder="" {...field} />
                     </FormControl>
                     <div className="flex justify-between">
                       <FormMessage />
@@ -154,7 +175,7 @@ export function BugDialog({ open, setOpen }: any) {
               <Button type="submit">Submit</Button>
             </form>
           </Form>
-          <DialogFooter className="sm:justify-start mt-4">
+          <DialogFooter className="mt-4 sm:justify-start">
             <DialogClose asChild>
               <Button className="w-full" variant={"secondary"}>
                 Discard
