@@ -1,5 +1,6 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { ChainService } from "@/services/chain"
 import { Input } from "../ui/input"
 import { Textarea } from "../ui/textarea"
 import { Button } from "../ui/button"
@@ -16,6 +17,17 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 export default function CreateBlockchainReward() {
+  const chains = new ChainService()
+  const [chain, setChain] = useState([])
+  const getAllChain = async () => {
+    const allChain = await chains.getChains()
+    if (allChain) {
+      setChain(allChain)
+    }
+  }
+  useEffect(() => {
+    getAllChain()
+  }, [])
   const [step, setStep] = useState(1)
   const [blockchainData, setBlockchainData] = useState({
     contractAddress: "",
@@ -25,6 +37,7 @@ export default function CreateBlockchainReward() {
     url: "",
     description: "",
   })
+  const [depositAmount, setDepositAmount] = useState(0)
   const [userType, setUserType] = useState("")
   const [rewardType, setRewardType] = useState("")
   const [tokenAmount, setTokenAmount] = useState(0)
@@ -58,7 +71,6 @@ export default function CreateBlockchainReward() {
   const [step2Error, setStep2Error] = useState("")
   const [step3Error, setStep3Error] = useState("")
   const [step4Error, setStep4Error] = useState("")
-
 
   const handleContestClick = () => {
     console.log(blockchainData)
@@ -178,21 +190,23 @@ export default function CreateBlockchainReward() {
                     }
                   >
                     <SelectTrigger
-                      className={`flex h-full w-full items-center gap-2 rounded-lg border border-th-accent-2 bg-th-black-2 p-2 px-4 font-semibold hover:bg-opacity-50`}
+                      className={`flex h-full w-full items-center gap-2 rounded-lg border border-th-accent-2 bg-th-black-2 p-2 px-4 hover:bg-opacity-50`}
                     >
                       <div>Select a chain</div>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        <SelectItem value="Polygonmatic">
-                          <div>Polygonmatic</div>
-                        </SelectItem>
-                        <SelectItem value="Binance Smartchain">
-                          <div>Binance Smartchain</div>
-                        </SelectItem>
-                        <SelectItem value="Ethereum Mainnet">
-                          <div>Ethereum Mainnet</div>
-                        </SelectItem>
+                        {chain &&
+                          chain.map((item: any, index) => {
+                            return (
+                              <SelectItem
+                                value={item.chainId}
+                                className="text-white"
+                              >
+                                {item.name}
+                              </SelectItem>
+                            )
+                          })}
                       </SelectGroup>
                     </SelectContent>
                   </Select>
@@ -340,45 +354,128 @@ export default function CreateBlockchainReward() {
                   setStep3Error("")
                   setRewardType("couponcode")
                 }}
-                className={`${rewardType === "couponcode" ? "bg-th-accent-2 text-black" : "bg-th-black-2"} flex cursor-pointer items-center justify-between rounded-lg border border-th-black p-4 shadow-md transition-all duration-200 hover:bg-[#3c4646]`}
+                className={`${rewardType === "couponcode" ? "bg-th-accent-2 text-black" : "bg-th-black-2 hover:bg-[#3c4646]"} flex cursor-pointer items-center justify-between rounded-lg border border-th-black p-4 shadow-md transition-all duration-200`}
               >
                 <div className="flex items-center gap-2">
                   <FaLongArrowAltRight /> <div>Coupon Code</div>
                 </div>
                 {rewardType === "couponcode" && (
-                  <div className="text-green-500">
+                  <div className="">
                     <FaCheck />
                   </div>
                 )}
               </div>
+              {rewardType === "couponcode" && (
+                <div className="flex flex-col gap-4 pl-6">
+                  <div className="flex flex-col gap-2">
+                    <div>Single use coupons</div>
+                    <Input
+                      className="px-4 py-6"
+                      placeholder="ABC300, ABC-400 ..."
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <div>Generic coupon</div>
+                    <Input
+                      className="px-4 py-6"
+                      placeholder="Enter coupon code"
+                    />
+                  </div>
+                </div>
+              )}
               <div
                 onClick={() => {
                   setStep3Error("")
                   setRewardType("token")
                 }}
-                className={`${rewardType === "token" ? "bg-th-accent-2 text-black" : "bg-th-black-2"} flex cursor-pointer items-center justify-between rounded-lg border border-th-black p-4 shadow-md transition-all duration-200 hover:bg-[#3c4646]`}
+                className={`${rewardType === "token" ? "bg-th-accent-2 text-black" : "bg-th-black-2 hover:bg-[#3c4646]"} flex cursor-pointer items-center justify-between rounded-lg border border-th-black p-4 shadow-md transition-all duration-200`}
               >
                 <div className="flex items-center gap-2">
                   <FaLongArrowAltRight /> <div>Token</div>
                 </div>
                 {rewardType === "token" && (
-                  <div className="text-green-500">
+                  <div className="">
                     <FaCheck />
                   </div>
                 )}
               </div>
+              {rewardType === "token" && (
+                <div className="flex flex-col gap-4 pl-6">
+                  <div className="flex w-1/2 flex-col gap-2">
+                    <div>Chain</div>
+                    <Select>
+                      <SelectTrigger
+                        className={`flex h-full w-full items-center gap-2 rounded-lg border border-th-accent-2 bg-th-black-2 p-2 px-4 hover:bg-opacity-50`}
+                      >
+                        Select a chain
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectItem
+                            value="Polygonmatic"
+                            className="text-white"
+                          >
+                            Polygonmatic
+                          </SelectItem>
+                          <SelectItem
+                            value="Binance Smartchain"
+                            className="text-white"
+                          >
+                            Binance Smartchain
+                          </SelectItem>
+                          <SelectItem
+                            value="Ethereum Mainnet"
+                            className="text-white"
+                          >
+                            Ethereum Mainnet
+                          </SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <div>Amount per winner </div>
+                    <Input
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        const value: any = e.target.value
+                        setDepositAmount(value * totalWinners)
+                        console.log(value * totalWinners)
+                      }}
+                      type="number"
+                      className="px-4 py-6"
+                      placeholder="Enter amount"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <div>Total winner </div>
+                    <div className="w-[150px] rounded-lg bg-th-black p-4">
+                      {totalWinners}
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <div>Deposit Tokens </div>
+                    <Input
+                      value={depositAmount}
+                      type="number"
+                      className="px-4 py-6"
+                      placeholder="Enter amount"
+                    />
+                  </div>
+                  <Button className="w-fit">Deposit</Button>
+                </div>
+              )}
               <div
                 onClick={() => {
                   setStep3Error("")
                   setRewardType("nft")
                 }}
-                className={`${rewardType === "nft" ? "bg-th-accent-2 text-black" : "bg-th-black-2"} flex cursor-pointer items-center justify-between rounded-lg border border-th-black p-4 shadow-md transition-all duration-200 hover:bg-[#3c4646]`}
+                className={`${rewardType === "nft" ? "bg-th-accent-2 text-black" : "bg-th-black-2 hover:bg-[#3c4646]"} flex cursor-pointer items-center justify-between rounded-lg border border-th-black p-4 shadow-md transition-all duration-200`}
               >
                 <div className="flex items-center gap-2">
                   <FaLongArrowAltRight /> <div>NFT</div>
                 </div>
                 {rewardType === "nft" && (
-                  <div className="text-green-500">
+                  <div className="">
                     <FaCheck />
                   </div>
                 )}
