@@ -37,5 +37,29 @@ export class ContestService extends BindService {
     } catch (error) {
       throw new Error("Failed to create contest")
     }
+}
+
+  public async getInteractionDetails(id:string){
+    try {
+        return (
+          await this.http.get(`get-contest-details/${id}?interaction=true`,{
+            headers: { Authorization: getAccessToken() },
+          })
+        ).data
+      } catch (error) {
+        throw new Error("Failed to create contest")
+      }
+  }
+
+  public async verifySmartContractTask(id:string){
+    try {
+        return (
+          await this.http.get(`verify-smart-contract-task/${id}`,{
+            headers: { Authorization: getAccessToken() },
+          })
+        ).data
+      } catch (error) {
+        throw new Error("Failed to create contest")
+      }
   }
 }
