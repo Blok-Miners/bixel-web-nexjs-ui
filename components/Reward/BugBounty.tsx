@@ -37,7 +37,7 @@ export const BugBounty = () => {
           <div>Description</div>
           <Textarea
             onChange={handleChange}
-            name="Description"
+            name="description"
             value={bugBounty.description}
             placeholder="Description"
             className="w-full rounded-lg border border-th-accent-2 p-4"
@@ -56,6 +56,7 @@ export const BugBounty = () => {
             required
           />
         </div>
+
         <div className="col-span-2 space-y-2 rounded-xl">
           <Label>Contract Address</Label>
           <Input
@@ -63,7 +64,7 @@ export const BugBounty = () => {
             placeholder="Contract Address"
             className="rounded-lg bg-transparent"
             value={bugBounty.contractAddress}
-            name="Contract Address"
+            name="contractAddress"
             onChange={handleChange}
             required
           />

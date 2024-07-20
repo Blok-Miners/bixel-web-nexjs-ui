@@ -94,7 +94,7 @@ export const CreateProjectSubmission = () => {
             placeholder="Contract Address"
             className="rounded-lg bg-transparent"
             value={projectSubmission.contractAddress}
-            name="Contract Address"
+            name="contractAddress"
             onChange={handleChange}
             required
           />
