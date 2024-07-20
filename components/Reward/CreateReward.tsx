@@ -1,9 +1,22 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import CreateBlockchainReward from "./CreateBlockchainReward"
 import CreateSocialReward from "./CreateSocialReward"
+import Holdings from "./Holdings"
+import { ChainService } from "@/services/chain"
 
-export default function CreateReward({productId}:{productId:string}) {
+export default function CreateReward({ productId }: { productId: string }) {
+  const chains = new ChainService();
+  const [chain, setChain] = useState([])
+  const getAllChain = async () => {
+    const allChain = await chains.getChains()
+    if (allChain) {
+      setChain(allChain)
+    }
+  }
+  useEffect(() => {
+    getAllChain()
+  }, [])
   const [reward, setReward] = useState("blockchain")
   // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   //   const { name, value, type, files } = e.target
@@ -29,7 +42,6 @@ export default function CreateReward({productId}:{productId:string}) {
   //   }
   // }
 
-  console.log(productId)
 
   return (
     <div className="mx-auto mt-6 max-w-6xl">
@@ -56,7 +68,17 @@ export default function CreateReward({productId}:{productId:string}) {
                 setReward("social")
               }}
             >
-              Social
+              Social Media Interaction
+            </div>
+            <div
+              className={` ${
+                reward === "holdings" ? "bg-th-black" : "bg-th-black-2"
+              } cursor-pointer rounded-lg p-2 px-4`}
+              onClick={() => {
+                setReward("holdings")
+              }}
+            >
+              Holdings Verification
             </div>
           </div>
         </div>
@@ -65,6 +87,8 @@ export default function CreateReward({productId}:{productId:string}) {
             <CreateBlockchainReward productId={productId} />
           ) : reward === "social" ? (
             <CreateSocialReward />
+          ) : reward === "holdings" ? (
+            <Holdings chain={chain}/>
           ) : null}
         </div>
       </div>
