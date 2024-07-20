@@ -3,7 +3,7 @@ import { useState } from "react"
 import CreateBlockchainReward from "./CreateBlockchainReward"
 import CreateSocialReward from "./CreateSocialReward"
 
-export default function CreateReward() {
+export default function CreateReward({productId}:{productId:string}) {
   const [reward, setReward] = useState("blockchain")
   // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   //   const { name, value, type, files } = e.target
@@ -28,6 +28,8 @@ export default function CreateReward() {
   //     setBlockchainData({ ...blockchainData, [name]: value })
   //   }
   // }
+
+  console.log(productId)
 
   return (
     <div className="mx-auto mt-6 max-w-6xl">
@@ -60,7 +62,7 @@ export default function CreateReward() {
         </div>
         <div className="h-[80vh] w-[1000px] rounded-xl bg-th-black-2 p-4">
           {reward === "blockchain" ? (
-            <CreateBlockchainReward />
+            <CreateBlockchainReward productId={productId} />
           ) : reward === "social" ? (
             <CreateSocialReward />
           ) : null}
