@@ -62,7 +62,7 @@ export default function CreateReward({productId}:{productId:string}) {
         </div>
         <div className="h-[80vh] w-[1000px] rounded-xl bg-th-black-2 p-4">
           {reward === "blockchain" ? (
-            <CreateBlockchainReward />
+            <CreateBlockchainReward productId={productId} />
           ) : reward === "social" ? (
             <CreateSocialReward />
           ) : null}
