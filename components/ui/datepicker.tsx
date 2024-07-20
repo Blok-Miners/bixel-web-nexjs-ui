@@ -25,7 +25,7 @@ export default function DatePicker({ value, onChange, onBlur, name, ref }: DateP
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          className={`w-[280px] justify-start text-left font-normal bg-white border-th-black hover:bg-white ${!selectedDate ? "text-th-black" : "text-th-black"}`}
+          className={`w-[280px] justify-start text-left font-normal border-th-accent-2 bg-th-black-2  ${!selectedDate ? "text-th-white" : "text-th-white"}`}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
           {selectedDate ? format(selectedDate, "PPP") : <span>Pick a date</span>}

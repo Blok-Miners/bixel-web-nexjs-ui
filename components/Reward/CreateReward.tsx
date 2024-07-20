@@ -2,8 +2,10 @@
 import { useState } from "react"
 import CreateBlockchainReward from "./CreateBlockchainReward"
 import CreateSocialReward from "./CreateSocialReward"
+import { CreateProjectSubmission } from "./CreateProjectSubmission"
+import { BugBounty } from "./BugBounty"
 
-export default function CreateReward({productId}:{productId:string}) {
+export default function CreateReward({ productId }: { productId: string }) {
   const [reward, setReward] = useState("blockchain")
   // const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   //   const { name, value, type, files } = e.target
@@ -58,6 +60,30 @@ export default function CreateReward({productId}:{productId:string}) {
             >
               Social
             </div>
+
+            <div
+              className={` ${
+                reward === "Project Submission"
+                  ? "bg-th-black"
+                  : "bg-th-black-2"
+              } cursor-pointer rounded-lg p-2 px-4`}
+              onClick={() => {
+                setReward("Project Submission")
+              }}
+            >
+              Project Submission
+            </div>
+
+            <div
+              className={` ${
+                reward === "Bug Bounty" ? "bg-th-black" : "bg-th-black-2"
+              } cursor-pointer rounded-lg p-2 px-4`}
+              onClick={() => {
+                setReward("Bug Bounty")
+              }}
+            >
+              Bug Bounty
+            </div>
           </div>
         </div>
         <div className="h-[80vh] w-[1000px] rounded-xl bg-th-black-2 p-4">
@@ -65,6 +91,10 @@ export default function CreateReward({productId}:{productId:string}) {
             <CreateBlockchainReward />
           ) : reward === "social" ? (
             <CreateSocialReward />
+          ) : reward === "Project Submission" ? (
+            <CreateProjectSubmission />
+          ) : reward === "Bug Bounty" ? (
+            <BugBounty />
           ) : null}
         </div>
       </div>
