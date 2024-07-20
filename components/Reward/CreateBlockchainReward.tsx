@@ -26,6 +26,7 @@ export default function CreateBlockchainReward({
     getAllChain()
   }, [])
   const contestService = new ContestService()
+
   const [step, setStep] = useState(1)
   const [contestId, setContestId] = useState("")
   const [blockchainData, setBlockchainData] = useState({
@@ -71,7 +72,9 @@ export default function CreateBlockchainReward({
   const [step2Error, setStep2Error] = useState("")
   const [step3Error, setStep3Error] = useState("")
 
+
   const handleContestClick = async () => {
+
     console.log(blockchainData)
     try {
       const contestData: ICreateContest = {
@@ -148,6 +151,7 @@ export default function CreateBlockchainReward({
           <div>Reward type</div>
         </button>
       </div>
+
       <div className="mt-8 h-[90%] overflow-y-auto px-4">
         {step === 1 && (
           <ContractDetails
@@ -191,6 +195,7 @@ export default function CreateBlockchainReward({
           />
         )}
       </div>
+
     </>
   )
 }
