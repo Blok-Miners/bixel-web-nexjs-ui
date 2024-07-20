@@ -58,11 +58,12 @@ export default function CreateReward() {
             </div>
           </div>
         </div>
-        <div className="h-[80vh] w-[1000px] rounded-xl bg-th-black-2 p-4 overflow-y-auto ">
-          {
-            reward === "blockchain" ? <CreateBlockchainReward /> : reward === "social" ? <CreateSocialReward/> : null
-          }
-
+        <div className="h-[80vh] w-[1000px] rounded-xl bg-th-black-2 p-4">
+          {reward === "blockchain" ? (
+            <CreateBlockchainReward />
+          ) : reward === "social" ? (
+            <CreateSocialReward />
+          ) : null}
         </div>
       </div>
     </div>

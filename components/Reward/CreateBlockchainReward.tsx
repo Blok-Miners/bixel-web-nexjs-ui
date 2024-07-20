@@ -74,7 +74,7 @@ export default function CreateBlockchainReward() {
   }
   return (
     <>
-      <div className="flex gap-4 px-4 text-sm text-slate-200 shadow-lg">
+      <div className="sticky top-0 z-10 flex gap-4 bg-th-black-2 px-4 text-sm text-slate-200 shadow-lg">
         <button
           onClick={() => setStep(1)}
           className={`font-medium ${step === 1 && "border-b border-th-accent-2 text-th-accent-2"} flex cursor-pointer items-center gap-2 p-2 text-sm`}
@@ -112,7 +112,7 @@ export default function CreateBlockchainReward() {
           <div>Final</div>
         </button>
       </div>
-      <div className="mt-8 px-4">
+      <div className="mt-8 overflow-y-auto h-[100%] px-4">
         {step === 1 && (
           <div className="flex flex-col gap-6">
             <div className="text-lg font-bold">Contract Details</div>
@@ -175,11 +175,10 @@ export default function CreateBlockchainReward() {
               </div>
               <div className="flex flex-col gap-2">
                 <div>Description/Steps to participate</div>
-                <Input
+                <Textarea
                   onChange={handleChange}
                   value={blockchainData.description}
                   name="description"
-                  type="text"
                   placeholder="Enter description"
                   className="w-full rounded-lg border border-th-accent-2 px-4 py-6"
                 />
