@@ -97,6 +97,7 @@ export const BugBounty = ({
           <div>Contest type</div>
         </button>
       </div>
+      
       <div className="mt-8 h-[90%] overflow-y-auto px-4">
         {step === 1 && (
           <BountyDetails
