@@ -7,6 +7,7 @@ import {
   FaLongArrowAltLeft,
   FaLongArrowAltRight,
 } from "react-icons/fa"
+import Loading from "../Loading"
 
 export default function ContestDetails({
   setStep2Error,
@@ -18,6 +19,9 @@ export default function ContestDetails({
   handleContestClick,
   step2Error,
   totalWinners,
+  contestId,
+  setLoading,
+  loading,
 }: any) {
   return (
     <div className="flex flex-col gap-6">
@@ -85,7 +89,13 @@ export default function ContestDetails({
           onClick={handleContestClick}
           className="flex w-fit items-center gap-2"
         >
-          <div>Next</div> <FaLongArrowAltRight />
+          {loading ? (
+            <Loading />
+          ) : (
+            <>
+              <div>Next</div> <FaLongArrowAltRight />
+            </>
+          )}
         </Button>
       </div>
       {step2Error && <div className="text-sm text-red-500">{step2Error}</div>}

@@ -14,6 +14,7 @@ export const ContractInteraction = ({ id }: { id: string }) => {
   const interactionDetails = async () => {
     try {
       const res = await contestService.getInteractionDetails(id)
+      console.log(res)
       setInteraction({
         id:res.interaction._id,
         contractAddress: res.interaction.contract.address as Address,

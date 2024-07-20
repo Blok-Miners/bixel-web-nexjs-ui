@@ -49,7 +49,7 @@ export default function CreateReward({ productId }: { productId: string }) {
 
   return (
     <div className="mx-auto mt-6 max-w-6xl">
-      <div className="mx-auto text-2xl font-bold">Create Reward</div>
+      <div className="mx-auto text-2xl font-bold">Create Contest</div>
       <div className="mt-6 flex gap-4">
         <div className="h-[80vh] w-[350px] rounded-xl bg-th-black-2 p-4">
           {/* <div className="text-lg font-bold">Reward type</div> */}

@@ -8,6 +8,7 @@ import { ContestModeEnum, ICreateContest } from "@/types/services/contest"
 import { Address } from "viem"
 import { Description } from "@radix-ui/react-dialog"
 import { ContestService } from "@/services/contest"
+import ConfirmationDialog from "../Shared/ConfirmationDialog"
 
 export const BugBounty = ({
   productId,
@@ -49,8 +50,13 @@ export const BugBounty = ({
       [name]: value,
     }))
   }
+  const [openDialog, setOpenDialog] = useState(false)
+  const [title, setTitle] = useState("")
+  const [message, setMessage] = useState("")
+  const [loading, setLoading] = useState(false)
 
   const handleBountyClick = async () => {
+    setLoading(true)
     console.log(bugBounty)
     console.log(totalWinners)
     console.log(mode)
@@ -71,15 +77,32 @@ export const BugBounty = ({
         contestData.chain = bugBounty.chain
       }
       const res = await contestService.createBugBountyContest(contestData)
-      if (!res) return
+      if (!res) {
+        return
+      }
+      setOpenDialog(true)
+      setTitle("Success")
+      setMessage("Bug Bounty Contest created successfully")
+      setLoading(false)
+      window.location.reload()
       console.log(res)
     } catch (error) {
+      setOpenDialog(true)
+      setTitle("Failure")
+      setMessage("Something went wrong creating contest !")
+      setLoading(false)
       console.log(error)
     }
   }
 
   return (
     <>
+      <ConfirmationDialog
+        open={openDialog}
+        setOpen={setOpenDialog}
+        title={title}
+        message={message}
+      />
       <div className="sticky top-0 z-10 flex gap-4 bg-th-black-2 px-4 text-sm text-slate-200 shadow-lg">
         <button
           onClick={() => setStep(1)}
@@ -120,6 +143,8 @@ export const BugBounty = ({
             handleContestClick={handleBountyClick}
             step2Error={step2Error}
             totalWinners={totalWinners}
+            loading={loading}
+            setLoading={setLoading}
           />
         )}
       </div>

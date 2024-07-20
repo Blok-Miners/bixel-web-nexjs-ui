@@ -8,6 +8,7 @@ import { Address } from "@/types/web3"
 import ContractDetails from "./Blockchain/ContractDetails"
 import ContestDetails from "./Blockchain/ContestDetails"
 import RewardDetails from "./Blockchain/RewardDetails"
+import ConfirmationDialog from "../Shared/ConfirmationDialog"
 
 export default function CreateBlockchainReward({
   productId,
@@ -72,7 +73,13 @@ export default function CreateBlockchainReward({
   const [step2Error, setStep2Error] = useState("")
   const [step3Error, setStep3Error] = useState("")
 
+  const [openDialog, setOpenDialog] = useState(false)
+  const [title, setTitle] = useState("")
+  const [message, setMessage] = useState("")
+  const [loading, setLoading] = useState(false)
+
   const handleContestClick = async () => {
+    setLoading(true)
     console.log(blockchainData)
     try {
       const contestData: ICreateContest = {
@@ -88,41 +95,55 @@ export default function CreateBlockchainReward({
       }
 
       const res = await contestService.createContest(contestData)
-      if (!res) return
+      if (!res) {
+        return
+      }
+      console.log(res)
+      setLoading(false)
       setStep(3)
       setContestId(res._id)
     } catch (error) {
+      setOpenDialog(true)
+      setTitle("Failure")
+      setMessage("Something went wrong !")
+      setLoading(false)
       console.log(error)
     }
   }
 
-  const handleSubmit = () => {
-    if (
-      !blockchainData.contractAddress ||
-      !blockchainData.abi ||
-      !blockchainData.chainDeployed ||
-      !blockchainData.eventName
-    ) {
-      setStep(1)
-      setStep1Error("All details are required")
-      return
-    }
-    if (!mode) {
-      setStep(2)
-      setStep2Error("Please select contest type")
-      return
-    }
-    if (!rewardType) {
-      setStep(3)
-      setStep3Error("Please select reward type")
-      return
-    }
-    console.log(blockchainData)
-  }
+  // const handleSubmit = () => {
+  //   if (
+  //     !blockchainData.contractAddress ||
+  //     !blockchainData.abi ||
+  //     !blockchainData.chainDeployed ||
+  //     !blockchainData.eventName
+  //   ) {
+  //     setStep(1)
+  //     setStep1Error("All details are required")
+  //     return
+  //   }
+  //   if (!mode) {
+  //     setStep(2)
+  //     setStep2Error("Please select contest type")
+  //     return
+  //   }
+  //   if (!rewardType) {
+  //     setStep(3)
+  //     setStep3Error("Please select reward type")
+  //     return
+  //   }
+  //   console.log(blockchainData)
+  // }
 
   const [couponCode, setCouponCode] = useState("")
   return (
     <>
+      <ConfirmationDialog
+        open={openDialog}
+        setOpen={setOpenDialog}
+        title={title}
+        message={message}
+      />
       <div className="sticky top-0 z-10 flex gap-4 bg-th-black-2 px-4 text-sm text-slate-200 shadow-lg">
         <button
           onClick={() => setStep(1)}
@@ -172,6 +193,9 @@ export default function CreateBlockchainReward({
             handleContestClick={handleContestClick}
             step2Error={step2Error}
             totalWinners={totalWinners}
+            contestId={contestId}
+            setLoading={setLoading}
+            loading={loading}
           />
         )}
         {step === 3 && (
