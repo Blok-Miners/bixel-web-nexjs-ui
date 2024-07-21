@@ -3,11 +3,11 @@ import { useEffect, useState } from "react"
 import CreateBlockchainReward from "./BlockchainReward"
 import CreateSocialReward from "./SocialReward"
 
-import { CreateProjectSubmission } from "./ProjectSubmission"
 import { BugBounty } from "./BugBounty"
 
 import Holdings from "./Holdings"
 import { ChainService } from "@/services/chain"
+import { ProjectSubmission } from "./ProjectSubmission"
 
 export default function CreateReward({ productId }: { productId: string }) {
   const chains = new ChainService()
@@ -116,7 +116,7 @@ export default function CreateReward({ productId }: { productId: string }) {
           ) : reward === "social" ? (
             <CreateSocialReward />
           ) : reward === "Project Submission" ? (
-            <CreateProjectSubmission />
+            <ProjectSubmission chain={chain} productId={productId} />
           ) : reward === "Bug Bounty" ? (
             <BugBounty chain={chain} productId={productId} />
           ) : reward === "holdings" ? (
