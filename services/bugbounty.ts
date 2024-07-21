@@ -11,6 +11,20 @@ export class BugBountyService extends bind {
     })
   }
 
+  public async getBugBounty(id: string) {
+    try {
+      return (
+        await this.http.get(`bug-bounty/${id}`, {
+          headers: {
+            Authorization: getAccessToken(),
+          },
+        })
+      ).data
+    } catch (error) {
+      throw error
+    }
+  }
+
   public async submitBugBounty(formData: FormData, contestId: string) {
     try {
       return (
@@ -19,6 +33,24 @@ export class BugBountyService extends bind {
           headers: {
             Authorization: getAccessToken(),
             "Content-Type": "multipart/form-data",
+          },
+        })
+      ).data
+    } catch (error) {
+      throw error
+    }
+  }
+
+  public async verifySubmission(body: {
+    contestId: string
+    submissionId: string
+    approved: boolean
+  }) {
+    try {
+      return (
+        await this.http.post("/verify-submission", body, {
+          headers: {
+            Authorization: getAccessToken(),
           },
         })
       ).data

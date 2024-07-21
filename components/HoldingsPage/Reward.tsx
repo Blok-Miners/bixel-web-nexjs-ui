@@ -9,8 +9,8 @@ import {
 } from "@/components/ui/table"
 import { Button } from "../ui/button"
 import { ScrollArea } from "../ui/scroll-area"
-import { Rewards } from "@/services/reward"
 import { ContestService } from "@/services/contest"
+import { RewardService } from "@/services/reward"
 
 type Reward = {
   id: string
@@ -28,7 +28,7 @@ export default function RewardTable() {
   const [rewards, setRewards] = useState<Reward[]>([])
   const [contestId, setContestId] = useState("")
   const getRewards = async () => {
-    const rewardService = new Rewards()
+    const rewardService = new RewardService()
     const reward = await rewardService.getClaimableRewards()
     console.log(reward)
     setContestId(reward.contestId)

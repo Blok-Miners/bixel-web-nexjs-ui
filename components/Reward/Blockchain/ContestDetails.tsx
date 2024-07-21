@@ -76,8 +76,8 @@ export default function ContestDetails({
                 className="w-full rounded-lg border border-th-accent-2 px-4 py-6"
               />
             </div>
-            <div className="col-span-2 flex justify-between gap-4">
-              <div className="flex flex-col gap-2">
+            <div className="col-span-2 flex  gap-8">
+              <div className="flex flex-1 flex-col gap-2">
                 <Label>Start Date</Label>
                 <DatePicker
                   value={startDate}
@@ -87,7 +87,7 @@ export default function ContestDetails({
                   ref={null}
                 />
               </div>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-1 flex-col gap-2">
                 <Label>End Date</Label>
                 <DatePicker
                   value={endDate}

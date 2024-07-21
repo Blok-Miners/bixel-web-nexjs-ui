@@ -28,6 +28,14 @@ export class ContestService extends BindService {
     }
   }
 
+  public async getContests(productId: string) {
+    try {
+      return (await this.http.get(`/get-product-contests/${productId}`)).data
+    } catch (error) {
+      throw new Error("Failed to create contest")
+    }
+  }
+
   public async createBugBountyContest(contestData: ICreateContest) {
     try {
       return (
@@ -57,6 +65,38 @@ export class ContestService extends BindService {
       return (
         await this.http.post(
           "/create-holdings-verification-contest",
+          contestData,
+          {
+            headers: { Authorization: getAccessToken() },
+          },
+        )
+      ).data
+    } catch (error) {
+      throw new Error("Failed to create contest")
+    }
+  }
+
+  public async createRegistrationVerificationContest(contestData: ICreateContest) {
+    try {
+      return (
+        await this.http.post(
+          "/create-registration-verification-contest",
+          contestData,
+          {
+            headers: { Authorization: getAccessToken() },
+          },
+        )
+      ).data
+    } catch (error) {
+      throw new Error("Failed to create contest")
+    }
+  }
+
+  public async createProjectSubmissionContest(contestData: ICreateContest) {
+    try {
+      return (
+        await this.http.post(
+          "/create-registration-verification-contest",
           contestData,
           {
             headers: { Authorization: getAccessToken() },
