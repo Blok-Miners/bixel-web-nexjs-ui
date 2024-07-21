@@ -9,15 +9,59 @@ import { ContestModeEnum } from "@/types/services/contest"
 export default function Holdings({ chain }: any) {
   const [step, setStep] = useState(1)
   const [chainId, setChainID] = useState("")
+  const [holdings, setHoldings] = useState({
+    contractAddress: "",
+    description: "",
+  })
+
+  const [depositAmountToken, setDepositAmountToken] = useState(0)
+  const [depositAmountNFT, setDepositAmountNFT] = useState(0)
+  const [couponType, setCouponType] = useState("")
+  const [couponCode, setCouponCode] = useState("")
+  const [rewardType, setRewardType] = useState("")
+  const [startDate, setStartDate] = useState<Date | null>(null)
+  const [endDate, setEndDate] = useState<Date | null>(null)
   const [mode, setMode] = useState<ContestModeEnum>(ContestModeEnum.LEADERBOARD)
   const [totalWinners, setTotalWineers] = useState(0)
+  const [openDialog, setOpenDialog] = useState(false)
+  const [title, setTitle] = useState("")
+  const [message, setMessage] = useState("")
+  const [contestId, setContestId] = useState("")
+  const [assetType, setAssetType] = useState("")
 
+  const [loading, setLoading] = useState(false)
   const [step1Error, setStep1Error] = useState("")
   const [step2Error, setStep2Error] = useState("")
   const [step3Error, setStep3Error] = useState("")
 
-  const handleContestClick =() => {
-    console.log("clicked")
+  const handleDateChange = (name: string, date: Date | null) => {
+    if (name === "endDate") {
+      setEndDate(date)
+    } else if (name === "startDate") {
+      setStartDate(date)
+    }
+  }
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    const { name, value } = e.target
+    setHoldings((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }))
+  }
+
+  const handleContestClick = () => {
+    console.log(
+      holdings,
+      startDate,
+      endDate,
+      chainId,
+      mode,
+      totalWinners,
+      assetType,
+    )
   }
   return (
     <>
@@ -53,6 +97,10 @@ export default function Holdings({ chain }: any) {
             chain={chain}
             chainId={chainId}
             setChainID={setChainID}
+            setStep={setStep}
+            holdings={holdings}
+            handleChange={handleChange}
+            setAssetType={setAssetType}
           />
         )}
         {step === 2 && (
@@ -66,6 +114,11 @@ export default function Holdings({ chain }: any) {
             handleContestClick={handleContestClick}
             step2Error={step2Error}
             totalWinners={totalWinners}
+            handleDateChange= {handleDateChange}
+            startDate={startDate}
+            endDate={endDate}
+            loading={loading}
+            setLoading={setLoading}
           />
         )}
       </div>

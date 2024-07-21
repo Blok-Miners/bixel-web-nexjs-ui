@@ -9,6 +9,7 @@ import ContractDetails from "./Blockchain/ContractDetails"
 import ContestDetails from "./Blockchain/ContestDetails"
 import RewardDetails from "./Blockchain/RewardDetails"
 import ConfirmationDialog from "../Shared/ConfirmationDialog"
+import { string } from "zod"
 
 export default function CreateBlockchainReward({
   productId,
@@ -38,10 +39,12 @@ export default function CreateBlockchainReward({
     url: "",
     description: "",
   })
+  const [startDate, setStartDate] = useState<Date | null>(null)
+  const [endDate, setEndDate] = useState<Date | null>(null)
   const [depositAmountToken, setDepositAmountToken] = useState(0)
   const [depositAmountNFT, setDepositAmountNFT] = useState(0)
   const [couponType, setCouponType] = useState("")
-  const [mode, setMode] = useState<ContestModeEnum>(ContestModeEnum.LEADERBOARD)
+  const [mode, setMode] = useState<ContestModeEnum>(ContestModeEnum.TIMEFRAME)
   const [rewardType, setRewardType] = useState("")
   const [totalWinners, setTotalWineers] = useState(0)
   const handleChange = (e: any) => {
@@ -92,6 +95,8 @@ export default function CreateBlockchainReward({
         noOfWinners: totalWinners,
         description: blockchainData.description,
         url: blockchainData.url,
+        startDate,
+        endDate,
       }
 
       const res = await contestService.createContest(contestData)
@@ -110,30 +115,6 @@ export default function CreateBlockchainReward({
       console.log(error)
     }
   }
-
-  // const handleSubmit = () => {
-  //   if (
-  //     !blockchainData.contractAddress ||
-  //     !blockchainData.abi ||
-  //     !blockchainData.chainDeployed ||
-  //     !blockchainData.eventName
-  //   ) {
-  //     setStep(1)
-  //     setStep1Error("All details are required")
-  //     return
-  //   }
-  //   if (!mode) {
-  //     setStep(2)
-  //     setStep2Error("Please select contest type")
-  //     return
-  //   }
-  //   if (!rewardType) {
-  //     setStep(3)
-  //     setStep3Error("Please select reward type")
-  //     return
-  //   }
-  //   console.log(blockchainData)
-  // }
 
   const [couponCode, setCouponCode] = useState("")
   return (
@@ -196,6 +177,10 @@ export default function CreateBlockchainReward({
             contestId={contestId}
             setLoading={setLoading}
             loading={loading}
+            startDate={startDate}
+            endDate={endDate}
+            setStartDate={setStartDate}
+            setEndDate={setEndDate}
           />
         )}
         {step === 3 && (

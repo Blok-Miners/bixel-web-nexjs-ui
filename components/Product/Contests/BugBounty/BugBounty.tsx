@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { BugDialog } from "./BugDialog"
 import Image from "next/image"
 import { FaCheck } from "react-icons/fa"
@@ -7,11 +7,28 @@ import { ScrollArea } from "../../../ui/scroll-area"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Check, X } from "lucide-react"
+import { useAccount } from "wagmi"
 
-export default function BugBounty({ contestId }: { contestId: string }) {
+export default function BugBounty({
+  contestId,
+  bugBountyId,
+  ownerId,
+}: {
+  contestId: string
+  bugBountyId: string
+  ownerId: string
+}) {
+  const [verify, setVerify] = useState(false)
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [contestLoading, setContestLoading] = useState(false)
+  const { address } = useAccount()
+  useEffect(() => {
+    if (!address) return
+    if (ownerId === address) setVerify(true)
+    else setVerify(false)
+  }, [address])
+
   return (
     <Card className="row-span-2 flex h-full flex-col">
       <CardHeader className="text-center font-bold">
@@ -40,7 +57,7 @@ export default function BugBounty({ contestId }: { contestId: string }) {
               </div>
             </div>
 
-            {false && (
+            {verify && (
               <div className="flex gap-1 rounded-md bg-th-black-2 p-1">
                 <Button
                   disabled={isLoading}
@@ -58,7 +75,7 @@ export default function BugBounty({ contestId }: { contestId: string }) {
                 </Button>
               </div>
             )}
-            {true && (
+            {!verify && (
               <div className="flex gap-1 rounded-md bg-th-black-2 p-1">
                 <Check color="#22c55e" strokeWidth={3} /> Verified
               </div>
@@ -67,7 +84,12 @@ export default function BugBounty({ contestId }: { contestId: string }) {
         </ScrollArea>
       </CardContent>
       <CardFooter>
-        <BugDialog open={open} setOpen={setOpen} />
+        <BugDialog
+          contestId={contestId}
+          bugBountyId={bugBountyId}
+          open={open}
+          setOpen={setOpen}
+        />
       </CardFooter>
     </Card>
   )

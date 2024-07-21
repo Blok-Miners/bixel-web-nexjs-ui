@@ -1,10 +1,9 @@
 import { Address } from "../web3"
 
 export enum ContestModeEnum {
-    TIMEFRAME = 'TIMEFRAME',
-    LEADERBOARD = 'LEADERBOARD',
-  }
-  
+  TIMEFRAME = "TIMEFRAME",
+  LEADERBOARD = "LEADERBOARD",
+}
 
 export interface ICreateContest {
   contractAddress: Address
@@ -13,7 +12,9 @@ export interface ICreateContest {
   eventName: string
   url: string
   description: string
-  productId:string
+  productId: string
   noOfWinners: number
-  mode:ContestModeEnum
+  mode: ContestModeEnum
+  startDate: Date | null
+  endDate: Date | null
 }

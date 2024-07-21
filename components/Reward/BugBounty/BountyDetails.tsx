@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { FaLongArrowAltRight } from "react-icons/fa"
 
 export default function BountyDetails({
   step,
@@ -92,31 +93,12 @@ export default function BountyDetails({
             </SelectContent>
           </Select>
         </div>
-        <div className="col-span-2 flex justify-between gap-4">
-          <div className="flex flex-col gap-2">
-            <Label>Start Date</Label>
-            <DatePicker
-              value={bugBounty.startDate}
-              onChange={(date) => handleDateChange("startDate", date)}
-              onBlur={() => {}}
-              name="startDate"
-              ref={null}
-            />
-          </div>
 
-          <div className="flex flex-col gap-2">
-            <Label>End Date</Label>
-            <DatePicker
-              value={bugBounty.endDate}
-              onChange={(date) => handleDateChange("endDate", date)}
-              onBlur={() => {}}
-              name="endDate"
-              ref={null}
-            />
-          </div>
-        </div>
-        <Button className="w-fit" onClick={() => setStep(2)}>
-          Next
+        <Button
+          onClick={() => setStep(2)}
+          className="flex w-fit items-center gap-2"
+        >
+          <div>Next</div> <FaLongArrowAltRight />
         </Button>
       </div>
     </ScrollArea>
