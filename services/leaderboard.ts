@@ -1,0 +1,26 @@
+import axios, { AxiosResponse } from "axios"
+import bind from "./bind"
+import { getAccessToken } from "@/lib/utils"
+
+export class Transaction extends bind {
+  private http
+  constructor() {
+    super()
+    this.http = axios.create({
+      baseURL: `${process.env.NEXT_PUBLIC_API_URL}/leaderboard`,
+    })
+  }
+
+  public async getLeaderboardbyId(id: string) {
+    try {
+      return (
+        await this.http.get("/get-contest-mode", {
+          params: { id },
+        })
+      ).data
+    } catch (error) {
+      throw error
+    }
+  }
+
+}
