@@ -8,6 +8,8 @@ import {
   FaLongArrowAltRight,
 } from "react-icons/fa"
 import Loading from "../Loading"
+import { Label } from "@/components/ui/label"
+import DatePicker from "@/components/ui/datepicker"
 
 export default function ContestDetails({
   setStep2Error,
@@ -19,9 +21,10 @@ export default function ContestDetails({
   handleContestClick,
   step2Error,
   totalWinners,
-  contestId,
-  setLoading,
   loading,
+  startDate,
+  endDate,
+  handleDateChange,
 }: any) {
   return (
     <div className="flex flex-col gap-6">
@@ -60,20 +63,41 @@ export default function ContestDetails({
           )}
         </div>
         {mode && (
-          <div className="flex flex-col gap-2">
-            <div>No. of winners</div>
-            <Input
-              // onChange={handleChange}
-              // value={blockchainData.contractAddress}
-              // name="contractAddress"
-              value={totalWinners}
-              onChange={(e) => {
-                setTotalWineers(parseInt(e.target.value))
-              }}
-              type="number"
-              placeholder="Enter no. of winners"
-              className="w-full rounded-lg border border-th-accent-2 px-4 py-6"
-            />
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-2">
+              <div>No. of winners</div>
+              <Input
+                value={totalWinners}
+                onChange={(e) => {
+                  setTotalWineers(parseInt(e.target.value))
+                }}
+                type="number"
+                placeholder="Enter no. of winners"
+                className="w-full rounded-lg border border-th-accent-2 px-4 py-6"
+              />
+            </div>
+            <div className="col-span-2 flex justify-between gap-4">
+              <div className="flex flex-col gap-2">
+                <Label>Start Date</Label>
+                <DatePicker
+                  value={startDate}
+                  onChange={(date) => handleDateChange("startDate", date)}
+                  onBlur={() => {}}
+                  name="startDate"
+                  ref={null}
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <Label>End Date</Label>
+                <DatePicker
+                  value={endDate}
+                  onChange={(date) => handleDateChange("endDate", date)}
+                  onBlur={() => {}}
+                  name="endDate"
+                  ref={null}
+                />
+              </div>
+            </div>
           </div>
         )}
       </div>

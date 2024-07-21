@@ -41,7 +41,7 @@ export default async function page({
             github={product.github}
           />
         </div>
-        <Contests id={product.id} videoUrl={product.video} />
+        <Contests id={product.id} ownerId ={product.owner.walletAddress} videoUrl={product.video} />
       </div>
     </div>
   )
