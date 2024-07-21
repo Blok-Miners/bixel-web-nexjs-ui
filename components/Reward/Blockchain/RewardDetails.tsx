@@ -397,7 +397,7 @@ export default function RewardDetails({
                     {chain &&
                       chain.map((item: any, index: any) => {
                         return (
-                          <SelectItem value={item.id} className="text-white">
+                          <SelectItem key={index} value={item.id} className="text-white">
                             {item.name}
                           </SelectItem>
                         )
