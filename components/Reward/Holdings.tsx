@@ -5,8 +5,10 @@ import { FaLongArrowAltRight } from "react-icons/fa"
 import HoldingsContract from "./Holdings/HoldingsContract"
 import ContestDetails from "./Blockchain/ContestDetails"
 import { ContestModeEnum } from "@/types/services/contest"
+import { ContestService } from "@/services/contest"
+import RewardDetails from "./Blockchain/RewardDetails"
 
-export default function Holdings({ chain }: any) {
+export default function Holdings({ productId, chain }: any) {
   const [step, setStep] = useState(1)
   const [chainId, setChainID] = useState("")
   const [holdings, setHoldings] = useState({
@@ -52,16 +54,40 @@ export default function Holdings({ chain }: any) {
     }))
   }
 
-  const handleContestClick = () => {
-    console.log(
-      holdings,
-      startDate,
-      endDate,
-      chainId,
-      mode,
-      totalWinners,
-      assetType,
-    )
+  const handleContestClick = async () => {
+    console.log(chainId)
+    const service = new ContestService()
+    setLoading(true)
+    try {
+      const contestData: any = {
+        description: holdings.description,
+        contractAddress: holdings.contractAddress,
+        chain: chainId,
+        assetType,
+        mode,
+        productId,
+        noOfWinners: totalWinners,
+        startTime: startDate,
+        endTime: endDate,
+      }
+      const res = await service.createHoldingsVerificationContest(contestData)
+      if (!res) {
+        return
+      }
+      // setOpenDialog(true)
+      // setTitle("Success")
+      // setMessage("Bug Bounty Contest created successfully")
+      setLoading(false)
+      setContestId(res._id)
+      setStep(3)
+      console.log(res)
+    } catch (error) {
+      setOpenDialog(true)
+      setTitle("Failure")
+      setMessage("Something went wrong creating contest !")
+      setLoading(false)
+      console.log(error)
+    }
   }
   return (
     <>
@@ -114,11 +140,29 @@ export default function Holdings({ chain }: any) {
             handleContestClick={handleContestClick}
             step2Error={step2Error}
             totalWinners={totalWinners}
-            handleDateChange= {handleDateChange}
+            handleDateChange={handleDateChange}
             startDate={startDate}
             endDate={endDate}
             loading={loading}
             setLoading={setLoading}
+          />
+        )}
+        {step === 3 && (
+          <RewardDetails
+            setStep3Error={setStep3Error}
+            setRewardType={setRewardType}
+            setCouponType={setCouponType}
+            rewardType={rewardType}
+            couponType={couponType}
+            setDepositAmountToken={setDepositAmountToken}
+            totalWinners={totalWinners}
+            depositAmountToken={depositAmountToken}
+            setStep={setStep}
+            step3Error={step3Error}
+            couponCode={couponCode}
+            setCouponCode={setCouponCode}
+            depositAmountNFT={depositAmountNFT}
+            setDepositAmountNFT={setDepositAmountNFT}
           />
         )}
       </div>

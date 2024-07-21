@@ -27,6 +27,7 @@ export class ContestService extends BindService {
       throw new Error("Failed to create contest")
     }
   }
+
   public async createBugBountyContest(contestData: ICreateContest) {
     try {
       return (
@@ -37,29 +38,45 @@ export class ContestService extends BindService {
     } catch (error) {
       throw new Error("Failed to create contest")
     }
-}
-
-  public async getInteractionDetails(id:string){
-    try {
-        return (
-          await this.http.get(`get-contest-details/${id}?interaction=true`,{
-            headers: { Authorization: getAccessToken() },
-          })
-        ).data
-      } catch (error) {
-        throw new Error("Failed to create contest")
-      }
   }
 
-  public async verifySmartContractTask(id:string){
+  public async createHoldingsVerificationContest(contestData: ICreateContest) {
     try {
-        return (
-          await this.http.get(`verify-smart-contract-task/${id}`,{
+      return (
+        await this.http.post(
+          "/create-holdings-verification-contest",
+          contestData,
+          {
             headers: { Authorization: getAccessToken() },
-          })
-        ).data
-      } catch (error) {
-        throw new Error("Failed to create contest")
-      }
+          },
+        )
+      ).data
+    } catch (error) {
+      throw new Error("Failed to create contest")
+    }
+  }
+
+  public async getInteractionDetails(id: string) {
+    try {
+      return (
+        await this.http.get(`get-contest-details/${id}?interaction=true`, {
+          headers: { Authorization: getAccessToken() },
+        })
+      ).data
+    } catch (error) {
+      throw new Error("Failed to create contest")
+    }
+  }
+
+  public async verifySmartContractTask(id: string) {
+    try {
+      return (
+        await this.http.get(`verify-smart-contract-task/${id}`, {
+          headers: { Authorization: getAccessToken() },
+        })
+      ).data
+    } catch (error) {
+      throw new Error("Failed to create contest")
+    }
   }
 }

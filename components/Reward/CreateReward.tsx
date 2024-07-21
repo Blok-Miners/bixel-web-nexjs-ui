@@ -112,7 +112,7 @@ export default function CreateReward({ productId }: { productId: string }) {
         </div>
         <div className="h-[80vh] w-[1000px] rounded-xl bg-th-black-2 p-4">
           {reward === "blockchain" ? (
-            <CreateBlockchainReward productId={productId} />
+            <CreateBlockchainReward productId={productId}/>
           ) : reward === "social" ? (
             <CreateSocialReward />
           ) : reward === "Project Submission" ? (
@@ -120,7 +120,7 @@ export default function CreateReward({ productId }: { productId: string }) {
           ) : reward === "Bug Bounty" ? (
             <BugBounty chain={chain} productId={productId} />
           ) : reward === "holdings" ? (
-            <Holdings chain={chain} />
+            <Holdings chain={chain} productId={productId}/>
           ) : null}
         </div>
       </div>
