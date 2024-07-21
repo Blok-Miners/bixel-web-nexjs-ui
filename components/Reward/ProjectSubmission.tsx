@@ -7,6 +7,7 @@ import ContestDetails from "./Blockchain/ContestDetails"
 import { ContestModeEnum } from "@/types/services/contest"
 import { ContestService } from "@/services/contest"
 import CreateProjectSubmission from "./ProjectSubmissionDetails"
+import RewardDetails from "./Blockchain/RewardDetails"
 
 export const ProjectSubmission = ({
   productId,
@@ -26,9 +27,21 @@ export const ProjectSubmission = ({
     endDate: null,
   })
 
-  const [mode, setMode] = useState<ContestModeEnum>(ContestModeEnum.LEADERBOARD)
-  const [totalWinners, setTotalWinners] = useState(0)
 
+  const [depositAmountToken, setDepositAmountToken] = useState(0)
+  const [depositAmountNFT, setDepositAmountNFT] = useState(0)
+  const [couponType, setCouponType] = useState("")
+  const [couponCode, setCouponCode] = useState("")
+  const [rewardType, setRewardType] = useState("")
+  const [startDate, setStartDate] = useState<Date | null>(null)
+  const [endDate, setEndDate] = useState<Date | null>(null)
+  const [mode, setMode] = useState<ContestModeEnum>(ContestModeEnum.LEADERBOARD)
+  const [totalWinners, setTotalWineers] = useState(0)
+  const [openDialog, setOpenDialog] = useState(false)
+  const [title, setTitle] = useState("")
+  const [message, setMessage] = useState("")
+  const [contestId, setContestId] = useState("")
+  const [assetType, setAssetType] = useState("")
   const [step1Error, setStep1Error] = useState("")
   const [step2Error, setStep2Error] = useState("")
   const [step3Error, setStep3Error] = useState("")
@@ -124,10 +137,28 @@ export const ProjectSubmission = ({
             setMode={setMode}
             setStep={setStep}
             ContestModeEnum={ContestModeEnum}
-            setTotalWinners={setTotalWinners}
+            setTotalWineers={setTotalWineers}
             handleContestClick={handleSubmissionClick}
             step2Error={step2Error}
             totalWinners={totalWinners}
+          />
+        )}
+          {step === 3 && (
+          <RewardDetails
+            setStep3Error={setStep3Error}
+            setRewardType={setRewardType}
+            setCouponType={setCouponType}
+            rewardType={rewardType}
+            couponType={couponType}
+            setDepositAmountToken={setDepositAmountToken}
+            totalWinners={totalWinners}
+            depositAmountToken={depositAmountToken}
+            setStep={setStep}
+            step3Error={step3Error}
+            couponCode={couponCode}
+            setCouponCode={setCouponCode}
+            depositAmountNFT={depositAmountNFT}
+            setDepositAmountNFT={setDepositAmountNFT}
           />
         )}
       </div>
