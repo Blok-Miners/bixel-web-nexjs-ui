@@ -9,6 +9,7 @@ import { ContestService } from "@/services/contest"
 import RewardDetails from "./Blockchain/RewardDetails"
 
 export default function Holdings({ productId, chain }: any) {
+  const service = new ContestService()
   const [step, setStep] = useState(1)
   const [chainId, setChainID] = useState("")
   const [holdings, setHoldings] = useState({
@@ -23,8 +24,10 @@ export default function Holdings({ productId, chain }: any) {
   const [rewardType, setRewardType] = useState("")
   const [startDate, setStartDate] = useState<Date | null>(null)
   const [endDate, setEndDate] = useState<Date | null>(null)
-  const [mode, setMode] = useState<ContestModeEnum>(ContestModeEnum.LEADERBOARD)
-  const [totalWinners, setTotalWineers] = useState(0)
+  const [mode, setMode] = useState<ContestModeEnum | undefined>(undefined)
+  const [totalWinners, setTotalWineers] = useState<number | undefined>(
+    undefined,
+  )
   const [openDialog, setOpenDialog] = useState(false)
   const [title, setTitle] = useState("")
   const [message, setMessage] = useState("")
@@ -47,6 +50,7 @@ export default function Holdings({ productId, chain }: any) {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
+    setStep1Error("")
     const { name, value } = e.target
     setHoldings((prevState) => ({
       ...prevState,
@@ -55,8 +59,25 @@ export default function Holdings({ productId, chain }: any) {
   }
 
   const handleContestClick = async () => {
-    console.log(chainId)
-    const service = new ContestService()
+    if (
+      !holdings.description ||
+      !holdings.contractAddress ||
+      !chainId ||
+      !assetType
+    ) {
+      setStep(1)
+      setStep1Error("Required fields should not be empty !")
+      return
+    }
+    if (startDate == null || endDate == null || !mode || !totalWinners) {
+      setStep2Error("Required fields should not be empty !")
+      return
+    }
+    if (startDate > endDate) {
+      setStep2Error("Start date should be less than end date !")
+      return
+    }
+
     setLoading(true)
     try {
       const contestData: any = {
@@ -81,6 +102,7 @@ export default function Holdings({ productId, chain }: any) {
       setContestId(res._id)
       setStep(3)
       console.log(res)
+      setContestId(res._id)
     } catch (error) {
       setOpenDialog(true)
       setTitle("Failure")
@@ -93,13 +115,11 @@ export default function Holdings({ productId, chain }: any) {
     <>
       <div className="sticky top-0 z-10 flex gap-4 bg-th-black-2 px-4 text-sm text-slate-200 shadow-lg">
         <button
-          onClick={() => setStep(1)}
           className={`font-medium ${step === 1 && "border-b border-th-accent-2 text-th-accent-2"} flex cursor-pointer items-center gap-2 p-2 text-sm`}
         >
           <div>Contract Details</div>
         </button>
         <button
-          onClick={() => setStep(2)}
           className={`font-medium ${step === 2 && "border-b border-th-accent-2 text-th-accent-2"} flex cursor-pointer items-center gap-2 p-2 text-sm`}
         >
           <div>
@@ -108,7 +128,6 @@ export default function Holdings({ productId, chain }: any) {
           <div>Contest type</div>
         </button>
         <button
-          onClick={() => setStep(3)}
           className={`font-medium ${step === 3 && "border-b border-th-accent-2 text-th-accent-2"} flex cursor-pointer items-center gap-2 p-2 text-sm`}
         >
           <div>
@@ -127,10 +146,12 @@ export default function Holdings({ productId, chain }: any) {
             holdings={holdings}
             handleChange={handleChange}
             setAssetType={setAssetType}
+            step1Error={step1Error}
           />
         )}
         {step === 2 && (
           <ContestDetails
+            contestId={contestId}
             setStep2Error={setStep2Error}
             mode={mode}
             setMode={setMode}

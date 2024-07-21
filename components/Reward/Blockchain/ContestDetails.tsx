@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label"
 import DatePicker from "@/components/ui/datepicker"
 
 export default function ContestDetails({
+  contestId,
   setStep2Error,
   mode,
   setMode,
@@ -70,18 +71,22 @@ export default function ContestDetails({
                 value={totalWinners}
                 onChange={(e) => {
                   setTotalWineers(parseInt(e.target.value))
+                  setStep2Error("")
                 }}
                 type="number"
                 placeholder="Enter no. of winners"
                 className="w-full rounded-lg border border-th-accent-2 px-4 py-6"
               />
             </div>
-            <div className="col-span-2 flex  gap-8">
+            <div className="col-span-2 flex gap-8">
               <div className="flex flex-1 flex-col gap-2">
                 <Label>Start Date</Label>
                 <DatePicker
                   value={startDate}
-                  onChange={(date) => handleDateChange("startDate", date)}
+                  onChange={(date) => {
+                    setStep2Error("")
+                    handleDateChange("startDate", date)
+                  }}
                   onBlur={() => {}}
                   name="startDate"
                   ref={null}
@@ -91,7 +96,10 @@ export default function ContestDetails({
                 <Label>End Date</Label>
                 <DatePicker
                   value={endDate}
-                  onChange={(date) => handleDateChange("endDate", date)}
+                  onChange={(date) => {
+                    setStep2Error("")
+                    handleDateChange("endDate", date)
+                  }}
                   onBlur={() => {}}
                   name="endDate"
                   ref={null}
@@ -109,18 +117,33 @@ export default function ContestDetails({
           <FaLongArrowAltLeft />
           <div>Back</div>
         </Button>
-        <Button
-          onClick={handleContestClick}
-          className="flex w-fit items-center gap-2"
-        >
-          {loading ? (
-            <Loading />
-          ) : (
-            <>
-              <div>Next</div> <FaLongArrowAltRight />
-            </>
-          )}
-        </Button>
+        {contestId ? (
+          <Button
+            onClick={() => setStep(3)}
+            className="flex w-fit items-center gap-2"
+          >
+            {loading ? (
+              <Loading />
+            ) : (
+              <>
+                <div>Next</div> <FaLongArrowAltRight />
+              </>
+            )}
+          </Button>
+        ) : (
+          <Button
+            onClick={handleContestClick}
+            className="flex w-fit items-center gap-2"
+          >
+            {loading ? (
+              <Loading />
+            ) : (
+              <>
+                <div>Submit</div>
+              </>
+            )}
+          </Button>
+        )}
       </div>
       {step2Error && <div className="text-sm text-red-500">{step2Error}</div>}
     </div>
