@@ -28,6 +28,14 @@ export class ContestService extends BindService {
     }
   }
 
+  public async getContests(productId: string) {
+    try {
+      return (await this.http.get(`/get-product-contests/${productId}`)).data
+    } catch (error) {
+      throw new Error("Failed to create contest")
+    }
+  }
+
   public async createBugBountyContest(contestData: ICreateContest) {
     try {
       return (

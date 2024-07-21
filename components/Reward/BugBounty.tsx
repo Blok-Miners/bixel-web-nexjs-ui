@@ -175,6 +175,7 @@ export const BugBounty = ({
         )}
         {step === 3 && (
           <RewardDetails
+            contestId={contestId}
             setStep3Error={setStep3Error}
             setRewardType={setRewardType}
             setCouponType={setCouponType}
