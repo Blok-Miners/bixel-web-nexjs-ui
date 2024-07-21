@@ -26,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select"
+import { MdOutlineDelete } from "react-icons/md";
 
 const projectSubmissionSchema = z.object({
   projectName: z.string().nonempty("Project Name is required"),
@@ -335,10 +336,10 @@ const ProjectSubmission: React.FC = () => {
                 <div className="flex items-end">
                   <Button
                     type="button"
-                    className="bg-red-700 text-xs hover:bg-red-600"
+                    className="bg-red-700 text-xl hover:bg-red-600 text-white"
                     onClick={() => remove(index)}
                   >
-                    Remove
+                    <MdOutlineDelete />
                   </Button>
                 </div>
               </div>

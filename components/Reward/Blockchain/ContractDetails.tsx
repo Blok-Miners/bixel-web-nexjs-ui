@@ -6,6 +6,7 @@ import {
   SelectGroup,
   SelectItem,
   SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { FaLongArrowAltRight } from "react-icons/fa"
@@ -66,9 +67,9 @@ export default function ContractDetails({
               }
             >
               <SelectTrigger
-                className={`flex h-full w-full items-center gap-2 rounded-lg border border-th-accent-2 bg-th-black-2 p-2 px-4 hover:bg-opacity-50`}
+                className={`flex h-full w-full items-center gap-2 rounded-lg border border-th-accent-2 bg-th-black-2 p-4 hover:bg-opacity-50`}
               >
-                <div>Select a chain</div>
+                <SelectValue placeholder="Select a chain" />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>

@@ -8,6 +8,8 @@ import { Address } from "@/types/web3"
 import ContractDetails from "./Blockchain/ContractDetails"
 import ContestDetails from "./Blockchain/ContestDetails"
 import RewardDetails from "./Blockchain/RewardDetails"
+import ConfirmationDialog from "../Shared/ConfirmationDialog"
+import { string } from "zod"
 
 export default function CreateBlockchainReward({
   productId,
@@ -37,12 +39,23 @@ export default function CreateBlockchainReward({
     url: "",
     description: "",
   })
+  const [startDate, setStartDate] = useState<Date | null>(null)
+  const [endDate, setEndDate] = useState<Date | null>(null)
   const [depositAmountToken, setDepositAmountToken] = useState(0)
   const [depositAmountNFT, setDepositAmountNFT] = useState(0)
   const [couponType, setCouponType] = useState("")
-  const [mode, setMode] = useState<ContestModeEnum>(ContestModeEnum.LEADERBOARD)
+  const [mode, setMode] = useState<ContestModeEnum>(ContestModeEnum.TIMEFRAME)
   const [rewardType, setRewardType] = useState("")
   const [totalWinners, setTotalWineers] = useState(0)
+
+  const handleDateChange = (name: string, date: Date | null) => {
+    if (name === "endDate") {
+      setEndDate(date)
+    } else if (name === "startDate") {
+      setStartDate(date)
+    }
+  }
+
   const handleChange = (e: any) => {
     const { name, value, type, files } = e.target
     setStep1Error("")
@@ -72,7 +85,13 @@ export default function CreateBlockchainReward({
   const [step2Error, setStep2Error] = useState("")
   const [step3Error, setStep3Error] = useState("")
 
+  const [openDialog, setOpenDialog] = useState(false)
+  const [title, setTitle] = useState("")
+  const [message, setMessage] = useState("")
+  const [loading, setLoading] = useState(false)
+
   const handleContestClick = async () => {
+    setLoading(true)
     console.log(blockchainData)
     try {
       const contestData: ICreateContest = {
@@ -85,44 +104,38 @@ export default function CreateBlockchainReward({
         noOfWinners: totalWinners,
         description: blockchainData.description,
         url: blockchainData.url,
+        startDate,
+        endDate,
       }
 
+      console.log(contestData)
+
       const res = await contestService.createContest(contestData)
-      if (!res) return
+      if (!res) {
+        return
+      }
+      console.log(res)
+      setLoading(false)
       setStep(3)
       setContestId(res._id)
     } catch (error) {
+      setOpenDialog(true)
+      setTitle("Failure")
+      setMessage("Something went wrong !")
+      setLoading(false)
       console.log(error)
     }
-  }
-
-  const handleSubmit = () => {
-    if (
-      !blockchainData.contractAddress ||
-      !blockchainData.abi ||
-      !blockchainData.chainDeployed ||
-      !blockchainData.eventName
-    ) {
-      setStep(1)
-      setStep1Error("All details are required")
-      return
-    }
-    if (!mode) {
-      setStep(2)
-      setStep2Error("Please select contest type")
-      return
-    }
-    if (!rewardType) {
-      setStep(3)
-      setStep3Error("Please select reward type")
-      return
-    }
-    console.log(blockchainData)
   }
 
   const [couponCode, setCouponCode] = useState("")
   return (
     <>
+      <ConfirmationDialog
+        open={openDialog}
+        setOpen={setOpenDialog}
+        title={title}
+        message={message}
+      />
       <div className="sticky top-0 z-10 flex gap-4 bg-th-black-2 px-4 text-sm text-slate-200 shadow-lg">
         <button
           onClick={() => setStep(1)}
@@ -172,6 +185,12 @@ export default function CreateBlockchainReward({
             handleContestClick={handleContestClick}
             step2Error={step2Error}
             totalWinners={totalWinners}
+            contestId={contestId}
+            setLoading={setLoading}
+            loading={loading}
+            startDate={startDate}
+            endDate={endDate}
+            handleDateChange={handleDateChange}
           />
         )}
         {step === 3 && (

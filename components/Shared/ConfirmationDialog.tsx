@@ -15,7 +15,7 @@ import Link from "next/link"
 interface IDialog {
   open: boolean
   setOpen: Dispatch<boolean>
-  status: StatusEnum
+  status?: StatusEnum
   message: ReactNode
   title: string
   link?: string

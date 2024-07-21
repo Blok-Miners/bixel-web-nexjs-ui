@@ -1,10 +1,45 @@
 "use client"
 
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Button } from "../ui/button"
+import { ContestService } from "@/services/contest"
+import { ISmartContractInteraction } from "@/types/services/smartContractInteraction"
+import { Address } from "@/types/web3"
 
-export const ContractInteraction = () => {
+export const ContractInteraction = ({ id }: { id: string }) => {
+  const contestService = new ContestService()
   const [Opened, setOpended] = useState(false)
+  const [interaction, setInteraction] = useState<ISmartContractInteraction>()
+
+  const interactionDetails = async () => {
+    try {
+      const res = await contestService.getInteractionDetails(id)
+      console.log(res)
+      setInteraction({
+        id:res.interaction._id,
+        contractAddress: res.interaction.contract.address as Address,
+        chain: res.chain.chainId,
+        url: res.interaction.url,
+        description: res.interaction.description,
+      })
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+  const verifyTransaction =async()=>{
+    try {
+      if(!interaction) return
+      const res = await contestService.verifySmartContractTask(interaction?.id)
+      console.log(res)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    interactionDetails()
+  }, [])
 
   return (
     <div className="grid w-full max-w-xl grid-cols-3 gap-4 rounded-2xl bg-th-accent-2/10 p-4">
@@ -14,34 +49,40 @@ export const ContractInteraction = () => {
       <div className="col-span-3 space-y-2 rounded-xl p-2 text-sm">
         <span className="w-full text-center">Contract Address</span>
         <div className="rounded-xl bg-th-accent-2/10 p-4 text-base font-medium">
-          0x11111111111111111111111111
+          {interaction?.contractAddress}
         </div>
       </div>
       <div className="col-span-1 space-y-2 rounded-xl p-2">
         <span className="text-sm">Chain</span>
         <div className="rounded-xl bg-th-accent-2/10 p-4 text-base font-medium">
-          0x1111111111
+          {interaction?.chain}
         </div>
       </div>
       <div className="col-span-2 space-y-2 rounded-xl p-2">
         <span className="text-sm">Interaction URL</span>
 
         <div className="rounded-xl bg-th-accent-2/10 p-4 text-base font-medium">
-          https://www.interactiveurl.com
+          {interaction?.url}
         </div>
       </div>
       <div className="col-span-3 h-fit space-y-2 rounded-xl p-2">
         <span className="text-sm">Description </span>
 
         <div className="h-fit rounded-xl bg-th-accent-2/10 p-4 text-base font-medium">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusantium,
-          voluptas! Itaque ad laborum voluptates, voluptatibus quas quidem
-          tempore!
+          {interaction?.description}
         </div>
       </div>
-      <Button className="col-span-3 m-2" onClick={() => setOpended(true)}>
-        {Opened ? "Verify" : "Open"}
-      </Button>
+      {Opened ? (
+        <Button className="col-span-3 m-2" onClick={verifyTransaction}>Verify</Button>
+      ) : (
+        <>
+          <a href={interaction?.url} target="_blank" className=" col-span-3" rel="noreferrer noopener" onClick={() => setOpended(true)}>
+            <Button className="col-span-3 m-2 w-full" >
+              Open
+            </Button>
+          </a>
+        </>
+      )}
     </div>
   )
 }
