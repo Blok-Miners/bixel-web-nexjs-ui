@@ -38,4 +38,12 @@ export class ContestService extends BindService {
       throw new Error("Failed to create contest")
     }
   }
+
+  public async getContestDetails(id: string) {
+    try {
+      return (await this.http.get(`/get-contest-details/${id}`)).data
+    } catch (error) {
+      throw error
+    }
+  }
 }

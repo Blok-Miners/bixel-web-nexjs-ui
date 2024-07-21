@@ -34,7 +34,7 @@ export const ActivityCard = () => {
             <TableRow className="border-th-accent-2">
               <TableHead className="text-th-accent">Product</TableHead>
               <TableHead className="text-th-accent">Activity</TableHead>
-              <TableHead className="text-th-accent">Reward</TableHead>
+              {/* <TableHead className="text-th-accent">Reward</TableHead> */}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -42,12 +42,12 @@ export const ActivityCard = () => {
               <TableRow key={activity.id}>
                 <TableCell>{activity.product.name}</TableCell>
                 <TableCell>{activity.activity}</TableCell>
-                <TableCell>
+                {/* <TableCell>
                   {Number(
                     formatUnits(BigInt(activity.amount), activity.tokenDecimal),
                   ).toLocaleString("en-US")}
                   {activity.tokenSymbol}
-                </TableCell>
+                </TableCell> */}
               </TableRow>
             ))}
           </TableBody>

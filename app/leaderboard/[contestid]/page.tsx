@@ -1,9 +1,9 @@
-import { Leaderboard } from "@/components/Leaderboard/Leaderboard"
+import Leaderboard from "@/components/Leaderboard/Leaderboard";
 
-export default function Page() {
+export default function Page({ params }: { params: { contestId: string } }) {
   return (
     <div>
-      <Leaderboard />
+      <Leaderboard contestId={params.contestId} />
     </div>
   )
 }
