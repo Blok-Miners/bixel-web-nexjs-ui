@@ -38,30 +38,6 @@ const CreateProjectSubmission = ({
               className="w-full rounded-lg border border-th-accent-2 p-4"
             />
           </div>
-          <div className="col-span-1 gap-4">
-            <div className="flex flex-col gap-2">
-              <Label>Start Date</Label>
-              <DatePicker
-                value={projectSubmission.startDate}
-                onChange={(date) => handleDateChange("startDate", date)}
-                onBlur={() => {}}
-                name="startDate"
-                ref={null}
-              />
-            </div>
-          </div>
-          <div className="col-span-1 gap-4">
-            <div className="flex flex-col gap-2">
-              <Label>End Date</Label>
-              <DatePicker
-                value={projectSubmission.endDate}
-                onChange={(date) => handleDateChange("endDate", date)}
-                onBlur={() => {}}
-                name="endDate"
-                ref={null}
-              />
-            </div>
-          </div>
 
           <div className="col-span-2 space-y-2 rounded-xl">
             <Label>Protocol URL</Label>
