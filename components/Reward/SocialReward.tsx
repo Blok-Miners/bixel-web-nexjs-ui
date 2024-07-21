@@ -107,6 +107,7 @@ export default function CreateSocialReward() {
               {socialLinks.map((item, index) => (
                 <>
                   <Select
+                    key={index}
                     onValueChange={(value) =>
                       handleAdd({
                         name: item.name,
@@ -126,7 +127,7 @@ export default function CreateSocialReward() {
                       <SelectContent className="bg-white">
                         <SelectGroup>
                           {item.content.map((content, index) => (
-                            <SelectItem value={content.value}>
+                            <SelectItem key={index} value={content.value}>
                               <div className="flex items-center gap-2">
                                 <div>{item.icon}</div> <div>{content.name}</div>
                               </div>
@@ -142,7 +143,7 @@ export default function CreateSocialReward() {
             <div className="flex flex-col gap-4">
               {added.map((item, index) => {
                 return (
-                  <div className="flex flex-col overflow-hidden rounded-lg bg-slate-300">
+                  <div key={index} className="flex flex-col overflow-hidden rounded-lg bg-slate-300">
                     <div
                       style={{ backgroundColor: item.color }}
                       className="flex justify-between bg-blue-700 p-2 px-4"
