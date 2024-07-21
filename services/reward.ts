@@ -25,4 +25,16 @@ export class RewardService extends bind {
       throw error
     }
   }
+
+  public async getClaimableRewards() {
+    try {
+      return (
+        await this.http.get(`/claimable-rewards`, {
+          headers: { Authorization: getAccessToken() },
+        })
+      ).data
+    } catch (error) {
+      throw error
+    }
+  }
 }

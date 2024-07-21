@@ -52,7 +52,7 @@ export default function BountyDetails({
         </div>
 
         <div className="space-y-2 rounded-xl">
-          <Label>Project URL</Label>
+          <Label>Profile URL</Label>
           <Input
             type="url"
             placeholder="URL"

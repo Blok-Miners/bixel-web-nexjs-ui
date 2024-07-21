@@ -3,11 +3,12 @@ import { useEffect, useState } from "react"
 import CreateBlockchainReward from "./BlockchainReward"
 import CreateSocialReward from "./SocialReward"
 
-import { CreateProjectSubmission } from "./ProjectSubmission"
 import { BugBounty } from "./BugBounty"
 
 import Holdings from "./Holdings"
 import { ChainService } from "@/services/chain"
+import Registration from "./Registration"
+import { ProjectSubmission } from "./ProjectSubmission"
 
 export default function CreateReward({ productId }: { productId: string }) {
   const chains = new ChainService()
@@ -108,19 +109,34 @@ export default function CreateReward({ productId }: { productId: string }) {
             >
               Bug Bounty
             </div>
+
+            <div
+              className={` ${
+                reward === "Registration Verification"
+                  ? "bg-th-black"
+                  : "bg-th-black-2"
+              } cursor-pointer rounded-lg p-2 px-4`}
+              onClick={() => {
+                setReward("Registration Verification")
+              }}
+            >
+              Registration Verification
+            </div>
           </div>
         </div>
         <div className="h-[80vh] w-[1000px] rounded-xl bg-th-black-2 p-4">
           {reward === "blockchain" ? (
-            <CreateBlockchainReward productId={productId}/>
+            <CreateBlockchainReward productId={productId} />
           ) : reward === "social" ? (
             <CreateSocialReward />
           ) : reward === "Project Submission" ? (
-            <CreateProjectSubmission />
+            <ProjectSubmission chain={chain} productId={productId} />
           ) : reward === "Bug Bounty" ? (
             <BugBounty chain={chain} productId={productId} />
           ) : reward === "holdings" ? (
-            <Holdings chain={chain} productId={productId}/>
+            <Holdings chain={chain} productId={productId} />
+          ) : reward === "Registration Verification" ? (
+            <Registration chain={chain} productId={productId} />
           ) : null}
         </div>
       </div>
