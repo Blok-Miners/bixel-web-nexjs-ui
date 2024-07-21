@@ -10,11 +10,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { tokenAbi } from "@/lib/tokenAbi"
+import { formatArray } from "@/lib/utils"
+import { ChainService } from "@/services/chain"
+import { Address } from "@/types/web3"
+import { useEffect, useState } from "react"
 import {
   FaCheck,
   FaLongArrowAltLeft,
   FaLongArrowAltRight,
 } from "react-icons/fa"
+import { getAddress } from "viem"
+import { useAccount, useReadContracts } from "wagmi"
 
 export default function RewardDetails({
   setStep3Error,
@@ -32,6 +39,54 @@ export default function RewardDetails({
   setDepositAmountNFT,
   depositAmountNFT,
 }: any) {
+  const [blockchainData, setBlockchainData] = useState({
+    chainDeployed: "",
+  })
+  const [chain, setChain] = useState([])
+  const { address } = useAccount()
+  const [tokenAddress, setTokenAddress] = useState<Address | undefined>()
+  const getAllChain = async () => {
+    const chains = new ChainService()
+    const allChain = await chains.getChains()
+    if (allChain) {
+      setChain(allChain)
+    }
+  }
+
+  const {
+    data: balances,
+    isLoading: balancesLoading,
+    refetch,
+  } = useReadContracts({
+    allowFailure: true,
+    contracts: [
+      {
+        abi: tokenAbi,
+        address: getAddress(tokens[0].address),
+        functionName: "balanceOf",
+        args: formatArray([address]),
+      },
+      {
+        abi: tokenAbi,
+        address: getAddress(tokens[0].address),
+        functionName: "allowance",
+        args: formatArray([address, contractAddress]),
+      },
+    ],
+  })
+
+  const handleDepositTokens = () => {
+    const { value } = e.target
+    setRewardType(value)
+    setStep3Error("")
+  }
+
+  useEffect(() => {
+    getAllChain()
+  }, [])
+
+  const handleDeposit = () => {}
+
   return (
     <div className="flex flex-col gap-6">
       <div className="text-lg font-bold">Select Reward type</div>
@@ -104,7 +159,14 @@ export default function RewardDetails({
           <div className="grid grid-cols-2 gap-6">
             <div className="flex w-full flex-col gap-2">
               <div>Chain</div>
-              <Select>
+              <Select
+                onValueChange={(value) =>
+                  setBlockchainData({
+                    ...blockchainData,
+                    chainDeployed: value,
+                  })
+                }
+              >
                 <SelectTrigger
                   className={`flex h-full w-full items-center gap-2 rounded-lg border border-th-accent-2 bg-th-black-2 p-4 hover:bg-opacity-50`}
                 >
@@ -112,18 +174,14 @@ export default function RewardDetails({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="Polygonmatic" className="text-white">
-                      Polygonmatic
-                    </SelectItem>
-                    <SelectItem
-                      value="Binance Smartchain"
-                      className="text-white"
-                    >
-                      Binance Smartchain
-                    </SelectItem>
-                    <SelectItem value="Ethereum Mainnet" className="text-white">
-                      Ethereum Mainnet
-                    </SelectItem>
+                    {chain &&
+                      chain.map((item: any, index: any) => {
+                        return (
+                          <SelectItem value={item.id} className="text-white">
+                            {item.name}
+                          </SelectItem>
+                        )
+                      })}
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -174,7 +232,14 @@ export default function RewardDetails({
           <div className="grid grid-cols-2 gap-6">
             <div className="flex w-full flex-col gap-2">
               <div>Chain</div>
-              <Select>
+              <Select
+                onValueChange={(value) =>
+                  setBlockchainData({
+                    ...blockchainData,
+                    chainDeployed: value,
+                  })
+                }
+              >
                 <SelectTrigger
                   className={`flex h-full w-full items-center gap-2 rounded-lg border border-th-accent-2 bg-th-black-2 p-4 hover:bg-opacity-50`}
                 >
@@ -182,18 +247,14 @@ export default function RewardDetails({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="Polygonmatic" className="text-white">
-                      Polygonmatic
-                    </SelectItem>
-                    <SelectItem
-                      value="Binance Smartchain"
-                      className="text-white"
-                    >
-                      Binance Smartchain
-                    </SelectItem>
-                    <SelectItem value="Ethereum Mainnet" className="text-white">
-                      Ethereum Mainnet
-                    </SelectItem>
+                    {chain &&
+                      chain.map((item: any, index: any) => {
+                        return (
+                          <SelectItem value={item.id} className="text-white">
+                            {item.name}
+                          </SelectItem>
+                        )
+                      })}
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -237,7 +298,9 @@ export default function RewardDetails({
             </div>
             <div className="flex flex-col gap-2">
               <div>Deposit Tokens </div>
-              <div className="p-2 text-lg font-semibold">{depositAmountNFT}</div>
+              <div className="p-2 text-lg font-semibold">
+                {depositAmountNFT}
+              </div>
             </div>
             <Button className="w-fit">Deposit</Button>
           </div>

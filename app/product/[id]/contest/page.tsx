@@ -7,9 +7,5 @@ export default function page({
     id: string
   }
 }) {
-  return (
-    <div>
-      <CreateReward productId={params.id}/>
-    </div>
-  )
+  return <CreateReward productId={params.id} />
 }
