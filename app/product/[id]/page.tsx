@@ -16,7 +16,6 @@ export default async function page({
   }
 }) {
   const product = await productService.getProduct(params.id)
-  console.log(product.socialMediaLinks)
   return (
     <div className="flex flex-col">
       <div className="relative h-64 overflow-hidden">
