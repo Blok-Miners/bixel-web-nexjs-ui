@@ -120,7 +120,7 @@ export default function CreateReward({ productId }: { productId: string }) {
           ) : reward === "Bug Bounty" ? (
             <BugBounty chain={chain} productId={productId} />
           ) : reward === "holdings" ? (
-            <Holdings chain={chain} />
+            <Holdings chain={chain} productId={productId}/>
           ) : null}
         </div>
       </div>
