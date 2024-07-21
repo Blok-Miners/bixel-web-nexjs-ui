@@ -42,7 +42,11 @@ export class ContestService extends BindService {
 
   public async getContestDetails(id: string) {
     try {
-      return (await this.http.get(`/get-contest-details/${id}`)).data
+      return (
+        await this.http.get(`/get-contest-details/${id}`, {
+          headers: { Authorization: getAccessToken() },
+        })
+      ).data
     } catch (error) {
       throw error
     }

@@ -22,4 +22,12 @@ export class Rewards extends bind {
       throw error
     }
   }
+
+  async claimReward(rewardId: string , body:Record<string, never> = {}) {
+    await this.http.post(`/claim-reward/${rewardId}`, body,
+      {
+        headers: { Authorization: getAccessToken() },
+      }
+    );
+  }
 }
