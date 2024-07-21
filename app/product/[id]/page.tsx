@@ -16,6 +16,7 @@ export default async function page({
   }
 }) {
   const product = await productService.getProduct(params.id)
+  console.log(product.socialMediaLinks)
   return (
     <div className="flex flex-col">
       <div className="relative h-64 overflow-hidden">
@@ -26,7 +27,7 @@ export default async function page({
         />
         <Actions id={params.id} owner={product.owner} />
         <div className="absolute bottom-8 right-8 z-10 flex gap-4">
-          <Socials socials={product.socialMediaLinks} />
+          <Socials socials={JSON.parse(product.socialMediaLinks)} />
           <Follow id={params.id} />
         </div>
       </div>
@@ -40,7 +41,7 @@ export default async function page({
             github={product.github}
           />
         </div>
-        <Contests id={product.id} ownerId ={product.owner.walletAddress} videoUrl={product.video} />
+        <Contests id={product.id} ownerId ={"0x50Ca1fde29D62292a112A72671E14a5d4f05580f"} videoUrl={product.video} />
       </div>
     </div>
   )
