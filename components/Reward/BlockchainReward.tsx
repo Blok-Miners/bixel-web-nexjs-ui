@@ -47,6 +47,15 @@ export default function CreateBlockchainReward({
   const [mode, setMode] = useState<ContestModeEnum>(ContestModeEnum.TIMEFRAME)
   const [rewardType, setRewardType] = useState("")
   const [totalWinners, setTotalWineers] = useState(0)
+
+  const handleDateChange = (name: string, date: Date | null) => {
+    if (name === "endDate") {
+      setEndDate(date)
+    } else if (name === "startDate") {
+      setStartDate(date)
+    }
+  }
+
   const handleChange = (e: any) => {
     const { name, value, type, files } = e.target
     setStep1Error("")
@@ -98,6 +107,8 @@ export default function CreateBlockchainReward({
         startDate,
         endDate,
       }
+
+      console.log(contestData)
 
       const res = await contestService.createContest(contestData)
       if (!res) {
@@ -179,8 +190,7 @@ export default function CreateBlockchainReward({
             loading={loading}
             startDate={startDate}
             endDate={endDate}
-            setStartDate={setStartDate}
-            setEndDate={setEndDate}
+            handleDateChange={handleDateChange}
           />
         )}
         {step === 3 && (
