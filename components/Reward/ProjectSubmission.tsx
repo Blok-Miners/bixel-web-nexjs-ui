@@ -6,7 +6,7 @@ import BountyDetails from "./BugBounty/BountyDetails"
 import ContestDetails from "./Blockchain/ContestDetails"
 import { ContestModeEnum } from "@/types/services/contest"
 import { ContestService } from "@/services/contest"
-import CreateProjectSubmission from "./ProjectSubmissionDetails"
+import CreateProjectSubmission from "./Project/ProjectSubmissionDetails"
 import RewardDetails from "./Blockchain/RewardDetails"
 
 export const ProjectSubmission = ({
@@ -20,13 +20,10 @@ export const ProjectSubmission = ({
   const [step, setStep] = useState(1)
   const [projectSubmission, setProjectSubmission] = useState({
     description: "",
-    profileUrl: "",
+    url: "",
     contractAddress: "",
     chain: "",
-    startDate: null,
-    endDate: null,
   })
-
 
   const [depositAmountToken, setDepositAmountToken] = useState(0)
   const [depositAmountNFT, setDepositAmountNFT] = useState(0)
@@ -45,12 +42,14 @@ export const ProjectSubmission = ({
   const [step1Error, setStep1Error] = useState("")
   const [step2Error, setStep2Error] = useState("")
   const [step3Error, setStep3Error] = useState("")
+  const [loading, setLoading] = useState(false)
 
-  const handleDateChange = (name: string, date: Date | undefined) => {
-    setProjectSubmission((prevState) => ({
-      ...prevState,
-      [name]: date,
-    }))
+  const handleDateChange = (name: string, date: Date | null) => {
+    if (name === "endDate") {
+      setEndDate(date)
+    } else if (name === "startDate") {
+      setStartDate(date)
+    }
   }
 
   const handleChange = (
@@ -63,42 +62,52 @@ export const ProjectSubmission = ({
     }))
   }
 
-  const handleSubmissionClick = async () => {
+  const handleContestClick = async () => {
     console.log(projectSubmission)
     console.log(totalWinners)
     console.log(mode)
+    console.log(startDate)
+    console.log(endDate)
     try {
       const contestData: any = {
         description: projectSubmission.description,
-        profileURL: projectSubmission.profileUrl,
+        url: projectSubmission.url,
+        contractAddress : projectSubmission.contractAddress,
+        chain: projectSubmission.chain,
         productId,
         mode,
         noOfWinners: totalWinners,
-        startTime: projectSubmission.startDate,
-        endTime: projectSubmission.endDate,
+        startTime: startDate,
+        endTime: endDate,
       }
-      if (projectSubmission.contractAddress) {
-        contestData.contractAddress = projectSubmission.contractAddress
+      const res = await contestService.createProjectSubmissionContest(contestData)
+      if (!res) {
+        return
       }
-      if (projectSubmission.chain) {
-        contestData.chain = projectSubmission.chain
-      }
-      const res = await contestService.createBugBountyContest(contestData)
-      if (!res) return
+      // setOpenDialog(true)
+      // setTitle("Success")
+      // setMessage("Bug Bounty Contest created successfully")
+      setLoading(false)
+      setContestId(res._id)
+      setStep(3)
       console.log(res)
     } catch (error) {
+      setOpenDialog(true)
+      setTitle("Failure")
+      setMessage("Something went wrong creating contest !")
+      setLoading(false)
       console.log(error)
     }
   }
 
   return (
     <>
-        <div className="sticky top-0 z-10 flex gap-4 bg-th-black-2 px-4 text-sm text-slate-200 shadow-lg">
+      <div className="sticky top-0 z-10 flex gap-4 bg-th-black-2 px-4 text-sm text-slate-200 shadow-lg">
         <button
           onClick={() => setStep(1)}
           className={`font-medium ${step === 1 && "border-b border-th-accent-2 text-th-accent-2"} flex cursor-pointer items-center gap-2 p-2 text-sm`}
         >
-          <div>Bounty Details</div>
+          <div>Project Details</div>
         </button>
         <button
           onClick={() => setStep(2)}
@@ -119,7 +128,7 @@ export const ProjectSubmission = ({
           <div>Reward type</div>
         </button>
       </div>
-      <div className="mt-8 px-4 h-[90%] overflow-y-auto">
+      <div className="mt-8 h-[90%] overflow-y-auto px-4">
         {step === 1 && (
           <CreateProjectSubmission
             projectSubmission={projectSubmission}
@@ -128,22 +137,28 @@ export const ProjectSubmission = ({
             setStep={setStep}
             handleChange={handleChange}
             handleDateChange={handleDateChange}
+            chain={chain}
           />
         )}
         {step === 2 && (
           <ContestDetails
+            step2Error={step2Error}
             setStep2Error={setStep2Error}
+            setStep={setStep}
+            loading={loading}
+            setLoading={setLoading}
             mode={mode}
             setMode={setMode}
-            setStep={setStep}
             ContestModeEnum={ContestModeEnum}
             setTotalWineers={setTotalWineers}
-            handleContestClick={handleSubmissionClick}
-            step2Error={step2Error}
+            handleContestClick={handleContestClick}
             totalWinners={totalWinners}
+            startDate={startDate}
+            endDate={endDate}
+            handleDateChange={handleDateChange}
           />
         )}
-          {step === 3 && (
+        {step === 3 && (
           <RewardDetails
             setStep3Error={setStep3Error}
             setRewardType={setRewardType}

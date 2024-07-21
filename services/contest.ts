@@ -64,6 +64,38 @@ export class ContestService extends BindService {
     }
   }
 
+  public async createRegistrationVerificationContest(contestData: ICreateContest) {
+    try {
+      return (
+        await this.http.post(
+          "/create-registration-verification-contest",
+          contestData,
+          {
+            headers: { Authorization: getAccessToken() },
+          },
+        )
+      ).data
+    } catch (error) {
+      throw new Error("Failed to create contest")
+    }
+  }
+
+  public async createProjectSubmissionContest(contestData: ICreateContest) {
+    try {
+      return (
+        await this.http.post(
+          "/create-registration-verification-contest",
+          contestData,
+          {
+            headers: { Authorization: getAccessToken() },
+          },
+        )
+      ).data
+    } catch (error) {
+      throw new Error("Failed to create contest")
+    }
+  }
+
   public async getInteractionDetails(id: string) {
     try {
       return (

@@ -1,20 +1,21 @@
 "use client"
 import React from "react"
 
-import { Textarea } from "../ui/textarea"
-import DatePicker from "../ui/datepicker"
-import { Label } from "../ui/label"
-import { Input } from "../ui/input"
+import { Textarea } from "../../ui/textarea"
+import DatePicker from "../../ui/datepicker"
+import { Label } from "../../ui/label"
+import { Input } from "../../ui/input"
 import {
   Select,
   SelectContent,
   SelectGroup,
   SelectItem,
   SelectTrigger,
-} from "../ui/select"
-import { ScrollArea } from "../ui/scroll-area"
+  SelectValue,
+} from "../../ui/select"
+import { ScrollArea } from "../../ui/scroll-area"
 import { FaLongArrowAltRight } from "react-icons/fa"
-import { Button } from "../ui/button"
+import { Button } from "../../ui/button"
 
 const CreateProjectSubmission = ({
   projectSubmission,
@@ -23,6 +24,7 @@ const CreateProjectSubmission = ({
   setStep,
   handleChange,
   handleDateChange,
+  chain
 }: any) => {
   return (
     <>
@@ -32,8 +34,8 @@ const CreateProjectSubmission = ({
             <div>Rules For Submission</div>
             <Textarea
               onChange={handleChange}
-              name="rulesForSubmission"
-              value={projectSubmission.rulesForSubmission}
+              name="description"
+              value={projectSubmission.description}
               placeholder="Rules For Submission"
               className="w-full rounded-lg border border-th-accent-2 p-4"
             />
@@ -45,8 +47,8 @@ const CreateProjectSubmission = ({
               type="url"
               placeholder="URL"
               className="rounded-lg bg-transparent"
-              value={projectSubmission.protocolUrl}
-              name="protocolUrl"
+              value={projectSubmission.url}
+              name="url"
               onChange={handleChange}
               required
             />
@@ -66,34 +68,32 @@ const CreateProjectSubmission = ({
 
           <div className="col-span-2 space-y-2 rounded-xl">
             <Label>Select a chain</Label>
-
             <Select
-              onValueChange={(value) =>
-                setProjectSubmission({
-                  ...projectSubmission,
-                  chain: value,
-                })
-              }
+            onValueChange={(value) =>
+              setProjectSubmission({
+                ...projectSubmission,
+                chain: value,
+              })
+            }
+          >
+            <SelectTrigger
+              className={`flex h-fit w-full items-center gap-2 rounded-lg border border-th-accent-2 bg-th-black-2 hover:bg-opacity-50`}
             >
-              <SelectTrigger
-                className={`flex items-center gap-2 rounded-lg border border-th-accent-2 bg-th-black-2 font-semibold hover:bg-opacity-50`}
-              >
-                <div>Select a chain</div>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="Polygonmatic">
-                    <div>Polygonmatic</div>
-                  </SelectItem>
-                  <SelectItem value="Binance Smartchain">
-                    <div>Binance Smartchain</div>
-                  </SelectItem>
-                  <SelectItem value="Ethereum Mainnet">
-                    <div>Ethereum Mainnet</div>
-                  </SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
+              <SelectValue placeholder="Select a chain" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectGroup>
+                {chain &&
+                  chain.map((item: any, index: any) => {
+                    return (
+                      <SelectItem value={item.id} className="text-white">
+                        {item.name}
+                      </SelectItem>
+                    )
+                  })}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
           </div>
           <Button className="w-fit" onClick={() => setStep(2)}>
             Next

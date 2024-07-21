@@ -20,7 +20,7 @@ export default function RegistrationDetails({
 }: any) {
   return (
     <div className="grid grid-cols-2 gap-6">
-      <div className="col-span-2 text-lg font-bold">Contract Details</div>
+      <div className="col-span-2 text-lg font-bold">Registration Details</div>
       <div className="col-span-2 flex flex-col gap-2">
         <div>Description</div>
         <Textarea

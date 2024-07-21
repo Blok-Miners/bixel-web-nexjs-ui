@@ -68,7 +68,7 @@ export default function Registration({ productId, chain }: any) {
         startTime: startDate,
         endTime: endDate,
       }
-      const res = await service.createHoldingsVerificationContest(contestData)
+      const res = await service.createRegistrationVerificationContest(contestData)
       if (!res) {
         return
       }
@@ -94,7 +94,7 @@ export default function Registration({ productId, chain }: any) {
           onClick={() => setStep(1)}
           className={`font-medium ${step === 1 && "border-b border-th-accent-2 text-th-accent-2"} flex cursor-pointer items-center gap-2 p-2 text-sm`}
         >
-          <div>Contract Details</div>
+          <div>Registration Details</div>
         </button>
         <button
           onClick={() => setStep(2)}
