@@ -18,7 +18,7 @@ import { PixelService } from "@/services/pixel"
 interface ITransaction {
   txHash: Address
   payment_date: string
-  planId: number
+  planId: string
   amount: string
   expiry_date: string
 }
@@ -40,6 +40,19 @@ export const TransactionHistory = () => {
     getTransactions()
   }, [])
 
+  const getPlanDescription = (planId: string) => {
+    switch (planId) {
+      case "0":
+        return "1 month"
+      case "1":
+        return "6 months"
+      case "2":
+        return "12 months"
+      default:
+        return "Unknown plan"
+    }
+  }
+
   return (
     <ScrollArea className="h-[400px] rounded-2xl bg-th-accent-2/10 p-4">
       <Table>
@@ -55,7 +68,6 @@ export const TransactionHistory = () => {
               Amount
             </TableHead>
             <TableHead className="text-th-accent">Expiry</TableHead>
-            {/* <TableHead className="text-th-accent">Bixels</TableHead> */}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -65,7 +77,7 @@ export const TransactionHistory = () => {
                 {shortenAddress(transaction.txHash)}
               </TableCell>
               <TableCell>{transaction.payment_date}</TableCell>
-              <TableCell>{transaction.planId}</TableCell>
+              <TableCell> {getPlanDescription(transaction.planId)} </TableCell>
               <TableCell>{transaction.amount}</TableCell>
               <TableCell>{transaction.expiry_date}</TableCell>
             </TableRow>
