@@ -99,7 +99,7 @@ export const RewardInteraction = ({ id }: { id: string }) => {
 
   return (
     <div>
-      <div className="grid w-full max-w-xl grid-cols-2 gap-4 rounded-2xl bg-th-accent-2/10 p-4">
+      <div className="grid w-full grid-cols-2 gap-4 rounded-2xl bg-th-accent-2/10 p-4">
         <span className="col-span-2 rounded-2xl px-4 py-1 text-center text-xl font-bold">
           Social Media
         </span>
