@@ -53,7 +53,7 @@ export const ContractInteraction = ({ id }: { id: string }) => {
       </span>
       <div className="col-span-3 space-y-2 rounded-xl p-2 text-sm">
         <span className="w-full text-center">Contract Address</span>
-        <div className="rounded-xl bg-th-accent-2/10 p-4 text-base font-medium">
+        <div className="rounded-xl bg-th-accent-2/10 p-4 text-base font-medium truncate">
           {interaction?.contractAddress}
         </div>
       </div>
@@ -63,10 +63,10 @@ export const ContractInteraction = ({ id }: { id: string }) => {
           {interaction?.chain}
         </div>
       </div>
-      <div className="col-span-2 space-y-2 rounded-xl p-2">
+      <div className="col-span-2 space-y-2 rounded-xl p-2 ">
         <span className="text-sm">Interaction URL</span>
 
-        <div className="rounded-xl bg-th-accent-2/10 p-4 text-base font-medium">
+        <div className="rounded-xl bg-th-accent-2/10 p-4 text-base font-medium truncate">
           {interaction?.url}
         </div>
       </div>

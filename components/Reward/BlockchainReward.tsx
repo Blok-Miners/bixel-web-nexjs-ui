@@ -211,6 +211,7 @@ export default function CreateBlockchainReward({
         )}
         {step === 3 && (
           <RewardDetails
+            productId={productId}
             contestId={contestId}
             setStep3Error={setStep3Error}
             setRewardType={setRewardType}

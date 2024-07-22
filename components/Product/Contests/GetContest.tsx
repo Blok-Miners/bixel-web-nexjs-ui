@@ -4,6 +4,7 @@ import { ContractInteraction } from "./ContractInteraction"
 import ProjectSubmission from "./ProjectSubmission"
 import { HoldingVerification } from "./HoldingVerification"
 import RegistrationVerification from "./RegistrationVerification"
+import { RewardInteraction } from "@/components/Interactions/RewardInteraction"
 
 interface IGetContest {
   type: ContestInteractionEnum
@@ -32,9 +33,11 @@ export default function GetContest({
     case ContestInteractionEnum.PROJECT_SUBMISSION:
       return <ProjectSubmission id={contestId} projectId={interactionId} />
     case ContestInteractionEnum.HOLDINGS_VERIFICATION:
-      return <HoldingVerification id={contestId} />
+      return <HoldingVerification id={contestId} interactionId={interactionId} />
     case ContestInteractionEnum.SMART_CONTRACT:
       return <RegistrationVerification id={contestId} />
+    case ContestInteractionEnum.SOCIAL_MEDIA:
+      return <RewardInteraction  id={contestId}/>
     default:
       return <></>
   }

@@ -38,7 +38,7 @@ export enum SocialMediaEnum {
 }
 
 export interface ISocialMediaInteraction {
-  socialMedia: ISocialMedia[]
+  socialMedia?: ISocialMedia[]
   description: string
   productId: string
   noOfWinners: number
@@ -61,4 +61,8 @@ export interface IChain {
   nativeCoin?:string
   nativeCoinDecimal?:string
   rpc?:string
+}
+
+export interface IFetchSocialMedia extends ISocialMedia {
+  _id:string
 }
