@@ -46,7 +46,7 @@ export default function RewardDetails({
   setCouponCode,
   setDepositAmountNFT,
   depositAmountNFT,
-  contestId
+  contestId,
 }: any) {
   const [blockchainData, setBlockchainData] = useState({
     chainDeployed: "",
@@ -154,7 +154,7 @@ export default function RewardDetails({
         totalTokens: depositAmountToken,
         txHash: tx!,
         contestId: contestId,
-        totalWinners 
+        totalWinners,
       })
       console.log(res)
       setLoading(false)
@@ -315,7 +315,11 @@ export default function RewardDetails({
                     {chain &&
                       chain.map((item: any, index: any) => {
                         return (
-                          <SelectItem key={index} value={item.id} className="text-white">
+                          <SelectItem
+                            key={index}
+                            value={item.id}
+                            className="text-white"
+                          >
                             {item.name}
                           </SelectItem>
                         )
@@ -397,7 +401,11 @@ export default function RewardDetails({
                     {chain &&
                       chain.map((item: any, index: any) => {
                         return (
-                          <SelectItem key={index} value={item.id} className="text-white">
+                          <SelectItem
+                            key={index}
+                            value={item.id}
+                            className="text-white"
+                          >
                             {item.name}
                           </SelectItem>
                         )

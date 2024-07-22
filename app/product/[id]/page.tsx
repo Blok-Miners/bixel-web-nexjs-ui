@@ -30,8 +30,8 @@ export default async function page({
           <Follow id={params.id} />
         </div>
       </div>
-      <div className="flex">
-        <div className="h-full min-h-[80vh] min-w-[320px] max-w-[320px] bg-th-black-2 p-8">
+      <div className="flex min-h-screen relative">
+        <div className="h-full min-h-screen sticky left-0 top-0 min-w-[320px] max-w-[320px] bg-th-black-2 p-8">
           <Info
             about={product.about}
             // socials={JSON.parse(product.socialMediaLinks)}
