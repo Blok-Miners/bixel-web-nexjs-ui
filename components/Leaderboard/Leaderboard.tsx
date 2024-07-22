@@ -16,6 +16,7 @@ import { Leaderboard } from "@/services/leaderboard"
 import { Address } from "@/types/web3"
 import { Button } from "../ui/button"
 import { ContestService } from "@/services/contest"
+import { RewardService } from "@/services/reward"
 
 interface LeaderboardProps {
   contestId: string
@@ -43,6 +44,7 @@ export default function LeaderboardTable({ contestId }: LeaderboardProps) {
   const [mode, setMode] = useState("")
   const [tabledata, setTabledata] = useState<TableDataItem[]>([])
   const [isOwner, setIsOwner] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const fetchLeaderboard = async () => {
     try {
@@ -56,6 +58,19 @@ export default function LeaderboardTable({ contestId }: LeaderboardProps) {
       console.error(error)
     }
   }
+
+  const handleDistributeReward = async () => {
+    try {
+      setLoading(true)
+      const rewardService = new RewardService()
+      const res = await rewardService.distributeLeaderboardRewards(contestId)
+      console.log(res)
+    } catch (error) {
+      setLoading(false)
+      console.log(error)
+    }
+  }
+
   const checkOwnership = async () => {
     try {
       const contestService = new ContestService()
@@ -76,12 +91,20 @@ export default function LeaderboardTable({ contestId }: LeaderboardProps) {
   }, [tabledata])
 
   return (
-    <ScrollArea className="mx-auto mb-4 mt-8 h-[80vh] w-full max-w-6xl rounded-2xl border-2 border-th-accent-2 bg-th-black-2 p-4 px-10 shadow-2xl">
+    <ScrollArea className="mx-auto mb-4 mt-8 h-[80vh] w-full max-w-6xl rounded-2xl border-2 border-th-accent-2 bg-th-black-2 py-4 shadow-2xl">
       {mode === "LEADERBOARD" && (
         <>
-          <div className="flex w-full items-center justify-between text-2xl font-semibold">
+          <div className="flex w-full items-center justify-between px-8 text-2xl font-semibold">
             Leaderboard
-            {isOwner && <Button>Distribute Reward</Button>}
+            {isOwner && (
+              <Button
+                isLoading={loading}
+                disabled={loading}
+                onClick={() => handleDistributeReward()}
+              >
+                Distribute Reward
+              </Button>
+            )}
           </div>
           <Table className="mt-8 w-full text-base">
             <TableHeader className="border-th-accent-2">
@@ -131,7 +154,7 @@ export default function LeaderboardTable({ contestId }: LeaderboardProps) {
       )}
       {mode === "TIMEFRAME" && (
         <>
-          <div className="w-full text-2xl font-semibold">Timeframe</div>
+          <div className="w-full px-8 text-2xl font-semibold">Timeframe</div>
           <Table className="mt-8 w-full text-base">
             <TableHeader className="border-th-accent-2">
               <TableRow className="border-th-accent-2">
