@@ -4,13 +4,16 @@ import React, { useState } from "react"
 import { FaLongArrowAltRight } from "react-icons/fa"
 import BountyDetails from "./BugBounty/BountyDetails"
 import ContestDetails from "./Blockchain/ContestDetails"
-import { ContestModeEnum, IChain, ICreateContest } from "@/types/services/contest"
+import {
+  ContestModeEnum,
+  IChain,
+  ICreateContest,
+} from "@/types/services/contest"
 import { Address } from "viem"
 import { Description } from "@radix-ui/react-dialog"
 import { ContestService } from "@/services/contest"
 import ConfirmationDialog from "../Shared/ConfirmationDialog"
 import RewardDetails from "./Blockchain/RewardDetails"
-
 
 export const BugBounty = ({
   productId,
@@ -47,7 +50,7 @@ export const BugBounty = ({
   const [loading, setLoading] = useState(false)
   const [step1Error, setStep1Error] = useState("")
   const [step2Error, setStep2Error] = useState<string | undefined>("")
-  const [step3Error, setStep3Error] = useState("")
+  const [step3Error, setStep3Error] = useState<string | undefined>("")
 
   const handleDateChange = (name: string, date: Date | null) => {
     if (name === "endDate") {

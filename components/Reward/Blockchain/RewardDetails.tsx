@@ -17,7 +17,7 @@ import { formatArray } from "@/lib/utils"
 import { ChainService } from "@/services/chain"
 import { RewardService } from "@/services/reward"
 import { Address } from "@/types/web3"
-import { useEffect, useState } from "react"
+import { Dispatch, useEffect, useState } from "react"
 import {
   FaCheck,
   FaLongArrowAltLeft,
@@ -30,6 +30,24 @@ import {
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi"
+
+interface IRewardDetails {
+  setStep3Error?: Dispatch<React.SetStateAction<string | undefined>>
+  setRewardType?: Dispatch<React.SetStateAction<string>>
+  setCouponType?: Dispatch<React.SetStateAction<string>>
+  rewardType?: string
+  couponType?: string
+  setDepositAmountToken?: any
+  totalWinners?: number
+  depositAmountToken?: any
+  setStep?: any
+  step3Error?: any
+  couponCode?: any
+  setCouponCode?: any
+  setDepositAmountNFT?: any
+  depositAmountNFT?: any
+  contestId?: any
+}
 
 export default function RewardDetails({
   setStep3Error,
@@ -47,7 +65,7 @@ export default function RewardDetails({
   setDepositAmountNFT,
   depositAmountNFT,
   contestId,
-}: any) {
+}: IRewardDetails) {
   const [blockchainData, setBlockchainData] = useState({
     chainDeployed: "",
   })
@@ -145,6 +163,7 @@ export default function RewardDetails({
   const handleCreateTokenPool = async () => {
     try {
       // if (!tokenAddress || !balances || !amountPerWinner || ) return
+      if (!totalWinners) return
       const rewardService = new RewardService()
       const res = await rewardService.createTokenPool({
         address: getAddress(tokenAddress!),
@@ -221,8 +240,8 @@ export default function RewardDetails({
       <div className="flex flex-col gap-6">
         <div
           onClick={() => {
-            setStep3Error("")
-            setRewardType("couponcode")
+            setStep3Error?.("")
+            setRewardType?.("couponcode")
           }}
           className={`${rewardType === "couponcode" ? "bg-th-accent-2 text-black" : "bg-th-black-2 hover:bg-[#3c4646]"} flex cursor-pointer items-center justify-between rounded-lg border border-th-black p-4 shadow-md transition-all duration-200`}
         >
@@ -269,8 +288,8 @@ export default function RewardDetails({
         )}
         <div
           onClick={() => {
-            setStep3Error("")
-            setRewardType("token")
+            setStep3Error?.("")
+            setRewardType?.("token")
           }}
           className={`${rewardType === "token" ? "bg-th-accent-2 text-black" : "bg-th-black-2 hover:bg-[#3c4646]"} flex cursor-pointer items-center justify-between rounded-lg border border-th-black p-4 shadow-md transition-all duration-200`}
         >
@@ -335,8 +354,8 @@ export default function RewardDetails({
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const value: any = e.target.value
                   setAmountPerWinner(value)
-                  setDepositAmountToken(value * totalWinners)
-                  console.log(value * totalWinners)
+                  setDepositAmountToken(totalWinners ? value * totalWinners : 0)
+                  console.log(totalWinners ? value * totalWinners : 0)
                 }}
                 type="number"
                 className="px-4 py-6"
@@ -365,8 +384,8 @@ export default function RewardDetails({
         )}
         <div
           onClick={() => {
-            setStep3Error("")
-            setRewardType("nft")
+            setStep3Error?.("")
+            setRewardType?.("nft")
           }}
           className={`${rewardType === "nft" ? "bg-th-accent-2 text-black" : "bg-th-black-2 hover:bg-[#3c4646]"} flex cursor-pointer items-center justify-between rounded-lg border border-th-black p-4 shadow-md transition-all duration-200`}
         >
@@ -439,8 +458,7 @@ export default function RewardDetails({
               <Input
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const value: any = e.target.value
-                  setDepositAmountNFT(value * totalWinners)
-                  console.log(value * totalWinners)
+                  setDepositAmountNFT(totalWinners ? value * totalWinners : 0)
                 }}
                 type="number"
                 className="px-4 py-6"

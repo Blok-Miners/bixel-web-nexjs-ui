@@ -85,7 +85,7 @@ export default function CreateBlockchainReward({
 
   const [step1Error, setStep1Error] = useState("")
   const [step2Error, setStep2Error] = useState<string | undefined>("")
-  const [step3Error, setStep3Error] = useState("")
+  const [step3Error, setStep3Error] = useState<string | undefined>("")
 
   const [openDialog, setOpenDialog] = useState(false)
   const [title, setTitle] = useState("")

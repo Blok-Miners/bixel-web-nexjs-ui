@@ -42,7 +42,7 @@ export default function Registration({
   const [loading, setLoading] = useState(false)
   const [step1Error, setStep1Error] = useState("")
   const [step2Error, setStep2Error] = useState<string | undefined>("")
-  const [step3Error, setStep3Error] = useState("")
+  const [step3Error, setStep3Error] = useState<string | undefined>("")
 
   const handleDateChange = (name: string, date: Date | null) => {
     if (name === "endDate") {
@@ -164,6 +164,7 @@ export default function Registration({
         )}
         {step === 3 && (
           <RewardDetails
+            contestId={contestId}
             setStep3Error={setStep3Error}
             setRewardType={setRewardType}
             setCouponType={setCouponType}

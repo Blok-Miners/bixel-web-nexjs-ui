@@ -66,7 +66,7 @@ export default function CreateSocialReward({
   const [loading, setLoading] = useState(false)
   const [step1Error, setStep1Error] = useState("")
   const [step2Error, setStep2Error] = useState<string | undefined>("")
-  const [step3Error, setStep3Error] = useState("")
+  const [step3Error, setStep3Error] = useState<string | undefined>("")
   const [description, setDescription] = useState("")
 
   const socialLinks = [
