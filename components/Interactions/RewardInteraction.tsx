@@ -14,6 +14,7 @@ import {
   IFetchSocialMedia,
   ISocialMedia,
   ISocialMediaInteraction,
+  ISocialSubmissions,
 } from "@/types/services/contest"
 import { userAgent } from "next/server"
 
@@ -37,7 +38,7 @@ export const RewardInteraction = ({ id }: { id: string }) => {
   const [socialMedias, setSocialMedias] = useState<IFetchSocialMedia[]>()
   const [username, setUsername] = useState<string>("")
   const [opened, setOpened] = useState(false)
-  const [allSubmissions, setAllSubmissions] = useState<any[]>()
+  const [allSubmissions, setAllSubmissions] = useState<ISocialSubmissions[]>()
 
   const handleToggle = (index: number) => {
     setExpanded(expanded === index ? null : index) // Toggle the expanded state
@@ -123,8 +124,16 @@ export const RewardInteraction = ({ id }: { id: string }) => {
                     <div className="text-start capitalize">
                       {socialMedia.type.toLowerCase()}
                     </div>
-                    {allSubmissions?.some((item)=>item.socialMedia === socialMedia._id) ? (
-                      <div className="text-green-500">Verified</div>
+                    {allSubmissions?.some(
+                      (item) => item.socialMedia === socialMedia._id,
+                    ) ? (
+                      allSubmissions?.filter(
+                        (item) => item.socialMedia === socialMedia._id,
+                      )?.[0]?.verified ? (
+                        <div className="text-green-500">Verified</div>
+                      ) : (
+                        <div className="text-red-500">Pending</div>
+                      )
                     ) : (
                       <Button
                         variant={"ghost"}
