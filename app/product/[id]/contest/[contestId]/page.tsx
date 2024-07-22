@@ -5,12 +5,12 @@ export default function page({
   params,
 }: {
   params: {
-    id: string
+    contestId: string
   }
 }) {
   return (
     <div className="mx-auto grid max-w-[1440px] grid-cols-1 gap-4 p-8">
-      <ProjectSubmissions id={params.id} />
+      <ProjectSubmissions id={params.contestId} />
     </div>
   )
 }
