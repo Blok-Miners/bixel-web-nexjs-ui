@@ -1,6 +1,10 @@
 import axios from "axios"
 import BindService from "./bind"
-import { ICreateContest, ISocialMedia, ISocialMediaInteraction } from "@/types/services/contest"
+import {
+  ICreateContest,
+  ISocialMedia,
+  ISocialMediaInteraction,
+} from "@/types/services/contest"
 import { getAccessToken } from "@/lib/utils"
 
 export class ContestService extends BindService {
@@ -76,7 +80,9 @@ export class ContestService extends BindService {
     }
   }
 
-  public async createRegistrationVerificationContest(contestData: ICreateContest) {
+  public async createRegistrationVerificationContest(
+    contestData: ICreateContest,
+  ) {
     try {
       return (
         await this.http.post(
@@ -108,17 +114,64 @@ export class ContestService extends BindService {
     }
   }
 
-  public async createSocialMediaInteractionContest(socialMediaData:ISocialMediaInteraction){
+  public async createSocialMediaInteractionContest(
+    socialMediaData: ISocialMediaInteraction,
+  ) {
     try {
       console.log(socialMediaData)
       return (
-        await this.http.post(
-          "/create-social-media-contest",
-          socialMediaData,
+        await this.http.post("/create-social-media-contest", socialMediaData, {
+          headers: { Authorization: getAccessToken() },
+        })
+      ).data
+    } catch (error) {
+      throw new Error("Failed to create contest")
+    }
+  }
+
+  public async getSocialMediaInteractionDetails(id:string){
+    try {
+      return (
+        await this.http.get(
+          `/get-contest-social-medias/${id}`,
           {
             headers: { Authorization: getAccessToken() },
           },
         )
+      ).data
+    } catch (error) {
+      throw new Error("Failed to create contest")
+    }
+  }
+
+  public async verifySocialMediaTask(id:string,username:string,contestId:string){
+    try {
+      return (
+        await this.http.post(
+          `/verify-social-media-task/${id}`,
+          { url:username,
+            contestId
+           },
+          {
+            headers: { Authorization: getAccessToken() },
+          },
+        )
+      ).data
+    } catch (error) {
+      throw new Error("Failed to create contest")
+    }
+  }
+
+  public async isSocialMediaTaskVerified(contestId:string){
+    try {
+      return (
+        await this.http.post(`is-social-media-task-verified`, 
+          {
+            contestId
+          }
+          ,{
+          headers: { Authorization: getAccessToken() },
+        })
       ).data
     } catch (error) {
       throw new Error("Failed to create contest")
@@ -141,6 +194,18 @@ export class ContestService extends BindService {
     try {
       return (
         await this.http.get(`verify-smart-contract-task/${id}`, {
+          headers: { Authorization: getAccessToken() },
+        })
+      ).data
+    } catch (error) {
+      throw new Error("Failed to create contest")
+    }
+  }
+
+  public async isProductOwner(contestId: string) {
+    try {
+      return (
+        await this.http.get(`is-product-owner/${contestId}`, {
           headers: { Authorization: getAccessToken() },
         })
       ).data

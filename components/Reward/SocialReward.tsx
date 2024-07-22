@@ -20,7 +20,6 @@ import {
 import { Input } from "../ui/input"
 import { MdOutlineDeleteOutline } from "react-icons/md"
 import { Label } from "../ui/label"
-import SocialRewardsDetails from "./SocialRewardsDetails"
 import ContestDetails from "./Blockchain/ContestDetails"
 import RewardDetails from "./Blockchain/RewardDetails"
 import ConfirmationDialog from "../Shared/ConfirmationDialog"
@@ -31,7 +30,7 @@ import {
   SocialMediaEnum,
 } from "@/types/services/contest"
 import { ContestService } from "@/services/contest"
-import { format } from "path"
+import SocialRewardsDetails from "./SocialRewardsDetails"
 
 interface AddedItem {
   name: string

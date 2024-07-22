@@ -57,6 +57,7 @@ export interface IIntentPixel {
   blokId: number
   planId: number
   listing_status: Listing_Status
+  amount: string
   metadataUrl: string
 }
 

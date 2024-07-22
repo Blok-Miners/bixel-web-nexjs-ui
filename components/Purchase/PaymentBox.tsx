@@ -244,6 +244,7 @@ export default function PaymentBox({
         image: uploadedImages[i].id,
         blokId,
         planId: Number(selectedPlan),
+        amount: parseUnits(String(total), 18).toString(),
         listing_status: Listing_Status.Rental,
         metadataUrl: metadata[i],
       }

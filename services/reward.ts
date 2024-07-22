@@ -44,4 +44,22 @@ export class RewardService extends bind {
       headers: { Authorization: getAccessToken() },
     })
   }
+
+  public async distributeLeaderboardRewards(contestId: string) {
+    try {
+      return (
+        await this.http.post(
+          `/distribute-leaderboard-rewards`,
+          { contestId },
+          {
+            headers: {
+              Authorization: getAccessToken(),
+            },
+          },
+        )
+      ).data
+    } catch (error) {
+      throw error
+    }
+  }
 }

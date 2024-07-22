@@ -15,7 +15,10 @@ export class ProfileService extends bind {
     try {
       return (
         await this.http.post(`/create?groupId=${groupId}`, body, {
-          headers: { Authorization: getAccessToken(), "Content-Type": "multipart/form-data" },
+          headers: {
+            Authorization: getAccessToken(),
+            "Content-Type": "multipart/form-data",
+          },
         })
       ).data
     } catch (error) {

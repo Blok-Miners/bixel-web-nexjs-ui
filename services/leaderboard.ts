@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios"
 import bind from "./bind"
 import { getAccessToken } from "@/lib/utils"
 
-export class leaderboard extends bind {
+export class Leaderboard extends bind {
   private http
   constructor() {
     super()

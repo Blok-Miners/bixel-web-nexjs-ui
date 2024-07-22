@@ -204,7 +204,7 @@ export default function ProfileCreation({
     try {
       const response = await profile.createProfile(formData, params.groupId)
       setLoading(false)
-      router.push(`/product/${response.productId}`)
+      router.push(`/product/${response.id}`)
     } catch (error) {
       setLoading(false)
     }
