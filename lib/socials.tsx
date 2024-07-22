@@ -8,10 +8,10 @@ import {
 } from "react-icons/fa6"
 
 export const icons: { [key: string]: () => JSX.Element } = {
-  twitter: () => <FaXTwitter />,
-  linkedin: () => <FaLinkedinIn />,
-  youtube: () => <FaYoutube />,
-  facebook: () => <FaFacebookF />,
-  telegram: () => <FaTelegram />,
-  instagram: () => <FaInstagram />,
+  twitterUrl: () => <FaXTwitter />,
+  linkedinUrl: () => <FaLinkedinIn />,
+  youtubeUrl: () => <FaYoutube />,
+  facebookUrl: () => <FaFacebookF />,
+  telegramUrl: () => <FaTelegram />,
+  instagramUrl: () => <FaInstagram />,
 }
