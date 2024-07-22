@@ -40,7 +40,7 @@ export default function BugBountyCard({
     setBugBounty(bounty)
   }
 
-  const selectBug = (submission: BugBountySubmission)=>{
+  const selectBug = (submission: BugBountySubmission) => {
     // setInfo({
     //   summary: submission.summary,
     //   steps
@@ -57,6 +57,8 @@ export default function BugBountyCard({
     })
     setIsLoading(false)
   }
+
+  const reset = () => {}
 
   useEffect(() => {
     getBugBounty()
@@ -94,7 +96,7 @@ export default function BugBountyCard({
             {bugBounty?.submissions ? (
               bugBounty?.submissions.map((submission) => (
                 <button
-                  onClick={()=> selectBug(submission)}
+                  onClick={() => selectBug(submission)}
                   key={submission._id}
                   className="flex w-full cursor-pointer items-center justify-between gap-4 rounded-lg bg-th-black/60 p-2 hover:bg-th-black"
                 >
@@ -143,7 +145,15 @@ export default function BugBountyCard({
         </ScrollArea>
       </CardContent>
       <CardFooter>
-        <Button>Submit Bug Report</Button>
+        <Button
+          className="w-full"
+          onClick={() => {
+            reset()
+            setOpen(true)
+          }}
+        >
+          Submit Bug Report
+        </Button>
         <BugDialog
           info={info}
           readonly={readOnly}
