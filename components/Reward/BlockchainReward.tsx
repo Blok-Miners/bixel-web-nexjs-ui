@@ -44,9 +44,11 @@ export default function CreateBlockchainReward({
   const [depositAmountToken, setDepositAmountToken] = useState(0)
   const [depositAmountNFT, setDepositAmountNFT] = useState(0)
   const [couponType, setCouponType] = useState("")
-  const [mode, setMode] = useState<ContestModeEnum>(ContestModeEnum.TIMEFRAME)
+  const [mode, setMode] = useState<ContestModeEnum | undefined>(undefined)
+  const [totalWinners, setTotalWineers] = useState<number | undefined>(
+    undefined,
+  )
   const [rewardType, setRewardType] = useState("")
-  const [totalWinners, setTotalWineers] = useState(0)
 
   const handleDateChange = (name: string, date: Date | null) => {
     if (name === "endDate") {
@@ -91,6 +93,25 @@ export default function CreateBlockchainReward({
   const [loading, setLoading] = useState(false)
 
   const handleContestClick = async () => {
+    if (
+      !blockchainData.description ||
+      !blockchainData.url ||
+      !blockchainData.abi ||
+      !blockchainData.chainDeployed ||
+      !blockchainData.eventName
+    ) {
+      setStep(1)
+      setStep1Error("Required fields should not be empty !")
+      return
+    }
+    if (startDate == null || endDate == null || !mode || !totalWinners) {
+      setStep2Error("Required fields should not be empty !")
+      return
+    }
+    if (startDate > endDate) {
+      setStep2Error("Start date should be less than end date !")
+      return
+    }
     setLoading(true)
     console.log(blockchainData)
     try {
@@ -138,13 +159,11 @@ export default function CreateBlockchainReward({
       />
       <div className="sticky top-0 z-10 flex gap-4 bg-th-black-2 px-4 text-sm text-slate-200 shadow-lg">
         <button
-          onClick={() => setStep(1)}
           className={`font-medium ${step === 1 && "border-b border-th-accent-2 text-th-accent-2"} flex cursor-pointer items-center gap-2 p-2 text-sm`}
         >
           <div>Contract Details</div>
         </button>
         <button
-          onClick={() => setStep(2)}
           className={`font-medium ${step === 2 && "border-b border-th-accent-2 text-th-accent-2"} flex cursor-pointer items-center gap-2 p-2 text-sm`}
         >
           <div>
@@ -153,7 +172,6 @@ export default function CreateBlockchainReward({
           <div>Contest type</div>
         </button>
         <button
-          onClick={() => setStep(3)}
           className={`font-medium ${step === 3 && "border-b border-th-accent-2 text-th-accent-2"} flex cursor-pointer items-center gap-2 p-2 text-sm`}
         >
           <div>

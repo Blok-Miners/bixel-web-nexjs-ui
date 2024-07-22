@@ -21,6 +21,7 @@ export default function HoldingsContract({
   holdings,
   handleChange,
   setAssetType,
+  step1Error
 }: any) {
   return (
     <div className="grid grid-cols-2 gap-6">
@@ -97,6 +98,9 @@ export default function HoldingsContract({
       >
         <div>Next</div> <FaLongArrowAltRight />
       </Button>
+      {step1Error && (
+        <div className="text-red-500 text-sm col-span-2">{step1Error}</div>
+      )}
     </div>
   )
 }

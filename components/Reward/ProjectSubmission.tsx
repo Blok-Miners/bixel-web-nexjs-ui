@@ -32,8 +32,10 @@ export const ProjectSubmission = ({
   const [rewardType, setRewardType] = useState("")
   const [startDate, setStartDate] = useState<Date | null>(null)
   const [endDate, setEndDate] = useState<Date | null>(null)
-  const [mode, setMode] = useState<ContestModeEnum>(ContestModeEnum.LEADERBOARD)
-  const [totalWinners, setTotalWineers] = useState(0)
+  const [mode, setMode] = useState<ContestModeEnum | undefined>(undefined)
+  const [totalWinners, setTotalWineers] = useState<number | undefined>(
+    undefined,
+  )
   const [openDialog, setOpenDialog] = useState(false)
   const [title, setTitle] = useState("")
   const [message, setMessage] = useState("")
@@ -55,6 +57,7 @@ export const ProjectSubmission = ({
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
+    setStep1Error("")
     const { name, value } = e.target
     setProjectSubmission((prevState) => ({
       ...prevState,
@@ -63,16 +66,30 @@ export const ProjectSubmission = ({
   }
 
   const handleContestClick = async () => {
-    console.log(projectSubmission)
-    console.log(totalWinners)
-    console.log(mode)
-    console.log(startDate)
-    console.log(endDate)
+    if (
+      !projectSubmission.description ||
+      !projectSubmission.url ||
+      !projectSubmission.contractAddress ||
+      !projectSubmission.chain
+    ) {
+      setStep(1)
+      setStep1Error("Required fields should not be empty !")
+      return
+    }
+    if (startDate == null || endDate == null || !mode || !totalWinners) {
+      setStep2Error("Required fields should not be empty !")
+      return
+    }
+    if (startDate > endDate) {
+      setStep2Error("Start date should be less than end date !")
+      return
+    }
+    setLoading(true)
     try {
       const contestData: any = {
         description: projectSubmission.description,
         url: projectSubmission.url,
-        contractAddress : projectSubmission.contractAddress,
+        contractAddress: projectSubmission.contractAddress,
         chain: projectSubmission.chain,
         productId,
         mode,
@@ -80,7 +97,8 @@ export const ProjectSubmission = ({
         startTime: startDate,
         endTime: endDate,
       }
-      const res = await contestService.createProjectSubmissionContest(contestData)
+      const res =
+        await contestService.createProjectSubmissionContest(contestData)
       if (!res) {
         return
       }
@@ -91,6 +109,7 @@ export const ProjectSubmission = ({
       setContestId(res._id)
       setStep(3)
       console.log(res)
+      setContestId(res._id)
     } catch (error) {
       setOpenDialog(true)
       setTitle("Failure")
@@ -104,13 +123,11 @@ export const ProjectSubmission = ({
     <>
       <div className="sticky top-0 z-10 flex gap-4 bg-th-black-2 px-4 text-sm text-slate-200 shadow-lg">
         <button
-          onClick={() => setStep(1)}
           className={`font-medium ${step === 1 && "border-b border-th-accent-2 text-th-accent-2"} flex cursor-pointer items-center gap-2 p-2 text-sm`}
         >
           <div>Project Details</div>
         </button>
         <button
-          onClick={() => setStep(2)}
           className={`font-medium ${step === 2 && "border-b border-th-accent-2 text-th-accent-2"} flex cursor-pointer items-center gap-2 p-2 text-sm`}
         >
           <div>
@@ -119,7 +136,6 @@ export const ProjectSubmission = ({
           <div>Contest type</div>
         </button>
         <button
-          onClick={() => setStep(3)}
           className={`font-medium ${step === 3 && "border-b border-th-accent-2 text-th-accent-2"} flex cursor-pointer items-center gap-2 p-2 text-sm`}
         >
           <div>
@@ -138,10 +154,12 @@ export const ProjectSubmission = ({
             handleChange={handleChange}
             handleDateChange={handleDateChange}
             chain={chain}
+            step1Error={step1Error}
           />
         )}
         {step === 2 && (
           <ContestDetails
+            contestId={contestId}
             step2Error={step2Error}
             setStep2Error={setStep2Error}
             setStep={setStep}
@@ -160,6 +178,7 @@ export const ProjectSubmission = ({
         )}
         {step === 3 && (
           <RewardDetails
+            contestId={contestId}
             setStep3Error={setStep3Error}
             setRewardType={setRewardType}
             setCouponType={setCouponType}
