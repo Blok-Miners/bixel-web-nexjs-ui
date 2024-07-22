@@ -12,8 +12,10 @@ import {
 import { FaMedal } from "react-icons/fa6"
 import { ScrollArea } from "../ui/scroll-area"
 import { shortenAddress } from "@/lib/utils"
-import { leaderboard } from "@/services/leaderboard"
+import { Leaderboard } from "@/services/leaderboard"
 import { Address } from "@/types/web3"
+import { Button } from "../ui/button"
+import { ContestService } from "@/services/contest"
 
 interface LeaderboardProps {
   contestId: string
@@ -37,12 +39,14 @@ interface TableDataItem {
   eligible: boolean
 }
 
-export default function Leaderboard({ contestId }: LeaderboardProps) {
+export default function LeaderboardTable({ contestId }: LeaderboardProps) {
   const [mode, setMode] = useState("")
   const [tabledata, setTabledata] = useState<TableDataItem[]>([])
+  const [isOwner, setIsOwner] = useState(false)
+
   const fetchLeaderboard = async () => {
     try {
-      const response = new leaderboard()
+      const response = new Leaderboard()
       console.log(contestId)
       const res = await response.getLeaderboardbyId(contestId)
       console.log(res)
@@ -52,9 +56,19 @@ export default function Leaderboard({ contestId }: LeaderboardProps) {
       console.error(error)
     }
   }
+  const checkOwnership = async () => {
+    try {
+      const contestService = new ContestService()
+      const isOwnerResponse = await contestService.isProductOwner(contestId)
+      setIsOwner(isOwnerResponse.isOwner)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   useEffect(() => {
     fetchLeaderboard()
+    checkOwnership()
   }, [contestId])
 
   useEffect(() => {
@@ -65,8 +79,9 @@ export default function Leaderboard({ contestId }: LeaderboardProps) {
     <ScrollArea className="mx-auto mb-4 mt-8 h-[80vh] w-full max-w-6xl rounded-2xl border-2 border-th-accent-2 bg-th-black-2 p-4 px-10 shadow-2xl">
       {mode === "LEADERBOARD" && (
         <>
-          <div className="w-full text-center text-2xl font-semibold">
+          <div className="flex w-full items-center justify-between text-2xl font-semibold">
             Leaderboard
+            {isOwner && <Button>Distribute Reward</Button>}
           </div>
           <Table className="mt-8 w-full text-base">
             <TableHeader className="border-th-accent-2">
@@ -116,9 +131,7 @@ export default function Leaderboard({ contestId }: LeaderboardProps) {
       )}
       {mode === "TIMEFRAME" && (
         <>
-          <div className="w-full text-center text-2xl font-semibold">
-            Timeframe
-          </div>
+          <div className="w-full text-2xl font-semibold">Timeframe</div>
           <Table className="mt-8 w-full text-base">
             <TableHeader className="border-th-accent-2">
               <TableRow className="border-th-accent-2">
