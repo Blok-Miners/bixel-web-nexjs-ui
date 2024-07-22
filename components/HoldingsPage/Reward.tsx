@@ -12,9 +12,21 @@ import { ScrollArea } from "../ui/scroll-area"
 import { ContestService } from "@/services/contest"
 import { RewardService } from "@/services/reward"
 
+type Reward = {
+  id: string
+  claimed: boolean
+  rewardPool: {
+    assetType: string
+    assetId: string
+  }
+  poolInfo: {
+    tokenPerWinner: number
+  }
+}
+
 export default function RewardTable() {
-  const [rewards, setRewards] = useState([])
-  const [contestId, setContestId] = useState('')
+  const [rewards, setRewards] = useState<Reward[]>([])
+  const [contestId, setContestId] = useState("")
   const getRewards = async () => {
     const rewardService = new RewardService()
     const reward = await rewardService.getClaimableRewards()
@@ -27,6 +39,27 @@ export default function RewardTable() {
     getRewards()
   }, [])
 
+  const getContestDetails = async () => {
+    const ContestServices = new ContestService()
+    const reward = await ContestServices.getContestDetails(contestId)
+    console.log(reward)
+  }
+
+  useEffect(() => {
+    getContestDetails()
+  }, [])
+
+  const handleClaim = async (rewardId: string) => {
+    const rewardService = new Rewards()
+    await rewardService.claimReward(rewardId ,{})
+
+    setRewards((prevRewards) =>
+      prevRewards.map((reward) =>
+        reward.id === rewardId ? { ...reward, claimed: true } : reward,
+      ),
+    )
+  }
+
   return (
     <ScrollArea className="h-[400px] rounded-2xl bg-th-accent-2/10 p-4">
       <Table>
@@ -38,13 +71,19 @@ export default function RewardTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          <TableRow>
-            <TableCell>Contest1</TableCell>
-            <TableCell>Reward1</TableCell>
-            <TableCell>
-              <Button>Claim</Button>
-            </TableCell>
-          </TableRow>
+          {rewards.map((reward, index) => (
+            <TableRow key={index}>
+              <TableCell>{reward.rewardPool.assetType}</TableCell>
+              <TableCell>{reward.poolInfo.tokenPerWinner}</TableCell>
+              <TableCell>
+                {reward.claimed ? (
+                  <Button disabled>Claimed</Button>
+                ) : (
+                  <Button onClick={() => handleClaim(reward.id)}>Claim</Button>
+                )}
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
     </ScrollArea>

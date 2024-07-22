@@ -24,12 +24,14 @@ const CreateProjectSubmission = ({
   setStep,
   handleChange,
   handleDateChange,
-  chain
+  chain,
+  step1Error
 }: any) => {
   return (
     <>
       <ScrollArea className="h-[90%]">
         <div className="grid grid-cols-2 gap-6 gap-x-10">
+        <div className="text-lg font-bold">Project Details</div>
           <div className="col-span-2 flex flex-col gap-2">
             <div>Rules For Submission</div>
             <Textarea
@@ -69,35 +71,43 @@ const CreateProjectSubmission = ({
           <div className="col-span-2 space-y-2 rounded-xl">
             <Label>Select a chain</Label>
             <Select
-            onValueChange={(value) =>
-              setProjectSubmission({
-                ...projectSubmission,
-                chain: value,
-              })
-            }
-          >
-            <SelectTrigger
-              className={`flex h-fit w-full items-center gap-2 rounded-lg border border-th-accent-2 bg-th-black-2 hover:bg-opacity-50`}
+              onValueChange={(value) =>
+                setProjectSubmission({
+                  ...projectSubmission,
+                  chain: value,
+                })
+              }
             >
-              <SelectValue placeholder="Select a chain" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {chain &&
-                  chain.map((item: any, index: any) => {
-                    return (
-                      <SelectItem key={index} value={item.id} className="text-white">
-                        {item.name}
-                      </SelectItem>
-                    )
-                  })}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+              <SelectTrigger
+                className={`flex h-fit w-full items-center gap-2 rounded-lg border border-th-accent-2 bg-th-black-2 hover:bg-opacity-50`}
+              >
+                <SelectValue placeholder="Select a chain" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {chain &&
+                    chain.map((item: any, index: any) => {
+                      return (
+                        <SelectItem
+                          key={index}
+                          value={item.id}
+                          className="text-white"
+                        >
+                          {item.name}
+                        </SelectItem>
+                      )
+                    })}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
-          <Button className="w-fit" onClick={() => setStep(2)}>
-            Next
+          <Button
+            onClick={() => setStep(2)}
+            className="flex w-fit items-center gap-2"
+          >
+            <div>Next</div> <FaLongArrowAltRight />
           </Button>
+          {step1Error && <div className="text-red-500 text-sm col-span-2">{step1Error}</div>}
         </div>
       </ScrollArea>
     </>

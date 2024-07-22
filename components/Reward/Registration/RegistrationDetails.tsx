@@ -17,9 +17,10 @@ export default function RegistrationDetails({
   setStep,
   registration,
   handleChange,
+  step1Error,
 }: any) {
   return (
-    <div className="grid grid-cols-2 gap-6">
+    <div className="flex flex-col gap-6">
       <div className="col-span-2 text-lg font-bold">Registration Details</div>
       <div className="col-span-2 flex flex-col gap-2">
         <div>Description</div>
@@ -47,6 +48,8 @@ export default function RegistrationDetails({
       >
         <div>Next</div> <FaLongArrowAltRight />
       </Button>
+
+      {step1Error && <div className="text-red-500 text-sm">{step1Error}</div>}
     </div>
   )
 }

@@ -23,8 +23,10 @@ export default function Registration({ productId, chain }: any) {
   const [rewardType, setRewardType] = useState("")
   const [startDate, setStartDate] = useState<Date | null>(null)
   const [endDate, setEndDate] = useState<Date | null>(null)
-  const [mode, setMode] = useState<ContestModeEnum>(ContestModeEnum.LEADERBOARD)
-  const [totalWinners, setTotalWineers] = useState(0)
+  const [mode, setMode] = useState<ContestModeEnum | undefined>(undefined)
+  const [totalWinners, setTotalWineers] = useState<number | undefined>(
+    undefined,
+  )
   const [openDialog, setOpenDialog] = useState(false)
   const [title, setTitle] = useState("")
   const [message, setMessage] = useState("")
@@ -47,6 +49,7 @@ export default function Registration({ productId, chain }: any) {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
+    setStep1Error("")
     const { name, value } = e.target
     setRegistration((prevState) => ({
       ...prevState,
@@ -55,6 +58,19 @@ export default function Registration({ productId, chain }: any) {
   }
 
   const handleContestClick = async () => {
+    if (!registration.description || !registration.url) {
+      setStep(1)
+      setStep1Error("All the fields are required !")
+      return
+    }
+    if (startDate == null || endDate == null || !mode || !totalWinners) {
+      setStep2Error("Required fields should not be empty !")
+      return
+    }
+    if (startDate > endDate) {
+      setStep2Error("Start date should be less than end date !")
+      return
+    }
     console.log(chainId)
     const service = new ContestService()
     setLoading(true)
@@ -68,7 +84,8 @@ export default function Registration({ productId, chain }: any) {
         startTime: startDate,
         endTime: endDate,
       }
-      const res = await service.createRegistrationVerificationContest(contestData)
+      const res =
+        await service.createRegistrationVerificationContest(contestData)
       if (!res) {
         return
       }
@@ -79,6 +96,7 @@ export default function Registration({ productId, chain }: any) {
       setContestId(res._id)
       setStep(3)
       console.log(res)
+      setContestId(res._id)
     } catch (error) {
       setOpenDialog(true)
       setTitle("Failure")
@@ -91,13 +109,11 @@ export default function Registration({ productId, chain }: any) {
     <>
       <div className="sticky top-0 z-10 flex gap-4 bg-th-black-2 px-4 text-sm text-slate-200 shadow-lg">
         <button
-          onClick={() => setStep(1)}
           className={`font-medium ${step === 1 && "border-b border-th-accent-2 text-th-accent-2"} flex cursor-pointer items-center gap-2 p-2 text-sm`}
         >
           <div>Registration Details</div>
         </button>
         <button
-          onClick={() => setStep(2)}
           className={`font-medium ${step === 2 && "border-b border-th-accent-2 text-th-accent-2"} flex cursor-pointer items-center gap-2 p-2 text-sm`}
         >
           <div>
@@ -106,7 +122,6 @@ export default function Registration({ productId, chain }: any) {
           <div>Contest type</div>
         </button>
         <button
-          onClick={() => setStep(3)}
           className={`font-medium ${step === 3 && "border-b border-th-accent-2 text-th-accent-2"} flex cursor-pointer items-center gap-2 p-2 text-sm`}
         >
           <div>
@@ -117,10 +132,16 @@ export default function Registration({ productId, chain }: any) {
       </div>
       <div className="mt-8 h-[90%] overflow-y-auto px-4">
         {step === 1 && (
-          <RegistrationDetails setStep={setStep} registration={registration} handleChange={handleChange} />
+          <RegistrationDetails
+            setStep={setStep}
+            registration={registration}
+            handleChange={handleChange}
+            step1Error={step1Error}
+          />
         )}
         {step === 2 && (
           <ContestDetails
+          contestId={contestId}
             setStep2Error={setStep2Error}
             mode={mode}
             setMode={setMode}
