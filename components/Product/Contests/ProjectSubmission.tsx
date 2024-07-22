@@ -89,7 +89,7 @@ const ProjectSubmission = ({ id }: { id: string }) => {
     <FormProvider {...methods}>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="grid w-full grid-cols-2 gap-4 rounded-2xl bg-th-accent-2/10 p-4"
+        className="row-span-2 grid w-full grid-cols-2 gap-4 rounded-2xl bg-th-accent-2/10 p-4"
       >
         <span className="col-span-2 rounded-2xl px-4 py-1 text-center text-xl font-bold">
           Project Submission

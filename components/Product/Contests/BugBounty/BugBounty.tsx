@@ -56,7 +56,7 @@ export default function BugBountyCard({
   }, [])
 
   return (
-    <Card className="row-span-2 flex h-full flex-col">
+    <Card className="flex h-full flex-col">
       <CardHeader className="text-center font-bold">
         BUG BOUNTY
         <div className="font-light text-th-accent-2">
@@ -84,47 +84,53 @@ export default function BugBountyCard({
       <CardContent className="h-full">
         <ScrollArea>
           <div className="flex h-full flex-col gap-4 overflow-auto rounded-lg border border-th-accent-2 p-4">
-            {bugBounty?.submissions.map((submission) => (
-              <button
-                key={submission._id}
-                className="flex w-full cursor-pointer items-center justify-between gap-4 rounded-lg bg-th-black/60 p-2 hover:bg-th-black"
-              >
-                <div className="flex items-center gap-2">
-                  <div className="relative aspect-square h-12 w-12">
-                    <Image
-                      src={submission.image}
-                      alt="Logo"
-                      className="h-full w-full"
-                      fill
-                    />
+            {bugBounty?.submissions ? (
+              bugBounty?.submissions.map((submission) => (
+                <button
+                  key={submission._id}
+                  className="flex w-full cursor-pointer items-center justify-between gap-4 rounded-lg bg-th-black/60 p-2 hover:bg-th-black"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="relative aspect-square h-12 w-12">
+                      <Image
+                        src={submission.image}
+                        alt="Logo"
+                        className="h-full w-full"
+                        fill
+                      />
+                    </div>
+                    <div className="text-xs">{submission.summary}</div>
                   </div>
-                  <div className="text-xs">{submission.summary}</div>
-                </div>
-                {!submission.verified && ownerId === address && (
-                  <div className="flex gap-1 rounded-md bg-th-black-2 p-1">
-                    <Button
-                      disabled={isLoading}
-                      isLoading={isLoading}
-                      onClick={() => handleVerify(true, submission._id)}
-                      className="w-10 bg-th-black px-2 !text-white hover:bg-th-black/40"
-                    >
-                      {!isLoading && <Check color="#22c55e" strokeWidth={3} />}
-                    </Button>
-                    <Button
-                      onClick={() => handleVerify(false, submission._id)}
-                      className="w-10 bg-th-black px-2 hover:bg-th-black/40"
-                    >
-                      {!isLoading && <X color="#fa0505" strokeWidth={3} />}
-                    </Button>
-                  </div>
-                )}
-                {submission.verified && (
-                  <div className="flex gap-1 rounded-md bg-th-black-2 p-1">
-                    <Check color="#22c55e" strokeWidth={3} /> Verified
-                  </div>
-                )}
-              </button>
-            ))}
+                  {!submission.verified && ownerId === address && (
+                    <div className="flex gap-1 rounded-md bg-th-black-2 p-1">
+                      <Button
+                        disabled={isLoading}
+                        isLoading={isLoading}
+                        onClick={() => handleVerify(true, submission._id)}
+                        className="w-10 bg-th-black px-2 !text-white hover:bg-th-black/40"
+                      >
+                        {!isLoading && (
+                          <Check color="#22c55e" strokeWidth={3} />
+                        )}
+                      </Button>
+                      <Button
+                        onClick={() => handleVerify(false, submission._id)}
+                        className="w-10 bg-th-black px-2 hover:bg-th-black/40"
+                      >
+                        {!isLoading && <X color="#fa0505" strokeWidth={3} />}
+                      </Button>
+                    </div>
+                  )}
+                  {submission.verified && (
+                    <div className="flex gap-1 rounded-md bg-th-black-2 p-1">
+                      <Check color="#22c55e" strokeWidth={3} /> Verified
+                    </div>
+                  )}
+                </button>
+              ))
+            ) : (
+              <></>
+            )}
           </div>
         </ScrollArea>
       </CardContent>
