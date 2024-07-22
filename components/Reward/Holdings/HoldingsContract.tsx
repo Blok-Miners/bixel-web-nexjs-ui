@@ -21,7 +21,7 @@ export default function HoldingsContract({
   holdings,
   handleChange,
   setAssetType,
-  step1Error
+  step1Error,
 }: any) {
   return (
     <div className="grid grid-cols-2 gap-6">
@@ -73,7 +73,11 @@ export default function HoldingsContract({
               {chain &&
                 chain.map((item: any, index: any) => {
                   return (
-                    <SelectItem key={index} value={item.id} className="text-white">
+                    <SelectItem
+                      key={index}
+                      value={item.id}
+                      className="text-white"
+                    >
                       {item.name}
                     </SelectItem>
                   )
@@ -99,7 +103,7 @@ export default function HoldingsContract({
         <div>Next</div> <FaLongArrowAltRight />
       </Button>
       {step1Error && (
-        <div className="text-red-500 text-sm col-span-2">{step1Error}</div>
+        <div className="col-span-2 text-sm text-red-500">{step1Error}</div>
       )}
     </div>
   )

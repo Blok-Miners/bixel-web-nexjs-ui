@@ -18,6 +18,7 @@ import { ChainService } from "@/services/chain"
 import { RewardService } from "@/services/reward"
 import { Address } from "@/types/web3"
 import { Dispatch, useEffect, useState } from "react"
+import { useRouter } from "next/navigation"
 import {
   FaCheck,
   FaLongArrowAltLeft,
@@ -32,6 +33,7 @@ import {
 } from "wagmi"
 
 interface IRewardDetails {
+  productId: string
   setStep3Error?: Dispatch<React.SetStateAction<string | undefined>>
   setRewardType?: Dispatch<React.SetStateAction<string>>
   setCouponType?: Dispatch<React.SetStateAction<string>>
@@ -50,6 +52,7 @@ interface IRewardDetails {
 }
 
 export default function RewardDetails({
+  productId,
   setStep3Error,
   setRewardType,
   setCouponType,
@@ -160,6 +163,8 @@ export default function RewardDetails({
     return true
   }
 
+  const router = useRouter()
+
   const handleCreateTokenPool = async () => {
     try {
       // if (!tokenAddress || !balances || !amountPerWinner || ) return
@@ -177,6 +182,7 @@ export default function RewardDetails({
       })
       console.log(res)
       setLoading(false)
+      if (productId) router.push(`/product/${productId}`)
     } catch (error) {
       console.log(error)
       setLoading(false)

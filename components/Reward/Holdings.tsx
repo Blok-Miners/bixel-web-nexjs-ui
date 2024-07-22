@@ -174,6 +174,7 @@ export default function Holdings({
         )}
         {step === 3 && (
           <RewardDetails
+          productId={productId}
             contestId={contestId}
             setStep3Error={setStep3Error}
             setRewardType={setRewardType}
