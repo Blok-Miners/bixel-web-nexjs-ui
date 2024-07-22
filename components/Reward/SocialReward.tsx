@@ -23,7 +23,12 @@ import { Label } from "../ui/label"
 import ContestDetails from "./Blockchain/ContestDetails"
 import RewardDetails from "./Blockchain/RewardDetails"
 import ConfirmationDialog from "../Shared/ConfirmationDialog"
-import { ContestModeEnum, ISocialMedia } from "@/types/services/contest"
+import {
+  ContestModeEnum,
+  ISocialMedia,
+  ISocialMediaInteraction,
+  SocialMediaEnum,
+} from "@/types/services/contest"
 import { ContestService } from "@/services/contest"
 import SocialRewardsDetails from "./SocialRewardsDetails"
 
@@ -48,8 +53,10 @@ export default function CreateSocialReward({
   const [rewardType, setRewardType] = useState("")
   const [startDate, setStartDate] = useState<Date | null>(null)
   const [endDate, setEndDate] = useState<Date | null>(null)
-  const [mode, setMode] = useState<ContestModeEnum>(ContestModeEnum.LEADERBOARD)
-  const [totalWinners, setTotalWineers] = useState(0)
+  const [mode, setMode] = useState<ContestModeEnum | undefined>(undefined)
+  const [totalWinners, setTotalWineers] = useState<number | undefined>(
+    undefined,
+  )
   const [openDialog, setOpenDialog] = useState(false)
   const [title, setTitle] = useState("")
   const [message, setMessage] = useState("")
@@ -57,8 +64,8 @@ export default function CreateSocialReward({
 
   const [loading, setLoading] = useState(false)
   const [step1Error, setStep1Error] = useState("")
-  const [step2Error, setStep2Error] = useState("")
-  const [step3Error, setStep3Error] = useState("")
+  const [step2Error, setStep2Error] = useState<string | undefined>("")
+  const [step3Error, setStep3Error] = useState<string | undefined>("")
   const [description, setDescription] = useState("")
 
   const socialLinks = [
@@ -119,14 +126,21 @@ export default function CreateSocialReward({
   }
 
   const handleContestClick = async () => {
-    console.log(added)
-    console.log(startDate, endDate)
-    console.log(totalWinners)
-    console.log(mode)
-    console.log(productId)
-    console.log(description)
+    if (!mode || !totalWinners || !startDate || !endDate) {
+      return
+    }
+    const formattedSocialMedias: ISocialMedia[] = added.map((social) => {
+      const formattedSocialMedia: ISocialMedia = {
+        type: social.name.toUpperCase(),
+        url: social.link,
+        activity: social.value.toUpperCase(),
+      }
+      return formattedSocialMedia
+    })
 
-    const socialMediaData: ISocialMedia = {
+    console.log(endDate)
+    const socialMediaData: ISocialMediaInteraction = {
+      socialMedia: formattedSocialMedias,
       description: description,
       startDate,
       endDate,
@@ -134,7 +148,10 @@ export default function CreateSocialReward({
       noOfWinners: totalWinners,
       productId,
     }
-    await contestService.createSocialMediaInteractionContest(socialMediaData)
+    console.log(socialMediaData, "socialMedia")
+    const res =
+      await contestService.createSocialMediaInteractionContest(socialMediaData)
+    setContestId(res.contest._id)
   }
 
   const handleDateChange = (name: string, date: Date | null) => {
@@ -178,7 +195,7 @@ export default function CreateSocialReward({
           </button>
         </div>
 
-        <div className="mt-8  px-4">
+        <div className="mt-8 px-4">
           {step === 1 && (
             <SocialRewardsDetails
               socialLinks={socialLinks}
@@ -192,14 +209,13 @@ export default function CreateSocialReward({
           )}
           {step === 2 && (
             <ContestDetails
+              contestId={contestId}
               step2Error={step2Error}
               setStep2Error={setStep2Error}
               setStep={setStep}
               loading={loading}
-              setLoading={setLoading}
               mode={mode}
               setMode={setMode}
-              ContestModeEnum={ContestModeEnum}
               setTotalWineers={setTotalWineers}
               handleContestClick={handleContestClick}
               totalWinners={totalWinners}

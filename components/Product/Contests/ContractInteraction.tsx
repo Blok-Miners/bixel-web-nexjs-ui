@@ -5,18 +5,20 @@ import { Button } from "../../ui/button"
 import { ContestService } from "@/services/contest"
 import { ISmartContractInteraction } from "@/types/services/smartContractInteraction"
 import { Address } from "@/types/web3"
+import { Loader2 } from "lucide-react"
 
 export const ContractInteraction = ({ id }: { id: string }) => {
   const contestService = new ContestService()
   const [Opened, setOpended] = useState(false)
   const [interaction, setInteraction] = useState<ISmartContractInteraction>()
+  const [loading, setLoading] = useState(false)
 
   const interactionDetails = async () => {
     try {
       const res = await contestService.getInteractionDetails(id)
       console.log(res)
       setInteraction({
-        id:res.interaction._id,
+        id: res.interaction._id,
         contractAddress: res.interaction.contract.address as Address,
         chain: res.chain.chainId,
         url: res.interaction.url,
@@ -27,12 +29,15 @@ export const ContractInteraction = ({ id }: { id: string }) => {
     }
   }
 
-  const verifyTransaction =async()=>{
+  const verifyTransaction = async () => {
+    setLoading(true)
     try {
-      if(!interaction) return
+      if (!interaction) return
       const res = await contestService.verifySmartContractTask(interaction?.id)
       console.log(res)
+      setLoading(false)
     } catch (error) {
+      setLoading(false)
       console.log(error)
     }
   }
@@ -73,13 +78,19 @@ export const ContractInteraction = ({ id }: { id: string }) => {
         </div>
       </div>
       {Opened ? (
-        <Button className="col-span-3 m-2" onClick={verifyTransaction}>Verify</Button>
+        <Button className="col-span-3 m-2" onClick={verifyTransaction}>
+          {loading ? <Loader2 className="animate-spin" /> : "Verify"}
+        </Button>
       ) : (
         <>
-          <a href={interaction?.url} target="_blank" className=" col-span-3" rel="noreferrer noopener" onClick={() => setOpended(true)}>
-            <Button className="col-span-3 m-2 w-full" >
-              Open
-            </Button>
+          <a
+            href={interaction?.url}
+            target="_blank"
+            className="col-span-3"
+            rel="noreferrer noopener"
+            onClick={() => setOpended(true)}
+          >
+            <Button className="col-span-3 m-2 w-full">Open</Button>
           </a>
         </>
       )}

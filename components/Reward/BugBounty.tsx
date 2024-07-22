@@ -4,7 +4,11 @@ import React, { useState } from "react"
 import { FaLongArrowAltRight } from "react-icons/fa"
 import BountyDetails from "./BugBounty/BountyDetails"
 import ContestDetails from "./Blockchain/ContestDetails"
-import { ContestModeEnum, ICreateContest } from "@/types/services/contest"
+import {
+  ContestModeEnum,
+  IChain,
+  ICreateContest,
+} from "@/types/services/contest"
 import { Address } from "viem"
 import { Description } from "@radix-ui/react-dialog"
 import { ContestService } from "@/services/contest"
@@ -16,7 +20,7 @@ export const BugBounty = ({
   chain,
 }: {
   productId: string
-  chain: any
+  chain: IChain[]
 }) => {
   const contestService = new ContestService()
   const [step, setStep] = useState(1)
@@ -32,8 +36,8 @@ export const BugBounty = ({
   const [couponType, setCouponType] = useState("")
   const [couponCode, setCouponCode] = useState("")
   const [rewardType, setRewardType] = useState("")
-  const [startDate, setStartDate] = useState<Date | null>(null)
-  const [endDate, setEndDate] = useState<Date | null>(null)
+  const [startDate, setStartDate] = useState<Date | null | undefined>(null)
+  const [endDate, setEndDate] = useState<Date | null | undefined>(null)
   const [mode, setMode] = useState<ContestModeEnum | undefined>(undefined)
   const [totalWinners, setTotalWineers] = useState<number | undefined>(
     undefined,
@@ -45,8 +49,8 @@ export const BugBounty = ({
 
   const [loading, setLoading] = useState(false)
   const [step1Error, setStep1Error] = useState("")
-  const [step2Error, setStep2Error] = useState("")
-  const [step3Error, setStep3Error] = useState("")
+  const [step2Error, setStep2Error] = useState<string | undefined>("")
+  const [step3Error, setStep3Error] = useState<string | undefined>("")
 
   const handleDateChange = (name: string, date: Date | null) => {
     if (name === "endDate") {
@@ -172,10 +176,8 @@ export const BugBounty = ({
             setStep2Error={setStep2Error}
             setStep={setStep}
             loading={loading}
-            setLoading={setLoading}
             mode={mode}
             setMode={setMode}
-            ContestModeEnum={ContestModeEnum}
             setTotalWineers={setTotalWineers}
             handleContestClick={handleBountyClick}
             totalWinners={totalWinners}

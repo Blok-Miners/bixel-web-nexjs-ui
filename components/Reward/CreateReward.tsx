@@ -17,6 +17,7 @@ export default function CreateReward({ productId }: { productId: string }) {
     const allChain = await chains.getChains()
     if (allChain) {
       setChain(allChain)
+      console.log(allChain)
     }
   }
   useEffect(() => {

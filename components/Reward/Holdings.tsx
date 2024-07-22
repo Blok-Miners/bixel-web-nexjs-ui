@@ -4,11 +4,17 @@ import { useState } from "react"
 import { FaLongArrowAltRight } from "react-icons/fa"
 import HoldingsContract from "./Holdings/HoldingsContract"
 import ContestDetails from "./Blockchain/ContestDetails"
-import { ContestModeEnum } from "@/types/services/contest"
+import { ContestModeEnum, IChain } from "@/types/services/contest"
 import { ContestService } from "@/services/contest"
 import RewardDetails from "./Blockchain/RewardDetails"
 
-export default function Holdings({ productId, chain }: any) {
+export default function Holdings({
+  productId,
+  chain,
+}: {
+  productId: string
+  chain: IChain[]
+}) {
   const service = new ContestService()
   const [step, setStep] = useState(1)
   const [chainId, setChainID] = useState("")
@@ -36,8 +42,8 @@ export default function Holdings({ productId, chain }: any) {
 
   const [loading, setLoading] = useState(false)
   const [step1Error, setStep1Error] = useState("")
-  const [step2Error, setStep2Error] = useState("")
-  const [step3Error, setStep3Error] = useState("")
+  const [step2Error, setStep2Error] = useState<string | undefined>("")
+  const [step3Error, setStep3Error] = useState<string | undefined>("")
 
   const handleDateChange = (name: string, date: Date | null) => {
     if (name === "endDate") {
@@ -152,20 +158,18 @@ export default function Holdings({ productId, chain }: any) {
         {step === 2 && (
           <ContestDetails
             contestId={contestId}
+            step2Error={step2Error}
             setStep2Error={setStep2Error}
+            setStep={setStep}
+            loading={loading}
             mode={mode}
             setMode={setMode}
-            setStep={setStep}
-            ContestModeEnum={ContestModeEnum}
             setTotalWineers={setTotalWineers}
             handleContestClick={handleContestClick}
-            step2Error={step2Error}
             totalWinners={totalWinners}
-            handleDateChange={handleDateChange}
             startDate={startDate}
             endDate={endDate}
-            loading={loading}
-            setLoading={setLoading}
+            handleDateChange={handleDateChange}
           />
         )}
         {step === 3 && (

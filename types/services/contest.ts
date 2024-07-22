@@ -28,12 +28,37 @@ export enum ContestInteractionEnum{
   SURVEYS = "SURVEYS",
   PROJECT_SUBMISSION = "PROJECT_SUBMISSION"
 }
+export enum SocialMediaEnum {
+  TWITTER = 'TWITTER',
+  LINKEDIN = 'LINKEDIN',
+  FACEBOOK = 'FACEBOOK',
+  INSTAGRAM = 'INSTAGRAM',
+  YOUTUBE = 'YOUTUBE',
+  OTHER = 'OTHER',
+}
 
-export interface ISocialMedia {
+export interface ISocialMediaInteraction {
+  socialMedia: ISocialMedia[]
   description: string
   productId: string
   noOfWinners: number
   mode: ContestModeEnum
   startDate: Date | null
   endDate: Date | null
+}
+
+export interface ISocialMedia {
+  type:string,
+  url:string,
+  activity:string
+}
+
+export interface IChain {
+  chainid? : string
+  id? : string
+  logo?:string
+  name?:string
+  nativeCoin?:string
+  nativeCoinDecimal?:string
+  rpc?:string
 }

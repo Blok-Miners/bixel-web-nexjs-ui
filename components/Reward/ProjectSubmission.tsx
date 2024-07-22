@@ -4,7 +4,7 @@ import React, { useState } from "react"
 import { FaLongArrowAltRight } from "react-icons/fa"
 import BountyDetails from "./BugBounty/BountyDetails"
 import ContestDetails from "./Blockchain/ContestDetails"
-import { ContestModeEnum } from "@/types/services/contest"
+import { ContestModeEnum, IChain } from "@/types/services/contest"
 import { ContestService } from "@/services/contest"
 import CreateProjectSubmission from "./Project/ProjectSubmissionDetails"
 import RewardDetails from "./Blockchain/RewardDetails"
@@ -14,7 +14,7 @@ export const ProjectSubmission = ({
   chain,
 }: {
   productId: string
-  chain: any
+  chain: IChain[]
 }) => {
   const contestService = new ContestService()
   const [step, setStep] = useState(1)
@@ -42,8 +42,8 @@ export const ProjectSubmission = ({
   const [contestId, setContestId] = useState("")
   const [assetType, setAssetType] = useState("")
   const [step1Error, setStep1Error] = useState("")
-  const [step2Error, setStep2Error] = useState("")
-  const [step3Error, setStep3Error] = useState("")
+  const [step2Error, setStep2Error] = useState<string | undefined>("")
+  const [step3Error, setStep3Error] = useState<string | undefined>("")
   const [loading, setLoading] = useState(false)
 
   const handleDateChange = (name: string, date: Date | null) => {
@@ -164,10 +164,8 @@ export const ProjectSubmission = ({
             setStep2Error={setStep2Error}
             setStep={setStep}
             loading={loading}
-            setLoading={setLoading}
             mode={mode}
             setMode={setMode}
-            ContestModeEnum={ContestModeEnum}
             setTotalWineers={setTotalWineers}
             handleContestClick={handleContestClick}
             totalWinners={totalWinners}
