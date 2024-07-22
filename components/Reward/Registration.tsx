@@ -3,12 +3,18 @@
 import { useState } from "react"
 import { FaLongArrowAltRight } from "react-icons/fa"
 import ContestDetails from "./Blockchain/ContestDetails"
-import { ContestModeEnum } from "@/types/services/contest"
+import { ContestModeEnum, IChain } from "@/types/services/contest"
 import { ContestService } from "@/services/contest"
 import RewardDetails from "./Blockchain/RewardDetails"
 import RegistrationDetails from "./Registration/RegistrationDetails"
 
-export default function Registration({ productId, chain }: any) {
+export default function Registration({
+  productId,
+  chain,
+}: {
+  productId: string
+  chain: IChain[]
+}) {
   const [step, setStep] = useState(1)
   const [chainId, setChainID] = useState("")
   const [registration, setRegistration] = useState({

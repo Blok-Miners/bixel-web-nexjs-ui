@@ -52,3 +52,13 @@ export interface ISocialMedia {
   url:string,
   activity:string
 }
+
+export interface IChain {
+  chainid? : string
+  id? : string
+  logo?:string
+  name?:string
+  nativeCoin?:string
+  nativeCoinDecimal?:string
+  rpc?:string
+}

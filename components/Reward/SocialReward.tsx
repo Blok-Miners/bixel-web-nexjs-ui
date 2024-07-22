@@ -24,7 +24,12 @@ import SocialRewardsDetails from "./SocialRewardsDetails"
 import ContestDetails from "./Blockchain/ContestDetails"
 import RewardDetails from "./Blockchain/RewardDetails"
 import ConfirmationDialog from "../Shared/ConfirmationDialog"
-import { ContestModeEnum, ISocialMedia, ISocialMediaInteraction, SocialMediaEnum } from "@/types/services/contest"
+import {
+  ContestModeEnum,
+  ISocialMedia,
+  ISocialMediaInteraction,
+  SocialMediaEnum,
+} from "@/types/services/contest"
 import { ContestService } from "@/services/contest"
 import { format } from "path"
 
@@ -122,17 +127,21 @@ export default function CreateSocialReward({
   }
 
   const handleContestClick = async () => {
-    const formattedSocialMedias:ISocialMedia[] = added.map(social=>{
-      const formattedSocialMedia:ISocialMedia = {
-        type:social.name.toUpperCase(),
-        url:social.link,
-        activity:social.value.toUpperCase(),
+    if (!mode || !totalWinners || !startDate || !endDate) {
+      return
+    }
+    const formattedSocialMedias: ISocialMedia[] = added.map((social) => {
+      const formattedSocialMedia: ISocialMedia = {
+        type: social.name.toUpperCase(),
+        url: social.link,
+        activity: social.value.toUpperCase(),
       }
       return formattedSocialMedia
     })
+
     console.log(endDate)
     const socialMediaData: ISocialMediaInteraction = {
-      socialMedia:formattedSocialMedias,
+      socialMedia: formattedSocialMedias,
       description: description,
       startDate,
       endDate,
@@ -140,8 +149,9 @@ export default function CreateSocialReward({
       noOfWinners: totalWinners,
       productId,
     }
-    console.log(socialMediaData,"socialMedia")
-    const res = await contestService.createSocialMediaInteractionContest(socialMediaData)
+    console.log(socialMediaData, "socialMedia")
+    const res =
+      await contestService.createSocialMediaInteractionContest(socialMediaData)
     setContestId(res.contest._id)
   }
 

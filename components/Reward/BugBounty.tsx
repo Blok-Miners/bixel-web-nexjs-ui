@@ -4,19 +4,20 @@ import React, { useState } from "react"
 import { FaLongArrowAltRight } from "react-icons/fa"
 import BountyDetails from "./BugBounty/BountyDetails"
 import ContestDetails from "./Blockchain/ContestDetails"
-import { ContestModeEnum, ICreateContest } from "@/types/services/contest"
+import { ContestModeEnum, IChain, ICreateContest } from "@/types/services/contest"
 import { Address } from "viem"
 import { Description } from "@radix-ui/react-dialog"
 import { ContestService } from "@/services/contest"
 import ConfirmationDialog from "../Shared/ConfirmationDialog"
 import RewardDetails from "./Blockchain/RewardDetails"
 
+
 export const BugBounty = ({
   productId,
   chain,
 }: {
   productId: string
-  chain: any
+  chain: IChain[]
 }) => {
   const contestService = new ContestService()
   const [step, setStep] = useState(1)

@@ -4,7 +4,7 @@ import React, { useState } from "react"
 import { FaLongArrowAltRight } from "react-icons/fa"
 import BountyDetails from "./BugBounty/BountyDetails"
 import ContestDetails from "./Blockchain/ContestDetails"
-import { ContestModeEnum } from "@/types/services/contest"
+import { ContestModeEnum, IChain } from "@/types/services/contest"
 import { ContestService } from "@/services/contest"
 import CreateProjectSubmission from "./Project/ProjectSubmissionDetails"
 import RewardDetails from "./Blockchain/RewardDetails"
@@ -14,7 +14,7 @@ export const ProjectSubmission = ({
   chain,
 }: {
   productId: string
-  chain: any
+  chain: IChain[]
 }) => {
   const contestService = new ContestService()
   const [step, setStep] = useState(1)
