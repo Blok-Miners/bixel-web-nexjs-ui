@@ -129,6 +129,55 @@ export class ContestService extends BindService {
     }
   }
 
+  public async getSocialMediaInteractionDetails(id:string){
+    try {
+      return (
+        await this.http.get(
+          `/get-contest-social-medias/${id}`,
+          {
+            headers: { Authorization: getAccessToken() },
+          },
+        )
+      ).data
+    } catch (error) {
+      throw new Error("Failed to create contest")
+    }
+  }
+
+  public async verifySocialMediaTask(id:string,username:string,contestId:string){
+    try {
+      return (
+        await this.http.post(
+          `/verify-social-media-task/${id}`,
+          { url:username,
+            contestId
+           },
+          {
+            headers: { Authorization: getAccessToken() },
+          },
+        )
+      ).data
+    } catch (error) {
+      throw new Error("Failed to create contest")
+    }
+  }
+
+  public async isSocialMediaTaskVerified(contestId:string){
+    try {
+      return (
+        await this.http.post(`is-social-media-task-verified`, 
+          {
+            contestId
+          }
+          ,{
+          headers: { Authorization: getAccessToken() },
+        })
+      ).data
+    } catch (error) {
+      throw new Error("Failed to create contest")
+    }
+  }
+
   public async getInteractionDetails(id: string) {
     try {
       return (
