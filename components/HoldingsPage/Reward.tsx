@@ -12,7 +12,7 @@ import { ScrollArea } from "../ui/scroll-area"
 import { ContestService } from "@/services/contest"
 import { RewardService } from "@/services/reward"
 import { AssetTypeEnum } from "@/types/services/reward"
-import { useWriteContract } from "wagmi"
+import { useWaitForTransactionReceipt, useWriteContract } from "wagmi"
 import { Address } from "@/types/web3"
 import { bscDepositContractAddress } from "@/lib/chains"
 import { rewardAbi } from "@/lib/rewardAbi"
@@ -30,7 +30,11 @@ type Reward = {
     id: string
   }
   poolInfo: {
+    address: Address
+    tokenDecimals: number
+    symbol: string
     tokenPerWinner: number
+    chainId: string
     _id: string
   }
 }
@@ -38,6 +42,7 @@ type Reward = {
 export default function RewardTable() {
   const [rewards, setRewards] = useState<Reward[]>([])
   const [contestId, setContestId] = useState("")
+  const [loading, setLoading] = useState(false)
 
   const getRewards = async () => {
     const rewardService = new RewardService()
@@ -59,24 +64,32 @@ export default function RewardTable() {
     console.log({ reward1: reward })
   }
 
+  const [tx, setTx] = useState<Address | undefined>()
+
   const { writeContractAsync } = useWriteContract()
 
+  const { data } = useWaitForTransactionReceipt({
+    hash: tx,
+  })
+
   const claimTokenReward = async (
-    amount: string,
+    amount: number,
     chain: string,
     address: Address,
     decimals: number,
   ) => {
-    if (!contestId) return
     try {
-      const tx = writeContractAsync({
+      const tx = await writeContractAsync({
         address: bscDepositContractAddress,
         abi: rewardAbi,
         functionName: "claimTokens",
-        args: [address, parseUnits(amount, decimals)],
+        args: [address, parseUnits(String(amount), decimals)],
       })
+      setTx(tx)
+      return tx
     } catch (error) {
       console.log(error)
+      throw error
     }
   }
 
@@ -84,23 +97,27 @@ export default function RewardTable() {
     getContestDetails()
   }, [contestId])
 
-  const handleClaim = async (
-    rewardId: string,
-    poolId: string,
-    rewardPoolId: string,
-    rewardType: AssetTypeEnum,
-    amount?: number,
-  ) => {
+  const handleClaim = async (rewardId: string) => {
+    setLoading(true)
+    const poolInfo = rewards.find((reward) => reward.id === rewardId)
+    console.log({ poolInfo })
     try {
-      let hash = ""
-      if (rewardType === AssetTypeEnum.Token) {
+      if (poolInfo?.rewardPool.assetType === AssetTypeEnum.Token) {
+        const hash = await claimTokenReward(
+          poolInfo.poolInfo.tokenPerWinner,
+          poolInfo.poolInfo.chainId,
+          poolInfo.poolInfo.address,
+          poolInfo.poolInfo.tokenDecimals,
+        )
+        registerClaim(rewardId, hash)
       }
-    } catch (error) {}
+    } catch (error) {
+      setLoading(false)
+    }
   }
 
   const registerClaim = async (rewardId: string, hash?: Address) => {
     const rewardService = new RewardService()
-
     await rewardService.claimReward(rewardId, hash ? { hash } : {})
 
     setRewards((prevRewards) =>
@@ -109,6 +126,11 @@ export default function RewardTable() {
       ),
     )
   }
+
+  useEffect(() => {
+    if (!data) return
+    setLoading(false)
+  }, [data])
 
   return (
     <ScrollArea className="h-[400px] rounded-2xl bg-th-accent-2/10 p-4">
@@ -128,21 +150,17 @@ export default function RewardTable() {
                   <span>{text.toLowerCase()} </span>
                 ))}
               </TableCell>
-              <TableCell>{reward.poolInfo.tokenPerWinner}</TableCell>
+              <TableCell>
+                {reward.poolInfo.tokenPerWinner} {reward.poolInfo.symbol}
+              </TableCell>
               <TableCell>
                 {reward.claimed ? (
                   <Button disabled>Claimed</Button>
                 ) : (
                   <Button
-                    onClick={() =>
-                      handleClaim(
-                        reward.id,
-                        reward.poolInfo._id,
-                        reward.rewardPool.id,
-                        reward.rewardPool.assetType,
-                        reward.poolInfo.tokenPerWinner,
-                      )
-                    }
+                    isLoading={loading}
+                    disabled={loading}
+                    onClick={() => handleClaim(reward.id)}
                   >
                     Claim
                   </Button>
