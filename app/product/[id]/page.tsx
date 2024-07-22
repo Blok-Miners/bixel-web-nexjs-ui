@@ -26,12 +26,12 @@ export default async function page({
         />
         <Actions id={params.id} owner={product.owner} />
         <div className="absolute bottom-8 right-8 z-10 flex gap-4">
-          <Socials socials={JSON.parse(product.socialMediaLinks)} />
+          <Socials socials={product.socialMediaLinks} />
           <Follow id={params.id} />
         </div>
       </div>
-      <div className="flex min-h-screen relative">
-        <div className="h-full min-h-screen sticky left-0 top-0 min-w-[320px] max-w-[320px] bg-th-black-2 p-8">
+      <div className="relative flex min-h-screen">
+        <div className="sticky left-0 top-0 h-full min-h-screen min-w-[320px] max-w-[320px] bg-th-black-2 p-8">
           <Info
             about={product.about}
             // socials={JSON.parse(product.socialMediaLinks)}
@@ -40,7 +40,11 @@ export default async function page({
             github={product.github}
           />
         </div>
-        <Contests id={product.id} ownerId ={"0x50Ca1fde29D62292a112A72671E14a5d4f05580f"} videoUrl={product.video} />
+        <Contests
+          id={product.id}
+          ownerId={product.owner.walletAddress}
+          videoUrl={product.video}
+        />
       </div>
     </div>
   )
