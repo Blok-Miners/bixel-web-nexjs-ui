@@ -128,7 +128,7 @@ export default function CreateReward({ productId }: { productId: string }) {
           {reward === "blockchain" ? (
             <CreateBlockchainReward productId={productId} />
           ) : reward === "social" ? (
-            <CreateSocialReward />
+            <CreateSocialReward  productId={productId}/>
           ) : reward === "Project Submission" ? (
             <ProjectSubmission chain={chain} productId={productId} />
           ) : reward === "Bug Bounty" ? (

@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import { Label } from "../ui/label"
 import { FaPlus } from "react-icons/fa6"
 import {
@@ -10,6 +10,8 @@ import {
 } from "../ui/select"
 import { Input } from "../ui/input"
 import { MdOutlineDeleteOutline } from "react-icons/md"
+import { Button } from "../ui/button"
+import { FaLongArrowAltRight } from "react-icons/fa"
 
 interface SocialLink {
   name: string
@@ -22,6 +24,7 @@ interface AddedItem {
   name: string
   value: string
   color: string
+  link:string
   icon: JSX.Element
 }
 
@@ -30,6 +33,9 @@ interface SocialRewardsDetailsProps {
   added: AddedItem[]
   handleAdd: (item: AddedItem) => void
   setAdded: React.Dispatch<React.SetStateAction<AddedItem[]>>
+  setStep: React.Dispatch<React.SetStateAction<number>>
+  setDescription: React.Dispatch<React.SetStateAction<string>>
+  description: string
 }
 
 export default function SocialRewardsDetails({
@@ -37,13 +43,22 @@ export default function SocialRewardsDetails({
   added,
   handleAdd,
   setAdded,
+  setStep,
+  setDescription,
+  description,
 }: SocialRewardsDetailsProps) {
+  const [linkValue,setLink] = useState('')
   return (
     <div className="flex flex-col gap-6">
       <div className="text-2xl font-bold">
         <div className="space-y-2 rounded-xl">
           <Label>Description</Label>
-          <Input type="text" placeholder="Description"  />
+          <Input
+            type="text"
+            placeholder="Description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
         </div>
       </div>
       <div className="flex items-center gap-2 font-bold">
@@ -57,6 +72,7 @@ export default function SocialRewardsDetails({
               handleAdd({
                 name: item.name,
                 value,
+                link:linkValue,
                 color: item.color,
                 icon: item.icon,
               })
@@ -111,11 +127,17 @@ export default function SocialRewardsDetails({
             </div>
             <div className="flex flex-col gap-2 p-4 text-black focus:border-hidden focus:outline-white">
               <div>Add URL</div>
-              <Input className="bg-slate-400" placeholder="https://" />
+              <Input className="bg-slate-400" placeholder="https://"  />
             </div>
           </div>
         ))}
       </div>
+      <Button
+        onClick={() => setStep(2)}
+        className="flex w-fit items-center gap-2"
+      >
+        <div>Next</div> <FaLongArrowAltRight />
+      </Button>
     </div>
   )
 }

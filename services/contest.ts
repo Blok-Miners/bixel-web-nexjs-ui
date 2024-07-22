@@ -1,6 +1,6 @@
 import axios from "axios"
 import BindService from "./bind"
-import { ICreateContest } from "@/types/services/contest"
+import { ICreateContest, ISocialMedia } from "@/types/services/contest"
 import { getAccessToken } from "@/lib/utils"
 
 export class ContestService extends BindService {
@@ -103,6 +103,14 @@ export class ContestService extends BindService {
           },
         )
       ).data
+    } catch (error) {
+      throw new Error("Failed to create contest")
+    }
+  }
+
+  public async createSocialMediaInteractionContest(socialMediaData:ISocialMedia){
+    try {
+
     } catch (error) {
       throw new Error("Failed to create contest")
     }

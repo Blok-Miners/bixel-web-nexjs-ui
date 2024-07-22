@@ -28,3 +28,12 @@ export enum ContestInteractionEnum{
   SURVEYS = "SURVEYS",
   PROJECT_SUBMISSION = "PROJECT_SUBMISSION"
 }
+
+export interface ISocialMedia {
+  description: string
+  productId: string
+  noOfWinners: number
+  mode: ContestModeEnum
+  startDate: Date | null
+  endDate: Date | null
+}

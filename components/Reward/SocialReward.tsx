@@ -24,17 +24,23 @@ import SocialRewardsDetails from "./SocialRewardsDetails"
 import ContestDetails from "./Blockchain/ContestDetails"
 import RewardDetails from "./Blockchain/RewardDetails"
 import ConfirmationDialog from "../Shared/ConfirmationDialog"
-import { ContestModeEnum } from "@/types/services/contest"
+import { ContestModeEnum, ISocialMedia } from "@/types/services/contest"
+import { ContestService } from "@/services/contest"
 
 interface AddedItem {
   name: string
   value: string
+  link:string
   color: string
   icon: JSX.Element
 }
 
-export default function CreateSocialReward() {
-
+export default function CreateSocialReward({
+  productId,
+}: {
+  productId: string
+}) {
+  const contestService = new ContestService()
   const [depositAmountToken, setDepositAmountToken] = useState(0)
   const [depositAmountNFT, setDepositAmountNFT] = useState(0)
   const [couponType, setCouponType] = useState("")
@@ -54,6 +60,7 @@ export default function CreateSocialReward() {
   const [step1Error, setStep1Error] = useState("")
   const [step2Error, setStep2Error] = useState("")
   const [step3Error, setStep3Error] = useState("")
+  const [description, setDescription] = useState("")
 
   const socialLinks = [
     {
@@ -113,11 +120,27 @@ export default function CreateSocialReward() {
   const [step, setStep] = useState(1)
 
   const handleAdd = (social: AddedItem) => {
+    console.log(social)
     setAdded((prevAdded) => [...prevAdded, social])
   }
 
-  const handleContestClick = () => {
-      console.log("clicked")
+  const handleContestClick = async() => {
+      console.log(added)
+      console.log(startDate,endDate)
+      console.log(totalWinners)
+      console.log(mode)
+      console.log(productId)
+      console.log(description)
+
+      const socialMediaData:ISocialMedia ={
+        description: description,
+        startDate,
+        endDate,
+        mode,
+        noOfWinners:totalWinners,
+        productId,
+      }
+      await contestService.createSocialMediaInteractionContest(socialMediaData)
   } 
 
   const handleDateChange = (name: string, date: Date | null) => {
@@ -172,6 +195,9 @@ export default function CreateSocialReward() {
             added={added}
             handleAdd={handleAdd}
             setAdded={setAdded}
+            setStep={setStep}
+            setDescription={setDescription}
+            description={description}
           />
         )}
                {step === 2 && (
