@@ -26,4 +26,14 @@ export enum ContestInteractionEnum{
   SOCIAL_MEDIA = "SOCIAL_MEDIA",
   REGISTRATION_VERIFICATION = "REGISTRATION_VERIFICATION",
   SURVEYS = "SURVEYS",
+  PROJECT_SUBMISSION = "PROJECT_SUBMISSION"
+}
+
+export interface ISocialMedia {
+  description: string
+  productId: string
+  noOfWinners: number
+  mode: ContestModeEnum
+  startDate: Date | null
+  endDate: Date | null
 }

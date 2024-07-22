@@ -24,10 +24,12 @@ export default function BountyDetails({
   setBugBounty,
   chain,
   handleDateChange,
+  step1Error,
 }: any) {
   return (
     <ScrollArea>
-      <div className="grid h-[30rem] grid-cols-2 gap-x-6 overflow-y-auto">
+      <div className="flex flex-col gap-6">
+        <div className="text-lg font-bold">Bounty Details</div>
         <div className="col-span-2 flex flex-col gap-2">
           <div>Description</div>
           <Textarea
@@ -51,47 +53,52 @@ export default function BountyDetails({
           />
         </div>
 
-        <div className="space-y-2 rounded-xl">
-          <Label>Profile URL</Label>
-          <Input
-            type="url"
-            placeholder="URL"
-            className="rounded-lg bg-transparent"
-            value={bugBounty.profileUrl}
-            name="profileUrl"
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <div>Chain (Optional)</div>
-          <Select
-            onValueChange={(value) =>
-              setBugBounty({
-                ...bugBounty,
-                chain: value,
-              })
-            }
-          >
-            <SelectTrigger
-              className={`flex h-fit w-full items-center gap-2 rounded-lg border border-th-accent-2 bg-th-black-2 hover:bg-opacity-50`}
+        <div className="flex gap-6">
+          <div className="flex-1 space-y-2 rounded-xl">
+            <Label>Profile URL</Label>
+            <Input
+              type="url"
+              placeholder="URL"
+              className="rounded-lg bg-transparent"
+              value={bugBounty.profileUrl}
+              name="profileUrl"
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="flex flex-1 flex-col gap-2">
+            <div>Chain (Optional)</div>
+            <Select
+              onValueChange={(value) =>
+                setBugBounty({
+                  ...bugBounty,
+                  chain: value,
+                })
+              }
             >
-              <SelectValue placeholder="Select a chain" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {chain &&
-                  chain.map((item: any, index: any) => {
-                    return (
-                      <SelectItem key={index} value={item.id} className="text-white">
-                        {item.name}
-                      </SelectItem>
-                    )
-                  })}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+              <SelectTrigger
+                className={`flex h-fit w-full items-center gap-2 rounded-lg border border-th-accent-2 bg-th-black-2 hover:bg-opacity-50`}
+              >
+                <SelectValue placeholder="Select a chain" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {chain &&
+                    chain.map((item: any, index: any) => {
+                      return (
+                        <SelectItem
+                          key={index}
+                          value={item.id}
+                          className="text-white"
+                        >
+                          {item.name}
+                        </SelectItem>
+                      )
+                    })}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
         <Button
@@ -100,6 +107,7 @@ export default function BountyDetails({
         >
           <div>Next</div> <FaLongArrowAltRight />
         </Button>
+        {step1Error && <div className="text-sm text-red-500">{step1Error}</div>}
       </div>
     </ScrollArea>
   )

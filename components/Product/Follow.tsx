@@ -4,16 +4,23 @@ import { useEffect, useState } from "react"
 import { Button } from "../ui/button"
 import { FaHeart, FaRegHeart } from "react-icons/fa"
 import { ProductService } from "@/services/product"
+import { Address } from "@/types/web3"
+import { useAccount } from "wagmi"
 
-export default function Follow({ id }: { id: string }) {
+export default function Follow({ id, owner }: { id: string; owner: Address }) {
   const [isFollowing, setIsFollowing] = useState(false)
   const [loading, setLoading] = useState(true)
+  const { address } = useAccount()
 
   const getFollowStatus = async () => {
-    const productService = new ProductService()
-    const res = await productService.getFollowStatus(id)
-    setIsFollowing(!!res)
-    setLoading(false)
+    try {
+      const productService = new ProductService()
+      const res = await productService.getFollowStatus(id)
+      setIsFollowing(!!res)
+      setLoading(false)
+    } catch (error) {
+      setLoading(false)
+    }
   }
 
   const handleFollow = async () => {
@@ -31,6 +38,10 @@ export default function Follow({ id }: { id: string }) {
   useEffect(() => {
     getFollowStatus()
   }, [])
+
+  console.log({ address, owner })
+
+  if (owner === address) return <></>
 
   return isFollowing ? (
     <Button
