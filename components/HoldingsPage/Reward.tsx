@@ -50,7 +50,7 @@ export default function RewardTable() {
   }, [])
 
   const handleClaim = async (rewardId: string) => {
-    const rewardService = new Rewards()
+    const rewardService = new RewardService()
     await rewardService.claimReward(rewardId ,{})
 
     setRewards((prevRewards) =>
