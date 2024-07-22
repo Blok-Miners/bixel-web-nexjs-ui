@@ -30,6 +30,9 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { BugBountyService } from "@/services/bugbounty"
 import { reset } from "viem/actions"
+import ConfirmationDialog from "@/components/Shared/ConfirmationDialog"
+import { Loader2 } from "lucide-react"
+import { truncate } from "fs"
 
 const formSchema = z.object({
   image: z.any(),
@@ -88,7 +91,16 @@ export function BugDialog({
     },
   })
 
+  const [loading, setLoading] = useState(false)
+
+  const [openDialog, setOpenDialog] = useState(false)
+
+  const [title, setTitle] = useState("")
+
+  const [message, setMessage] = useState("")
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true)
     console.log(values)
     console.log(image)
     console.log(contestId)
@@ -101,7 +113,14 @@ export function BugDialog({
     try {
       const res = await service.submitBugBounty(formData, contestId)
       console.log(res)
+      setOpen(false)
+      setOpenDialog(true)
+      setTitle("Success")
+      setMessage("Bug submitted successfully")
+      setLoading(false)
+      form.reset()
     } catch (error) {
+      setLoading(false)
       console.log(error)
     }
   }
@@ -130,85 +149,114 @@ export function BugDialog({
     }
   }, [image])
 
+  useEffect(() => {
+    if (open === false) {
+      setImage(null)
+      setPreview(null)
+    }
+  }, [open])
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="w-full">Submit</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogTitle className="mx-auto">Bug Report</DialogTitle>
-        <ScrollArea className="scrollbar-hide max-h-[80vh]">
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="flex flex-col gap-4"
-            >
-              <FormItem>
-                <FormLabel>Choose Image</FormLabel>
-                <Input
-                  readOnly={readonly}
-                  id="file-upload"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="placeholder:text-white"
+    <>
+      <ConfirmationDialog
+        open={openDialog}
+        setOpen={setOpenDialog}
+        title={title}
+        message={message}
+      />
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger asChild>
+          <Button className="w-full">Submit</Button>
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-md">
+          <DialogTitle className="mx-auto">Bug Report</DialogTitle>
+          <ScrollArea className="scrollbar-hide max-h-[80vh]">
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="flex flex-col gap-4"
+              >
+                <FormItem>
+                  <FormLabel>Choose Image</FormLabel>
+                  <Input
+                    readOnly={readonly}
+                    id="file-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="placeholder:text-white"
+                  />
+                  {preview && (
+                    <div className="mt-4 w-full overflow-hidden rounded-lg border border-th-accent-2">
+                      <Image
+                        src={preview}
+                        alt="Image Preview"
+                        width={100}
+                        height={100}
+                        className="w-full"
+                      />
+                    </div>
+                  )}
+                </FormItem>
+                <FormField
+                  control={form.control}
+                  name="summary"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-white">Summary</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          readOnly={readonly}
+                          placeholder=""
+                          {...field}
+                        />
+                      </FormControl>
+                      <div className="flex justify-between">
+                        <FormMessage />
+                      </div>
+                    </FormItem>
+                  )}
                 />
-                {preview && (
-                  <div className="mt-4 w-full overflow-hidden rounded-lg border border-th-accent-2">
-                    <Image
-                      src={preview}
-                      alt="Image Preview"
-                      width={100}
-                      height={100}
-                      className="w-full"
-                    />
-                  </div>
-                )}
-              </FormItem>
-              <FormField
-                control={form.control}
-                name="summary"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-white">Summary</FormLabel>
-                    <FormControl>
-                      <Textarea readOnly={readonly} placeholder="" {...field} />
-                    </FormControl>
-                    <div className="flex justify-between">
-                      <FormMessage />
-                    </div>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="steps"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-white">
-                      Steps to replicate :
-                    </FormLabel>
-                    <FormControl>
-                      <Textarea readOnly={readonly} placeholder="" {...field} />
-                    </FormControl>
-                    <div className="flex justify-between">
-                      <FormMessage />
-                    </div>
-                  </FormItem>
-                )}
-              />
-              <Button type="submit">Submit</Button>
-            </form>
-          </Form>
-          <DialogFooter className="mt-4 sm:justify-start">
-            <DialogClose asChild>
-              <Button className="w-full" variant={"secondary"}>
-                Discard
-              </Button>
-            </DialogClose>
-          </DialogFooter>
-        </ScrollArea>
-      </DialogContent>
-    </Dialog>
+                <FormField
+                  control={form.control}
+                  name="steps"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-white">
+                        Steps to replicate :
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea
+                          readOnly={readonly}
+                          placeholder=""
+                          {...field}
+                        />
+                      </FormControl>
+                      <div className="flex justify-between">
+                        <FormMessage />
+                      </div>
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit">
+                  {loading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" color="white" />
+                  ) : (
+                    "Submit"
+                  )}
+                </Button>
+              </form>
+            </Form>
+            <DialogFooter className="mt-4 sm:justify-start">
+              <DialogClose asChild>
+                <Button className="w-full" variant={"secondary"}>
+                  Discard
+                </Button>
+              </DialogClose>
+            </DialogFooter>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
