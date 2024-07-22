@@ -19,6 +19,12 @@ import {
 } from "@/components/ui/select"
 import { Input } from "../ui/input"
 import { MdOutlineDeleteOutline } from "react-icons/md"
+import { Label } from "../ui/label"
+import SocialRewardsDetails from "./SocialRewardsDetails"
+import ContestDetails from "./Blockchain/ContestDetails"
+import RewardDetails from "./Blockchain/RewardDetails"
+import ConfirmationDialog from "../Shared/ConfirmationDialog"
+import { ContestModeEnum } from "@/types/services/contest"
 
 interface AddedItem {
   name: string
@@ -28,6 +34,27 @@ interface AddedItem {
 }
 
 export default function CreateSocialReward() {
+
+  const [depositAmountToken, setDepositAmountToken] = useState(0)
+  const [depositAmountNFT, setDepositAmountNFT] = useState(0)
+  const [couponType, setCouponType] = useState("")
+  const [couponCode, setCouponCode] = useState("")
+  const [rewardType, setRewardType] = useState("")
+  const [startDate, setStartDate] = useState<Date | null>(null)
+  const [endDate, setEndDate] = useState<Date | null>(null)
+  const [mode, setMode] = useState<ContestModeEnum>(ContestModeEnum.LEADERBOARD)
+  const [totalWinners, setTotalWineers] = useState(0)
+  const [openDialog, setOpenDialog] = useState(false)
+  const [title, setTitle] = useState("")
+  const [message, setMessage] = useState("")
+  const [contestId, setContestId] = useState("")
+
+
+  const [loading, setLoading] = useState(false)
+  const [step1Error, setStep1Error] = useState("")
+  const [step2Error, setStep2Error] = useState("")
+  const [step3Error, setStep3Error] = useState("")
+
   const socialLinks = [
     {
       name: "Facebook",
@@ -81,97 +108,108 @@ export default function CreateSocialReward() {
       content: [{ name: "Visit on Youtube", value: "Visit" }],
     },
   ]
+
   const [added, setAdded] = useState<AddedItem[]>([])
   const [step, setStep] = useState(1)
 
   const handleAdd = (social: AddedItem) => {
     setAdded((prevAdded) => [...prevAdded, social])
   }
+
+  const handleContestClick = () => {
+      console.log("clicked")
+  } 
+
+  const handleDateChange = (name: string, date: Date | null) => {
+    if (name === "endDate") {
+      setEndDate(date)
+    } else if (name === "startDate") {
+      setStartDate(date)
+    }
+  }
+
+
+
   return (
     <>
-      <div className="flex gap-4 px-4 text-sm text-slate-200 shadow-lg">
+      <ConfirmationDialog
+        open={openDialog}
+        setOpen={setOpenDialog}
+        title={title}
+        message={message}
+      />
+      <div className="sticky top-0 z-10 flex gap-4 bg-th-black-2 px-4 text-sm text-slate-200 shadow-lg">
         <button
           onClick={() => setStep(1)}
           className={`font-medium ${step === 1 && "border-b border-th-accent-2 text-th-accent-2"} flex cursor-pointer items-center gap-2 p-2 text-sm`}
         >
           <div>Social Links</div>
         </button>
+        <button
+          onClick={() => setStep(2)}
+          className={`font-medium ${step === 2 && "border-b border-th-accent-2 text-th-accent-2"} flex cursor-pointer items-center gap-2 p-2 text-sm`}
+        >
+          <div>
+            <FaLongArrowAltRight />
+          </div>
+          <div>Contest type</div>
+        </button>
+        <button
+          onClick={() => setStep(3)}
+          className={`font-medium ${step === 3 && "border-b border-th-accent-2 text-th-accent-2"} flex cursor-pointer items-center gap-2 p-2 text-sm`}
+        >
+          <div>
+            <FaLongArrowAltRight />
+          </div>
+          <div>Reward Details</div>
+        </button>
       </div>
+
       <div className="mt-8 px-4">
         {step === 1 && (
-          <div className="flex flex-col gap-6">
-            <div className="flex items-center gap-2 font-bold">
-              <FaPlus /> Add Social Links
-            </div>
-            <div className="flex flex-wrap items-center gap-4">
-              {socialLinks.map((item, index) => (
-                <>
-                  <Select
-                    key={index}
-                    onValueChange={(value) =>
-                      handleAdd({
-                        name: item.name,
-                        value,
-                        color: item.color,
-                        icon: item.icon,
-                      })
-                    }
-                  >
-                    <SelectTrigger
-                      style={{ backgroundColor: item.color }}
-                      className={`flex w-fit items-center gap-2 rounded-lg p-2 outline-none hover:opacity-80 bg-[${item.color}] px-4 font-semibold shadow-lg hover:bg-opacity-50`}
-                    >
-                      {item.icon} <div>{item.name}</div>
-                    </SelectTrigger>
-                    {item.content && (
-                      <SelectContent className="bg-white">
-                        <SelectGroup>
-                          {item.content.map((content, index) => (
-                            <SelectItem key={index} value={content.value}>
-                              <div className="flex items-center gap-2">
-                                <div>{item.icon}</div> <div>{content.name}</div>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    )}
-                  </Select>
-                </>
-              ))}
-            </div>
-            <div className="flex flex-col gap-4">
-              {added.map((item, index) => {
-                return (
-                  <div key={index} className="flex flex-col overflow-hidden rounded-lg bg-slate-300">
-                    <div
-                      style={{ backgroundColor: item.color }}
-                      className="flex justify-between bg-blue-700 p-2 px-4"
-                    >
-                      <div>
-                        {item.value} on {item.name}
-                      </div>
-                      <button
-                        className="flex items-center gap-1 bg-opacity-45"
-                        onClick={() =>
-                          setAdded((prevAdded) =>
-                            prevAdded.filter((_, i) => i !== index),
-                          )
-                        }
-                      >
-                        <MdOutlineDeleteOutline />
-                        <div>Remove</div>
-                      </button>
-                    </div>
-                    <div className="flex flex-col gap-2 p-4 text-black focus:border-hidden focus:outline-white">
-                      <div>Add URL</div>
-                      <Input className="bg-slate-400" placeholder="https://" />
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-          </div>
+          <SocialRewardsDetails
+            socialLinks={socialLinks}
+            added={added}
+            handleAdd={handleAdd}
+            setAdded={setAdded}
+          />
+        )}
+               {step === 2 && (
+          <ContestDetails
+            step2Error={step2Error}
+            setStep2Error={setStep2Error}
+            setStep={setStep}
+            loading={loading}
+            setLoading={setLoading}
+            mode={mode}
+            setMode={setMode}
+            ContestModeEnum={ContestModeEnum}
+            setTotalWineers={setTotalWineers}
+            handleContestClick={handleContestClick}
+            totalWinners={totalWinners}
+            startDate={startDate}
+            endDate={endDate}
+            handleDateChange={handleDateChange}
+          />
+        )}
+        {step === 3 && (
+          <RewardDetails
+            contestId={contestId}
+            setStep3Error={setStep3Error}
+            setRewardType={setRewardType}
+            setCouponType={setCouponType}
+            rewardType={rewardType}
+            couponType={couponType}
+            setDepositAmountToken={setDepositAmountToken}
+            totalWinners={totalWinners}
+            depositAmountToken={depositAmountToken}
+            setStep={setStep}
+            step3Error={step3Error}
+            couponCode={couponCode}
+            setCouponCode={setCouponCode}
+            depositAmountNFT={depositAmountNFT}
+            setDepositAmountNFT={setDepositAmountNFT}
+          />
         )}
       </div>
     </>
