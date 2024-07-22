@@ -90,4 +90,18 @@ export class ProductService extends BindService {
       throw error
     }
   }
+
+  public async getProductSubmissions(id: string) {
+    try {
+      return (
+        await this.http.get(`/get-submission/ ${id}`, {
+          params: { id },
+        })
+      ).data
+    } catch (error) {
+      throw error
+    }
+  }
 }
+
+
