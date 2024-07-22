@@ -164,4 +164,16 @@ export class ContestService extends BindService {
       throw new Error("Failed to create contest")
     }
   }
+
+  public async getProjectDetails(id: string) {
+    try {
+      return (
+        await this.http.get(`project-submission/${id}`, {
+          headers: { Authorization: getAccessToken() },
+        })
+      ).data
+    } catch (error) {
+      throw error
+    }
+  }
 }
