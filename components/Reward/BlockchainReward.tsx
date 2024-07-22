@@ -84,7 +84,7 @@ export default function CreateBlockchainReward({
   }
 
   const [step1Error, setStep1Error] = useState("")
-  const [step2Error, setStep2Error] = useState("")
+  const [step2Error, setStep2Error] = useState<string | undefined>("")
   const [step3Error, setStep3Error] = useState("")
 
   const [openDialog, setOpenDialog] = useState(false)
@@ -198,13 +198,11 @@ export default function CreateBlockchainReward({
             mode={mode}
             setMode={setMode}
             setStep={setStep}
-            ContestModeEnum={ContestModeEnum}
             setTotalWineers={setTotalWineers}
             handleContestClick={handleContestClick}
             step2Error={step2Error}
             totalWinners={totalWinners}
             contestId={contestId}
-            setLoading={setLoading}
             loading={loading}
             startDate={startDate}
             endDate={endDate}

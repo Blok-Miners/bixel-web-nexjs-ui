@@ -36,7 +36,7 @@ export default function Holdings({ productId, chain }: any) {
 
   const [loading, setLoading] = useState(false)
   const [step1Error, setStep1Error] = useState("")
-  const [step2Error, setStep2Error] = useState("")
+  const [step2Error, setStep2Error] = useState<string | undefined>("")
   const [step3Error, setStep3Error] = useState("")
 
   const handleDateChange = (name: string, date: Date | null) => {
@@ -152,20 +152,18 @@ export default function Holdings({ productId, chain }: any) {
         {step === 2 && (
           <ContestDetails
             contestId={contestId}
+            step2Error={step2Error}
             setStep2Error={setStep2Error}
+            setStep={setStep}
+            loading={loading}
             mode={mode}
             setMode={setMode}
-            setStep={setStep}
-            ContestModeEnum={ContestModeEnum}
             setTotalWineers={setTotalWineers}
             handleContestClick={handleContestClick}
-            step2Error={step2Error}
             totalWinners={totalWinners}
-            handleDateChange={handleDateChange}
             startDate={startDate}
             endDate={endDate}
-            loading={loading}
-            setLoading={setLoading}
+            handleDateChange={handleDateChange}
           />
         )}
         {step === 3 && (

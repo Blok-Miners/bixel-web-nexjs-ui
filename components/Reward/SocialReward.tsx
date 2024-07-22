@@ -48,8 +48,10 @@ export default function CreateSocialReward({
   const [rewardType, setRewardType] = useState("")
   const [startDate, setStartDate] = useState<Date | null>(null)
   const [endDate, setEndDate] = useState<Date | null>(null)
-  const [mode, setMode] = useState<ContestModeEnum>(ContestModeEnum.LEADERBOARD)
-  const [totalWinners, setTotalWineers] = useState(0)
+  const [mode, setMode] = useState<ContestModeEnum | undefined>(undefined)
+  const [totalWinners, setTotalWineers] = useState<number | undefined>(
+    undefined,
+  )
   const [openDialog, setOpenDialog] = useState(false)
   const [title, setTitle] = useState("")
   const [message, setMessage] = useState("")
@@ -57,7 +59,7 @@ export default function CreateSocialReward({
 
   const [loading, setLoading] = useState(false)
   const [step1Error, setStep1Error] = useState("")
-  const [step2Error, setStep2Error] = useState("")
+  const [step2Error, setStep2Error] = useState<string | undefined>("")
   const [step3Error, setStep3Error] = useState("")
   const [description, setDescription] = useState("")
 
@@ -178,7 +180,7 @@ export default function CreateSocialReward({
           </button>
         </div>
 
-        <div className="mt-8  px-4">
+        <div className="mt-8 px-4">
           {step === 1 && (
             <SocialRewardsDetails
               socialLinks={socialLinks}
@@ -192,14 +194,13 @@ export default function CreateSocialReward({
           )}
           {step === 2 && (
             <ContestDetails
+              contestId={contestId}
               step2Error={step2Error}
               setStep2Error={setStep2Error}
               setStep={setStep}
               loading={loading}
-              setLoading={setLoading}
               mode={mode}
               setMode={setMode}
-              ContestModeEnum={ContestModeEnum}
               setTotalWineers={setTotalWineers}
               handleContestClick={handleContestClick}
               totalWinners={totalWinners}

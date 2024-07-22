@@ -35,7 +35,7 @@ export default function Registration({ productId, chain }: any) {
 
   const [loading, setLoading] = useState(false)
   const [step1Error, setStep1Error] = useState("")
-  const [step2Error, setStep2Error] = useState("")
+  const [step2Error, setStep2Error] = useState<string | undefined>("")
   const [step3Error, setStep3Error] = useState("")
 
   const handleDateChange = (name: string, date: Date | null) => {
@@ -141,12 +141,11 @@ export default function Registration({ productId, chain }: any) {
         )}
         {step === 2 && (
           <ContestDetails
-          contestId={contestId}
+            contestId={contestId}
             setStep2Error={setStep2Error}
             mode={mode}
             setMode={setMode}
             setStep={setStep}
-            ContestModeEnum={ContestModeEnum}
             setTotalWineers={setTotalWineers}
             handleContestClick={handleContestClick}
             step2Error={step2Error}
@@ -155,7 +154,6 @@ export default function Registration({ productId, chain }: any) {
             startDate={startDate}
             endDate={endDate}
             loading={loading}
-            setLoading={setLoading}
           />
         )}
         {step === 3 && (

@@ -32,8 +32,8 @@ export const BugBounty = ({
   const [couponType, setCouponType] = useState("")
   const [couponCode, setCouponCode] = useState("")
   const [rewardType, setRewardType] = useState("")
-  const [startDate, setStartDate] = useState<Date | null>(null)
-  const [endDate, setEndDate] = useState<Date | null>(null)
+  const [startDate, setStartDate] = useState<Date | null | undefined>(null)
+  const [endDate, setEndDate] = useState<Date | null | undefined>(null)
   const [mode, setMode] = useState<ContestModeEnum | undefined>(undefined)
   const [totalWinners, setTotalWineers] = useState<number | undefined>(
     undefined,
@@ -45,7 +45,7 @@ export const BugBounty = ({
 
   const [loading, setLoading] = useState(false)
   const [step1Error, setStep1Error] = useState("")
-  const [step2Error, setStep2Error] = useState("")
+  const [step2Error, setStep2Error] = useState<string | undefined>("")
   const [step3Error, setStep3Error] = useState("")
 
   const handleDateChange = (name: string, date: Date | null) => {
@@ -172,10 +172,8 @@ export const BugBounty = ({
             setStep2Error={setStep2Error}
             setStep={setStep}
             loading={loading}
-            setLoading={setLoading}
             mode={mode}
             setMode={setMode}
-            ContestModeEnum={ContestModeEnum}
             setTotalWineers={setTotalWineers}
             handleContestClick={handleBountyClick}
             totalWinners={totalWinners}
