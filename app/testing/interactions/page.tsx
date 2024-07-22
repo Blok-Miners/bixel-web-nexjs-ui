@@ -1,6 +1,7 @@
 import { ContractInteraction } from "@/components/Interactions/ContractInteraction"
 import { HoldingVerification } from "@/components/Interactions/HoldingVerification"
 import ProjectSubmission from "@/components/Interactions/ProjectSubmission"
+import { RewardInteraction } from "@/components/Interactions/RewardInteraction"
 
 export default function page() {
   return (
@@ -8,6 +9,7 @@ export default function page() {
       <ContractInteraction id={"669bb9b3663e883c122fb899"} />
       <ProjectSubmission />
       <HoldingVerification />
+      <RewardInteraction/>
     </div>
   )
 }
