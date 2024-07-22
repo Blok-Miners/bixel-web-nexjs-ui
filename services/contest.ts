@@ -92,7 +92,7 @@ export class ContestService extends BindService {
     try {
       return (
         await this.http.post(
-          "/create-registration-verification-contest",
+          "/create-project-submission-contest",
           contestData,
           {
             headers: { Authorization: getAccessToken() },
