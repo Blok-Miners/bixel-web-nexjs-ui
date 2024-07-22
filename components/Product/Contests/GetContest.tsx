@@ -30,7 +30,7 @@ export default function GetContest({
     case ContestInteractionEnum.SMART_CONTRACT:
       return <ContractInteraction id={contestId} />
     case ContestInteractionEnum.PROJECT_SUBMISSION:
-      return <ProjectSubmission id={contestId} />
+      return <ProjectSubmission id={contestId} projectId={interactionId} />
     case ContestInteractionEnum.HOLDINGS_VERIFICATION:
       return <HoldingVerification id={contestId} />
     case ContestInteractionEnum.SMART_CONTRACT:
