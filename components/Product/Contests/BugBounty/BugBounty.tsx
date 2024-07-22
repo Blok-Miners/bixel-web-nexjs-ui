@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Check, X } from "lucide-react"
 import { useAccount } from "wagmi"
 import { BugBountyService } from "@/services/bugbounty"
-import { BugBounty } from "@/types/services/bugBounty"
+import { BugBounty, BugBountySubmission } from "@/types/services/bugBounty"
 
 export default function BugBountyCard({
   contestId,
@@ -38,6 +38,13 @@ export default function BugBountyCard({
     const bugBountyService = new BugBountyService()
     const bounty = await bugBountyService.getBugBounty(bugBountyId)
     setBugBounty(bounty)
+  }
+
+  const selectBug = (submission: BugBountySubmission)=>{
+    // setInfo({
+    //   summary: submission.summary,
+    //   steps
+    // })
   }
 
   const handleVerify = async (approved: boolean, submissionId: string) => {
@@ -87,6 +94,7 @@ export default function BugBountyCard({
             {bugBounty?.submissions ? (
               bugBounty?.submissions.map((submission) => (
                 <button
+                  onClick={()=> selectBug(submission)}
                   key={submission._id}
                   className="flex w-full cursor-pointer items-center justify-between gap-4 rounded-lg bg-th-black/60 p-2 hover:bg-th-black"
                 >
@@ -135,6 +143,7 @@ export default function BugBountyCard({
         </ScrollArea>
       </CardContent>
       <CardFooter>
+        <Button>Submit Bug Report</Button>
         <BugDialog
           info={info}
           readonly={readOnly}

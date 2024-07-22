@@ -165,9 +165,6 @@ export function BugDialog({
         message={message}
       />
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogTrigger asChild>
-          <Button className="w-full">Submit</Button>
-        </DialogTrigger>
         <DialogContent className="sm:max-w-md">
           <DialogTitle className="mx-auto">Bug Report</DialogTitle>
           <ScrollArea className="scrollbar-hide max-h-[80vh]">
