@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from "axios"
 import bind from "./bind"
 import { getAccessToken } from "@/lib/utils"
 import { ICreateTokenPool } from "@/types/services/reward"
+import { Address } from "@/types/web3"
 
 export class RewardService extends bind {
   private http
@@ -38,11 +39,9 @@ export class RewardService extends bind {
     }
   }
 
-  async claimReward(rewardId: string , body:Record<string, never> = {}) {
-    await this.http.post(`/claim-reward/${rewardId}`, body,
-      {
-        headers: { Authorization: getAccessToken() },
-      }
-    );
+  async claimReward(rewardId: string, body: { hash?: Address }) {
+    await this.http.post(`/claim-reward/${rewardId}`, body, {
+      headers: { Authorization: getAccessToken() },
+    })
   }
 }

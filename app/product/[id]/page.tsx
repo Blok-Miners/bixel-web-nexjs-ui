@@ -27,7 +27,7 @@ export default async function page({
         <Actions id={params.id} owner={product.owner} />
         <div className="absolute bottom-8 right-8 z-10 flex gap-4">
           <Socials socials={product.socialMediaLinks} />
-          <Follow id={params.id} />
+          <Follow id={params.id} owner={product.owner.walletAddress} />
         </div>
       </div>
       <div className="relative flex min-h-screen">
