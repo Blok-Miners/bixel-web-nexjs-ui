@@ -24,7 +24,7 @@ interface AddedItem {
   name: string
   value: string
   color: string
-  link:string
+  link: string
   icon: JSX.Element
 }
 
@@ -47,9 +47,18 @@ export default function SocialRewardsDetails({
   setDescription,
   description,
 }: SocialRewardsDetailsProps) {
-  const [linkValue,setLink] = useState('')
+  const [linkValue, setLink] = useState("")
+  const handleLinkChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number,
+  ) => {
+    const newAdded = [...added]
+    newAdded[index].link = e.target.value
+    setAdded(newAdded)
+  }
+
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6  overflow-y-auto">
       <div className="text-2xl font-bold">
         <div className="space-y-2 rounded-xl">
           <Label>Description</Label>
@@ -72,7 +81,7 @@ export default function SocialRewardsDetails({
               handleAdd({
                 name: item.name,
                 value,
-                link:linkValue,
+                link: linkValue,
                 color: item.color,
                 icon: item.icon,
               })
@@ -127,7 +136,12 @@ export default function SocialRewardsDetails({
             </div>
             <div className="flex flex-col gap-2 p-4 text-black focus:border-hidden focus:outline-white">
               <div>Add URL</div>
-              <Input className="bg-slate-400" placeholder="https://"  />
+              <Input
+                className="bg-slate-400"
+                placeholder="https://"
+                value={item.link}
+                onChange={(e) => handleLinkChange(e, index)}
+              />
             </div>
           </div>
         ))}
