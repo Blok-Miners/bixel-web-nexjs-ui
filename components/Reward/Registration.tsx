@@ -65,7 +65,7 @@ export default function Registration({
   }
 
   const handleContestClick = async () => {
-    if (!registration.description || !registration.url) {
+    if (!registration.description || !registration.url || !verificationMode) {
       setStep(1)
       setStep1Error("All the fields are required !")
       return
@@ -85,6 +85,7 @@ export default function Registration({
       const contestData: any = {
         description: registration.description,
         url: registration.url,
+        verificationMode,
         mode,
         productId,
         noOfWinners: totalWinners,
@@ -167,7 +168,7 @@ export default function Registration({
         )}
         {step === 3 && (
           <RewardDetails
-          productId={productId}
+            productId={productId}
             contestId={contestId}
             setStep3Error={setStep3Error}
             setRewardType={setRewardType}
