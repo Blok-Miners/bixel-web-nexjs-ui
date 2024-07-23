@@ -34,7 +34,8 @@ export enum SocialMediaEnum {
   FACEBOOK = 'FACEBOOK',
   INSTAGRAM = 'INSTAGRAM',
   YOUTUBE = 'YOUTUBE',
-  OTHER = 'OTHER',
+  DISCORD = 'DISCORD',
+  TELEGRAM = "TELEGRAM"
 }
 
 export interface ISocialMediaInteraction {
