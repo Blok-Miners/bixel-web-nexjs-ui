@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from "axios"
 import bind from "./bind"
 import { getAccessToken } from "@/lib/utils"
 import { ICreateCouponPool, ICreateTokenPool } from "@/types/services/reward"
+import { ICreateNFTPool } from "@/types/services/reward"
 import { Address } from "@/types/web3"
 
 export class RewardService extends bind {
@@ -31,6 +32,19 @@ export class RewardService extends bind {
     try {
       return (
         await this.http.post(`/create-coupon-pool`, body, {
+          headers: {
+            Authorization: getAccessToken(),
+          },
+        })
+      ).data
+    } catch (error) {
+      throw error
+    }
+  }
+  public async createNftPool(nftPool: ICreateNFTPool) {
+    try {
+      return (
+        await this.http.post(`/create-nft-pool`, nftPool, {
           headers: {
             Authorization: getAccessToken(),
           },

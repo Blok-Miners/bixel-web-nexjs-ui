@@ -24,13 +24,21 @@ import {
   FaLongArrowAltLeft,
   FaLongArrowAltRight,
 } from "react-icons/fa"
-import { formatUnits, getAddress, parseEther, parseUnits } from "viem"
+import {
+  erc20Abi,
+  erc721Abi,
+  formatUnits,
+  getAddress,
+  parseEther,
+  parseUnits,
+} from "viem"
 import {
   useAccount,
   useReadContracts,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi"
+import { erc1155Abi } from "@/lib/erc1155Abi"
 
 interface IRewardDetails {
   productId: string
@@ -78,7 +86,10 @@ export default function RewardDetails({
   const [tx, setTx] = useState<Address | undefined>()
   const [amountPerWinner, setAmountPerWinner] = useState<number | undefined>()
   const [approvalHash, setApprovalHash] = useState<Address | undefined>()
+  const [nftIds, setNftsIds] = useState<string[]>([])
+  const [nftType, setNftType] = useState("")
   const [loading, setLoading] = useState<boolean>(false)
+  const [nftAmount1155, setNftAmount1155] = useState<string[]>([])
   const getAllChain = async () => {
     const chains = new ChainService()
     const allChain = await chains.getChains()
@@ -237,6 +248,198 @@ export default function RewardDetails({
     }
   }
 
+  const [ercApprovalHash, setErcApprovalHash] = useState<Address | undefined>()
+  const [ercTxHash, setErcTxHash] = useState<Address | undefined>()
+
+  const {
+    data: ercApprovalReceipt,
+    isLoading: ercLoadingApproval,
+    error: ercErrorApproval,
+  } = useWaitForTransactionReceipt({
+    hash: ercApprovalHash,
+  })
+
+  const {
+    data: ercTxHashReceipt,
+    isLoading: ercTxLoading,
+    error: ercTxError,
+  } = useWaitForTransactionReceipt({
+    hash: ercTxHash,
+  })
+
+  const {
+    data: erc721Approved,
+    isLoading: erc721Loading,
+    refetch: erc721Refetch,
+  } = useReadContracts({
+    allowFailure: true,
+    contracts: [
+      {
+        abi: erc721Abi,
+        address: tokenAddress ? getAddress(tokenAddress) : undefined,
+        functionName: "isApprovedForAll",
+        args: formatArray([address, bscDepositContractAddress]),
+      },
+    ],
+  })
+
+  const {
+    data: erc1155Approved,
+    isLoading: erc1155Loading,
+    refetch: erc1155Refetch,
+  } = useReadContracts({
+    allowFailure: true,
+    contracts: [
+      {
+        abi: erc1155Abi,
+        address: tokenAddress ? getAddress(tokenAddress) : undefined,
+        functionName: "isApprovedForAll",
+        args: formatArray([address, bscDepositContractAddress]),
+      },
+    ],
+  })
+
+  const checkERC721Approval = () => {
+    if (!erc721Approved) return false
+    return erc721Approved[0].result
+  }
+
+  const checkERC1155Approval = () => {
+    if (!erc1155Approved) return false
+    return erc1155Approved[0].result
+  }
+
+  const handleERC721Approve = async () => {
+    try {
+      if (!tokenAddress) return
+      const hash = await writeContractAsync({
+        abi: erc721Abi,
+        address: getAddress(tokenAddress),
+        functionName: "setApprovalForAll",
+        args: [bscDepositContractAddress, true],
+      })
+      console.log(hash)
+      setErcApprovalHash(hash)
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+    }
+  }
+
+  const handleERC1155Approve = async () => {
+    try {
+      console.log(tokenAddress)
+      if (!tokenAddress || !address) return
+      const hash = await writeContractAsync({
+        abi: erc1155Abi,
+        address: getAddress(address),
+        functionName: "setApprovalForAll",
+        args: [bscDepositContractAddress, true],
+      })
+      setErcApprovalHash(hash)
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+    }
+  }
+
+  const handleDeposit721 = async () => {
+    try {
+      if (!tokenAddress || !depositAmountNFT) return
+      if (depositAmountNFT !== nftIds.length) return
+      setLoading(true)
+      const approval = checkERC721Approval()
+      console.log(approval)
+      if (!approval) return handleERC721Approve()
+      const hash = await writeContractAsync({
+        abi: rewardAbi,
+        address: bscDepositContractAddress,
+        functionName: "depositNfts721",
+        args: [getAddress(tokenAddress), nftIds],
+      })
+      console.log(hash)
+      setErcTxHash(hash)
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+    }
+  }
+
+  const handleDeposit1155 = async () => {
+    console.log(tokenAddress, erc1155Approved)
+    try {
+      if (!tokenAddress || !depositAmountNFT) return
+      if (
+        depositAmountNFT !== nftIds.length &&
+        nftAmount1155.length !== nftIds.length
+      )
+        return
+      setLoading(true)
+      const approval = checkERC1155Approval()
+      console.log(approval)
+      if (!approval) return handleERC1155Approve()
+      console.log(nftAmount1155, "hhehhehehe")
+      // const formattedAmount = nftAmount1155.map(amount=>{
+      //   return BigInt(amount)
+      // })
+      // console.log(formattedAmount,"ofrmayed")
+      const hash = await writeContractAsync({
+        abi: rewardAbi,
+        address: bscDepositContractAddress,
+        functionName: "depositNfts1155",
+        args: [getAddress(tokenAddress), nftIds, nftAmount1155],
+      })
+      console.log(hash,"11555")
+      setErcTxHash(hash)
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+    }
+  }
+
+  const handleDepositNfts = () => {
+    if (nftType === "ERC-721") {
+      return handleDeposit721()
+    } else if (nftType === "ERC-1155") {
+      console.log(nftAmount1155)
+      return handleDeposit1155()
+    }
+  }
+
+  const handleCreateNftPool = async () => {
+    try {
+      if (!totalWinners) return
+      const rewardService = new RewardService()
+      const res = await rewardService.createNftPool({
+        address: getAddress(tokenAddress!),
+        chainId: blockchainData.chainDeployed,
+        NFTs: nftIds,
+        distributedNFTS: 0,
+        contestId,
+        totalWinners,
+      })
+      console.log(res)
+      setLoading(false)
+      if (productId) router.push(`/product/${productId}`)
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+    }
+  }
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target.value
+    const numberArray = input
+      .split(",")
+      .map((num) => num.trim())
+      .filter((num) => !isNaN(Number(num)) && num !== "")
+
+    if (e.target.name === "tokenIds") {
+      setNftsIds(numberArray)
+    }
+    setNftAmount1155(numberArray)
+  }
+
   useEffect(() => {
     if (!tx) return
     if (!receipt) return
@@ -253,6 +456,28 @@ export default function RewardDetails({
     refetch()
     handleDepositTokens()
   }, [receiptApproval, receiptErrorApproval, receiptLoadingApproval])
+
+  useEffect(() => {
+    if (!ercApprovalHash) return
+    if (!ercApprovalReceipt) return
+    if (receiptErrorApproval) return
+    if (receiptLoadingApproval) return
+    if(nftType === 'ERC-721'){
+      erc721Refetch()
+      handleDeposit721()
+    }
+    erc1155Refetch()
+    handleDeposit1155()
+
+  }, [ercApprovalReceipt, ercLoadingApproval, ercErrorApproval])
+
+  useEffect(() => {
+    if (!ercTxHash) return
+    if (!ercTxHashReceipt) return
+    if (ercTxError) return
+    if (ercTxLoading) return
+    handleCreateNftPool()
+  }, [ercTxHashReceipt, ercTxLoading, ercTxError])
 
   useEffect(() => {
     getAllChain()
@@ -433,6 +658,16 @@ export default function RewardDetails({
         </div>
         {rewardType === "nft" && (
           <div className="grid grid-cols-2 gap-6">
+            <div className="col-span-2 flex flex-col gap-2">
+              <div>Token Address</div>
+              <Input
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setTokenAddress(e.target.value as Address)
+                }
+                className="px-4 py-6"
+                placeholder="Token Address"
+              />
+            </div>
             <div className="flex w-full flex-col gap-2">
               <div>Chain</div>
               <Select
@@ -468,7 +703,7 @@ export default function RewardDetails({
             </div>
             <div className="flex w-full flex-col gap-2">
               <div>NFT type</div>
-              <Select>
+              <Select onValueChange={(value) => setNftType(value)}>
                 <SelectTrigger
                   className={`flex h-full w-full items-center gap-2 rounded-lg border border-th-accent-2 bg-th-black-2 p-4 hover:bg-opacity-50`}
                 >
@@ -487,7 +722,7 @@ export default function RewardDetails({
               </Select>
             </div>
             <div className="col-span-2 flex flex-col gap-2">
-              <div>Amount per winner </div>
+              <div>Tokens per winner </div>
               <Input
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const value: any = e.target.value
@@ -508,7 +743,34 @@ export default function RewardDetails({
                 {depositAmountNFT}
               </div>
             </div>
-            <Button className="w-fit">Deposit</Button>
+            <div className="col-span-2 flex flex-col gap-2">
+              <div>Token Ids</div>
+              <Input
+                name="tokenIds"
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  handleInputChange(e)
+                }
+                className="px-4 py-6"
+                placeholder="1,2,3,4,5,6"
+              />
+            </div>
+            {nftType === "ERC-1155" && (
+              <div className="col-span-2 flex flex-col gap-2">
+                <div>Amount per Token</div>
+                <Input
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    handleInputChange(e)
+                  }
+                  className="px-4 py-6"
+                  placeholder="1.0,2.0,3.0,4.0,5.0,6.0"
+                />
+                <span>Please enter in decimals</span>
+              </div>
+            )}
+
+            <Button className="w-fit" onClick={handleDepositNfts}>
+              Deposit
+            </Button>
           </div>
         )}
       </div>

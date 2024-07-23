@@ -21,3 +21,13 @@ export enum AssetTypeEnum {
   Coupon = "Coupon",
   NFT = "NFT",
 }
+
+
+export interface ICreateNFTPool {
+  address: Address
+  chainId: string
+  NFTs:string[]
+  distributedNFTS:number
+  contestId:string
+  totalWinners: number
+}
