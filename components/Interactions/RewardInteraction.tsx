@@ -51,7 +51,7 @@ export const RewardInteraction = ({ id }: { id: string }) => {
     url: string,
   ) => {
     if (!opened) {
-      Router.push(url)
+      window.open(url)
       setOpened(true)
     }
     if (activity !== "VISIT") return handleToggle(index)
