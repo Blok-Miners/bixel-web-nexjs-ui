@@ -72,7 +72,7 @@ export default function PurchaseInfoPage({
     }
   }
   return (
-    <div className="grid grid-cols-3 gap-4 p-8">
+    <div className="flex gap-4 p-8">
       {/* <PurchaseHeader /> */}
       <ProductPageForm
         form={form}

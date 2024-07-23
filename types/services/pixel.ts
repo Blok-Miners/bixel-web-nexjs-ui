@@ -48,6 +48,7 @@ export interface ITransactionIntent {
   listing_status: Listing_Status
   expiryDate: Date
   planId: number
+  amount: string
 }
 
 export interface IIntentPixel {
@@ -57,7 +58,6 @@ export interface IIntentPixel {
   blokId: number
   planId: number
   listing_status: Listing_Status
-  amount: string
   metadataUrl: string
 }
 

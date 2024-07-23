@@ -39,16 +39,7 @@ export default function Contests({
   }, [])
   return (
     <div className="grid grid-cols-2 gap-4 bg-th-black p-6 xl:grid-cols-3">
-      {contests.map((contest) => (
-        <GetContest
-          contestId={contest._id}
-          ownerId={ownerId}
-          interactionId={contest.interaction}
-          type={contest.type}
-          key={contest._id}
-        />
-      ))}
-      <div className=" flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
         <Video src={videoUrl} />
         {address === ownerId && (
           <Link
@@ -59,6 +50,15 @@ export default function Contests({
           </Link>
         )}
       </div>
+      {contests.map((contest) => (
+        <GetContest
+          contestId={contest._id}
+          ownerId={ownerId}
+          interactionId={contest.interaction}
+          type={contest.type}
+          key={contest._id}
+        />
+      ))}
     </div>
   )
 }

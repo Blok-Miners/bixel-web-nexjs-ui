@@ -216,7 +216,7 @@ export default function ProductPageForm({
   }, [imageParts])
 
   return (
-    <Card className="col-span-2 row-span-2 flex flex-col rounded-xl">
+    <Card className="col-span-2 w-full row-span-2 flex flex-col rounded-xl">
       <CardHeader className="text-2xl font-bold">Bixel Info</CardHeader>
       <CardContent>
         <Form {...form}>
@@ -312,7 +312,7 @@ export default function ProductPageForm({
                 </div>
               )}
             </div>
-            <Button type="submit">Submit</Button>
+            {/* <Button type="submit">Submit</Button> */}
           </form>
         </Form>
       </CardContent>

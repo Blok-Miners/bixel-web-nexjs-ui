@@ -244,7 +244,6 @@ export default function PaymentBox({
         image: uploadedImages[i].id,
         blokId,
         planId: Number(selectedPlan),
-        amount: parseUnits(String(total), 18).toString(),
         listing_status: Listing_Status.Rental,
         metadataUrl: metadata[i],
       }
@@ -254,6 +253,7 @@ export default function PaymentBox({
       data,
       metadata: metadataId!,
       txHash: hash,
+      amount: parseUnits(String(total), 18).toString(),
       listing_status: Listing_Status.Rental,
       planId: Number(selectedPlan),
       expiryDate: new Date(
@@ -325,7 +325,7 @@ export default function PaymentBox({
 
   return (
     <>
-      <Card className="col-span-1 row-span-2 flex flex-col rounded-xl">
+      <Card className="col-span-1 row-span-2 flex min-w-[400px] h-fit flex-col rounded-xl">
         <CardHeader className="text-2xl font-bold">Payment Info</CardHeader>
         <CardContent className="flex h-full flex-col gap-4 text-lg">
           <div className="fontsem flex justify-between text-2xl">
