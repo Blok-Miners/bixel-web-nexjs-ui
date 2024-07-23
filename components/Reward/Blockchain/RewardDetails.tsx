@@ -332,7 +332,7 @@ export default function RewardDetails({
       if (!tokenAddress || !address) return
       const hash = await writeContractAsync({
         abi: erc1155Abi,
-        address: getAddress(address),
+        address: getAddress(tokenAddress),
         functionName: "setApprovalForAll",
         args: [bscDepositContractAddress, true],
       })
@@ -347,7 +347,7 @@ export default function RewardDetails({
     console.log(tokenAddress,depositAmountNFT,depositAmountNFT)
     try {
       if (!tokenAddress || !depositAmountNFT) return
-      if (totalWinners !== nftIds.length) return
+      if (depositAmountNFT !== nftIds.length) return
       setLoading(true)
       const approval = checkERC721Approval()
       console.log(approval)
@@ -371,14 +371,14 @@ export default function RewardDetails({
     try {
       if (!tokenAddress || !depositAmountNFT) return
       if (
-        totalWinners !== nftIds.length &&
+        depositAmountNFT !== nftIds.length &&
         nftAmount1155.length !== nftIds.length
       )
         return
       setLoading(true)
       const approval = checkERC1155Approval()
-      console.log(approval)
       if (!approval) return handleERC1155Approve()
+        console.log(approval)
       const hash = await writeContractAsync({
         abi: rewardAbi,
         address: bscDepositContractAddress,
