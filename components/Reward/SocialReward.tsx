@@ -128,7 +128,7 @@ export default function CreateSocialReward({
       icon: <FaDiscord />,
       color: "#5865F2",
       content: [
-        { name: "Visit on Youtube", value: "Visit" },
+        { name: "Visit on Discord", value: "Visit" },
         { name: "Join on Discord", value: "Join" },
       ],
     },
