@@ -46,7 +46,7 @@ export default function CreateBlockchainReward({
   const [couponType, setCouponType] = useState("")
   const [mode, setMode] = useState<ContestModeEnum | undefined>(undefined)
   const [totalWinners, setTotalWineers] = useState<number | undefined>(
-    undefined,
+    undefined
   )
   const [rewardType, setRewardType] = useState("")
 
