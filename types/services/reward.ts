@@ -10,6 +10,11 @@ export interface ICreateTokenPool {
   contestId: string
   totalWinners: number
 }
+export interface ICreateCouponPool {
+  coupon: string
+  contestId: string
+  totalWinners: number
+}
 
 export enum AssetTypeEnum {
   Token = "Token",

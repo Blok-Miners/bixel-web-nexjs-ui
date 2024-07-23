@@ -189,6 +189,26 @@ export default function RewardDetails({
     }
   }
 
+  const handleCreateCouponPool = async () => {
+    try {
+      if (!couponCode) return
+      if (!totalWinners) return
+      setLoading(true)
+      const rewardService = new RewardService()
+      const res = await rewardService.createCouponPool({
+        coupon: couponCode,
+        contestId: contestId,
+        totalWinners,
+      })
+      console.log(res)
+      setLoading(false)
+      if (productId) router.push(`/product/${productId}`)
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+    }
+  }
+
   const handleDepositTokens = async () => {
     console.log({ tokenAddress, depositAmountToken, balances })
     try {
@@ -287,7 +307,14 @@ export default function RewardDetails({
                     placeholder="Enter coupon code"
                   />
                 </div>
-                <Button className="w-fit">Submit</Button>
+                <Button
+                  isLoading={loading}
+                  disabled={loading}
+                  onClick={handleCreateCouponPool}
+                  className="w-fit"
+                >
+                  Submit
+                </Button>
               </div>
             )}
           </div>

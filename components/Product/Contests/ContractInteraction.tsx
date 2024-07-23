@@ -16,7 +16,6 @@ export const ContractInteraction = ({ id }: { id: string }) => {
   const interactionDetails = async () => {
     try {
       const res = await contestService.getInteractionDetails(id)
-      console.log(res)
       setInteraction({
         id: res.interaction._id,
         contractAddress: res.interaction.contract.address as Address,
@@ -34,8 +33,8 @@ export const ContractInteraction = ({ id }: { id: string }) => {
     try {
       if (!interaction) return
       const res = await contestService.verifySmartContractTask(interaction?.id)
-      console.log(res)
-      setLoading(false)
+      // console.log(res)
+      // setLoading(false)
     } catch (error) {
       setLoading(false)
       console.log(error)

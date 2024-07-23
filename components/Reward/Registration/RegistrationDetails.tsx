@@ -64,6 +64,16 @@ export default function RegistrationDetails({
           </SelectContent>
         </Select>
       </div>
+      <div className="col-span-2 flex flex-col gap-2">
+        <div>Enter Verification URL</div>
+        <Input
+          onChange={handleChange}
+          value={registration.verificationURL}
+          name="verificationURL"
+          placeholder="Enter Url"
+          className="w-full rounded-lg border border-th-accent-2 p-4"
+        />
+      </div>
       <Button
         onClick={() => setStep(2)}
         className="flex w-fit items-center gap-2"

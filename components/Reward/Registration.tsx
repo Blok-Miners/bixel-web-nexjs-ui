@@ -20,6 +20,7 @@ export default function Registration({
   const [registration, setRegistration] = useState({
     description: "",
     url: "",
+    verificationURL: "",
   })
 
   const [depositAmountToken, setDepositAmountToken] = useState(0)
@@ -65,7 +66,12 @@ export default function Registration({
   }
 
   const handleContestClick = async () => {
-    if (!registration.description || !registration.url || !verificationMode) {
+    if (
+      !registration.description ||
+      !registration.url ||
+      !verificationMode ||
+      !registration.verificationURL
+    ) {
       setStep(1)
       setStep1Error("All the fields are required !")
       return
@@ -86,6 +92,7 @@ export default function Registration({
         description: registration.description,
         url: registration.url,
         verificationMode,
+        verificationURL: registration.verificationURL,
         mode,
         productId,
         noOfWinners: totalWinners,

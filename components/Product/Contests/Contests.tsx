@@ -30,7 +30,7 @@ export default function Contests({
   const getAllContests = async () => {
     const contestService = new ContestService()
     const allContests = await contestService.getContests(id)
-    console.log({ contests })
+    // console.log(allContests)
     setContests(allContests)
   }
 
@@ -48,7 +48,7 @@ export default function Contests({
           key={contest._id}
         />
       ))}
-      <div className=" flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
         <Video src={videoUrl} />
         {address === ownerId && (
           <Link

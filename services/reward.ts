@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios"
 import bind from "./bind"
 import { getAccessToken } from "@/lib/utils"
-import { ICreateTokenPool } from "@/types/services/reward"
+import { ICreateCouponPool, ICreateTokenPool } from "@/types/services/reward"
 import { Address } from "@/types/web3"
 
 export class RewardService extends bind {
@@ -17,6 +17,20 @@ export class RewardService extends bind {
     try {
       return (
         await this.http.post(`/create-token-pool`, body, {
+          headers: {
+            Authorization: getAccessToken(),
+          },
+        })
+      ).data
+    } catch (error) {
+      throw error
+    }
+  }
+
+  public async createCouponPool(body: ICreateCouponPool) {
+    try {
+      return (
+        await this.http.post(`/create-coupon-pool`, body, {
           headers: {
             Authorization: getAccessToken(),
           },
