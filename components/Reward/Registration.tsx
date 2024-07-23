@@ -20,6 +20,7 @@ export default function Registration({
   const [registration, setRegistration] = useState({
     description: "",
     url: "",
+    verificationURL: "",
   })
 
   const [depositAmountToken, setDepositAmountToken] = useState(0)
@@ -38,6 +39,7 @@ export default function Registration({
   const [message, setMessage] = useState("")
   const [contestId, setContestId] = useState("")
   const [assetType, setAssetType] = useState("")
+  const [verificationMode, setVerificationMode] = useState("")
 
   const [loading, setLoading] = useState(false)
   const [step1Error, setStep1Error] = useState("")
@@ -64,7 +66,12 @@ export default function Registration({
   }
 
   const handleContestClick = async () => {
-    if (!registration.description || !registration.url) {
+    if (
+      !registration.description ||
+      !registration.url ||
+      !verificationMode ||
+      !registration.verificationURL
+    ) {
       setStep(1)
       setStep1Error("All the fields are required !")
       return
@@ -84,6 +91,8 @@ export default function Registration({
       const contestData: any = {
         description: registration.description,
         url: registration.url,
+        verificationMode,
+        verificationURL: registration.verificationURL,
         mode,
         productId,
         noOfWinners: totalWinners,
@@ -143,6 +152,8 @@ export default function Registration({
             registration={registration}
             handleChange={handleChange}
             step1Error={step1Error}
+            setVerificationMode={setVerificationMode}
+            verificationMode={verificationMode}
           />
         )}
         {step === 2 && (
@@ -164,7 +175,7 @@ export default function Registration({
         )}
         {step === 3 && (
           <RewardDetails
-          productId={productId}
+            productId={productId}
             contestId={contestId}
             setStep3Error={setStep3Error}
             setRewardType={setRewardType}

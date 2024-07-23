@@ -1,1 +1,1 @@
-export const bscDepositContractAddress = "0x6CB3f9Ff96976B6871450DD1B9F0663E84AAc3A1"
+export const bscDepositContractAddress = "0xc4187f9442E36388c0eea00eb82bAcF86883Af27"

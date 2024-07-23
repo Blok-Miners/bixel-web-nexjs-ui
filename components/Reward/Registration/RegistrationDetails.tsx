@@ -18,6 +18,8 @@ export default function RegistrationDetails({
   registration,
   handleChange,
   step1Error,
+  verificationMode,
+  setVerificationMode,
 }: any) {
   return (
     <div className="flex flex-col gap-6">
@@ -33,11 +35,41 @@ export default function RegistrationDetails({
         />
       </div>
       <div className="col-span-2 flex flex-col gap-2">
-        <div>Description</div>
+        <div>Enter url</div>
         <Input
           onChange={handleChange}
           value={registration.url}
           name="url"
+          placeholder="Enter Url"
+          className="w-full rounded-lg border border-th-accent-2 p-4"
+        />
+      </div>
+      <div className="flex w-1/2 flex-col gap-2">
+        <div>Verification mode</div>
+        <Select value={verificationMode} onValueChange={setVerificationMode}>
+          <SelectTrigger
+            className={`flex h-full w-full items-center gap-2 rounded-lg border border-th-accent-2 bg-th-black-2 p-4 hover:bg-opacity-50`}
+          >
+            <SelectValue placeholder="Select verification mode" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              <SelectItem value="walletAddress" className="text-white">
+                Wallet Address
+              </SelectItem>
+              <SelectItem value="email" className="text-white">
+                Email
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="col-span-2 flex flex-col gap-2">
+        <div>Enter Verification URL</div>
+        <Input
+          onChange={handleChange}
+          value={registration.verificationURL}
+          name="verificationURL"
           placeholder="Enter Url"
           className="w-full rounded-lg border border-th-accent-2 p-4"
         />
@@ -49,7 +81,7 @@ export default function RegistrationDetails({
         <div>Next</div> <FaLongArrowAltRight />
       </Button>
 
-      {step1Error && <div className="text-red-500 text-sm">{step1Error}</div>}
+      {step1Error && <div className="text-sm text-red-500">{step1Error}</div>}
     </div>
   )
 }

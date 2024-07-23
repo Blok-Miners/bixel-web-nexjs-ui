@@ -135,6 +135,27 @@ export const rewardAbi = [
   },
   {
     inputs: [
+      { internalType: "address", name: "nft", type: "address" },
+      { internalType: "uint256[]", name: "tokenIds", type: "uint256[]" },
+      { internalType: "uint256[]", name: "amounts", type: "uint256[]" },
+    ],
+    name: "depositNfts1155",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      { internalType: "address", name: "nft", type: "address" },
+      { internalType: "uint256[]", name: "tokenIds", type: "uint256[]" },
+    ],
+    name: "depositNfts721",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
       { internalType: "address", name: "token", type: "address" },
       { internalType: "uint256", name: "amount", type: "uint256" },
     ],

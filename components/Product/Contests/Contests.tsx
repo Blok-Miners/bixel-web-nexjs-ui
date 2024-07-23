@@ -30,7 +30,7 @@ export default function Contests({
   const getAllContests = async () => {
     const contestService = new ContestService()
     const allContests = await contestService.getContests(id)
-    console.log({ contests })
+    // console.log(allContests)
     setContests(allContests)
   }
 

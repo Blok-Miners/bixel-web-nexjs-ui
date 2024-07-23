@@ -66,3 +66,8 @@ export interface IChain {
 export interface IFetchSocialMedia extends ISocialMedia {
   _id:string
 }
+
+export interface ISocialSubmissions{
+  socialMedia:string
+  verified:boolean
+}

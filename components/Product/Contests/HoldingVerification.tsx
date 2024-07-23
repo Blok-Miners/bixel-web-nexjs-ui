@@ -44,7 +44,6 @@ export const HoldingVerification = ({
     const allChain = await chains.getChains()
     if (allChain) {
       setChain(allChain)
-      console.log(allChain)
     }
     const service = new HoldingsService()
     try {
@@ -57,7 +56,6 @@ export const HoldingVerification = ({
         return item.id === response?.chain
       })
       setChainId(newChainId[0].chainId)
-      console.log(response)
     } catch (error) {
       console.log(error)
     }
@@ -75,7 +73,6 @@ export const HoldingVerification = ({
       if (!response) {
         return
       }
-      console.log(response)
       setVerified(true)
       setLoading(false)
     } catch (error) {

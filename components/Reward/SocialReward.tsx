@@ -2,7 +2,7 @@
 import { useState } from "react"
 import { FaFacebookF } from "react-icons/fa"
 import { FaLongArrowAltRight } from "react-icons/fa"
-import { FaInstagram } from "react-icons/fa6"
+import { FaDiscord, FaInstagram } from "react-icons/fa6"
 import { FaYoutube } from "react-icons/fa"
 import { FaXTwitter } from "react-icons/fa6"
 import { FaTelegramPlane } from "react-icons/fa"
@@ -76,19 +76,26 @@ export default function CreateSocialReward({
       content: [
         { name: "Facebook Entry", value: "Entry" },
         { name: "Visit on Facebook", value: "Visit" },
+        { name: "Post on Facebook", value: "Post" },
       ],
     },
     {
       name: "Instagram",
       icon: <FaInstagram />,
       color: "#E1306C",
-      content: [{ name: "Visit on Instagram", value: "Visit" }],
+      content: [
+        { name: "Visit on Instagram", value: "Visit" },
+        { name: "Post on Instagram", value: "Post" },
+      ],
     },
     {
       name: "Linkedin",
       icon: <FaLinkedinIn />,
       color: "#0077B5",
-      content: [{ name: "Visit a Profile", value: "View" }],
+      content: [
+        { name: "Visit a Profile", value: "View" },
+        { name: "Post on Linkedn", value: "Post" },
+      ],
     },
     {
       name: "Twitter",
@@ -98,6 +105,7 @@ export default function CreateSocialReward({
         { name: "Twitter Entry", value: "Entry" },
         { name: "Post on Twitter", value: "Post" },
         { name: "Visit on Twitter", value: "Visit" },
+        { name: "Post on Twitter", value: "Post" },
       ],
     },
     {
@@ -114,6 +122,15 @@ export default function CreateSocialReward({
       icon: <FaYoutube />,
       color: "#FF0000",
       content: [{ name: "Visit on Youtube", value: "Visit" }],
+    },
+    {
+      name: "Discord",
+      icon: <FaDiscord />,
+      color: "#5865F2",
+      content: [
+        { name: "Visit on Youtube", value: "Visit" },
+        { name: "Join on Discord", value: "Join" },
+      ],
     },
   ]
 
@@ -149,9 +166,19 @@ export default function CreateSocialReward({
       productId,
     }
     console.log(socialMediaData, "socialMedia")
-    const res =
-      await contestService.createSocialMediaInteractionContest(socialMediaData)
-    setContestId(res.contest._id)
+    setLoading(true)
+    try {
+      const res =
+        await contestService.createSocialMediaInteractionContest(
+          socialMediaData,
+        )
+      setContestId(res.contest._id)
+      setLoading(false)
+      setStep(3)
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+    }
   }
 
   const handleDateChange = (name: string, date: Date | null) => {

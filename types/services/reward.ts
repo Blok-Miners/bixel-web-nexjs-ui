@@ -10,9 +10,24 @@ export interface ICreateTokenPool {
   contestId: string
   totalWinners: number
 }
+export interface ICreateCouponPool {
+  coupon: string
+  contestId: string
+  totalWinners: number
+}
 
 export enum AssetTypeEnum {
   Token = "Token",
   Coupon = "Coupon",
   NFT = "NFT",
+}
+
+
+export interface ICreateNFTPool {
+  address: Address
+  chainId: string
+  NFTs:string[]
+  distributedNFTS:number
+  contestId:string
+  totalWinners: number
 }
