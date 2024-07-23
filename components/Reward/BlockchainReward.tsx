@@ -29,7 +29,7 @@ export default function CreateBlockchainReward({
   }, [])
   const contestService = new ContestService()
 
-  const [step, setStep] = useState(3)
+  const [step, setStep] = useState(1)
   const [contestId, setContestId] = useState("")
   const [blockchainData, setBlockchainData] = useState({
     contractAddress: "",
@@ -46,7 +46,7 @@ export default function CreateBlockchainReward({
   const [couponType, setCouponType] = useState("")
   const [mode, setMode] = useState<ContestModeEnum | undefined>(undefined)
   const [totalWinners, setTotalWineers] = useState<number | undefined>(
-    1
+    undefined
   )
   const [rewardType, setRewardType] = useState("")
 
