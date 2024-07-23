@@ -371,7 +371,7 @@ export default function RewardDetails({
     try {
       if (!tokenAddress || !depositAmountNFT) return
       if (
-        depositAmountNFT !== nftIds.length &&
+        totalWinners !== nftIds.length &&
         nftAmount1155.length !== nftIds.length
       )
         return
