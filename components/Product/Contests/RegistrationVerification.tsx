@@ -7,6 +7,9 @@ import { useEffect, useState } from "react"
 import { useAccount } from "wagmi"
 import axios from "axios"
 import { Loader2 } from "lucide-react"
+interface IResponse {
+  success: boolean
+}
 
 export default function RegistrationVerification({
   id,
@@ -26,37 +29,49 @@ export default function RegistrationVerification({
       const res = await service.getRegistrationVerification(interactionId)
       if (res) {
         setData(res)
-        console.log(res)
       }
     } catch (error) {
       console.log(error)
     }
   }
-  useEffect(() => {
-    getRegistrationVerification()
-  }, [])
 
-  const handleVerify = async () => {
-    setLoading(true)
+  const verifyRegistration = async () => {
     try {
-      const res: any = await axios.post(`${data.verificationURL}`, {
-        address,
-      })
-      console.log(res)
-      if (res.isRegistered === true) {
-        setVerified(true)
-        setLoading(false)
+      const res: IResponse = await service.verifyRegistration(id)
+      if (res) {
+        if (res.success === true) {
+          setVerified(true)
+        }
       }
-      setLoading(false)
     } catch (error) {
-      setLoading(false)
       console.log(error)
     }
+  }
+
+  useEffect(() => {
+    getRegistrationVerification()
+    verifyRegistration()
+  }, [])
+
+  const registerVerification = async () => {
+    setLoading(true)
+    try {
+      const res = await service.registerSubmission(id)
+      verifyRegistration()
+      setLoading(false)
+    } catch (error) {
+      console.log(error)
+      setLoading(false)
+    }
+  }
+
+  const handleVerify = async () => {
+    registerVerification()
   }
   return (
     <>
       {data && (
-        <Card className="row-span-2 flex h-full flex-col">
+        <Card className="flex h-full flex-col">
           <CardHeader className="text-center font-bold">
             Registration Verification
             <div className="font-light text-th-accent-2">
@@ -79,9 +94,9 @@ export default function RegistrationVerification({
           </CardContent>
           <CardFooter>
             {verified ? (
-              <Button  disabled className="w-full bg-opacity-65">
+              <div className="w-full rounded-xl bg-th-accent-2/10 p-4 text-center font-bold text-green-600">
                 Verified
-              </Button>
+              </div>
             ) : (
               <Button onClick={handleVerify} className="w-full">
                 {loading ? <Loader2 className="animate-spin" /> : "Verify"}

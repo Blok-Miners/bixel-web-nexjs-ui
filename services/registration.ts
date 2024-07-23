@@ -24,4 +24,34 @@ export class RegistrationService extends bind {
       throw error
     }
   }
+  public async verifyRegistration(id: string) {
+    try {
+      return (
+        await this.http.get(`verify-registration/${id}`, {
+          headers: {
+            Authorization: getAccessToken(),
+          },
+        })
+      ).data
+    } catch (error) {
+      throw error
+    }
+  }
+  public async registerSubmission(id: string) {
+    try {
+      return (
+        await this.http.post(
+          `register-registration-submission/${id}`,
+          {},
+          {
+            headers: {
+              Authorization: getAccessToken(),
+            },
+          },
+        )
+      ).data
+    } catch (error) {
+      throw error
+    }
+  }
 }
