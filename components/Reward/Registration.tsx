@@ -38,6 +38,7 @@ export default function Registration({
   const [message, setMessage] = useState("")
   const [contestId, setContestId] = useState("")
   const [assetType, setAssetType] = useState("")
+  const [verificationMode, setVerificationMode] = useState("")
 
   const [loading, setLoading] = useState(false)
   const [step1Error, setStep1Error] = useState("")
@@ -143,6 +144,8 @@ export default function Registration({
             registration={registration}
             handleChange={handleChange}
             step1Error={step1Error}
+            setVerificationMode={setVerificationMode}
+            verificationMode={verificationMode}
           />
         )}
         {step === 2 && (

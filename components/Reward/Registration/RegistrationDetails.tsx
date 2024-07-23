@@ -18,6 +18,8 @@ export default function RegistrationDetails({
   registration,
   handleChange,
   step1Error,
+  verificationMode,
+  setVerificationMode,
 }: any) {
   return (
     <div className="flex flex-col gap-6">
@@ -33,7 +35,7 @@ export default function RegistrationDetails({
         />
       </div>
       <div className="col-span-2 flex flex-col gap-2">
-        <div>Description</div>
+        <div>Enter url</div>
         <Input
           onChange={handleChange}
           value={registration.url}
