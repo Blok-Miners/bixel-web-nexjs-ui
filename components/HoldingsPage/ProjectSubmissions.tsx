@@ -27,31 +27,25 @@ interface Submission {
 
 export const ProjectSubmissions = ({ id }: ProjectSubmissionsProps) => {
   const [submissions, setSubmissions] = useState<Submission[]>([])
+  const [isOwner, setIsOwner] = useState(false)
 
   const getContestDetails = async () => {
     const ContestServices = new ContestService()
     try {
       const reward = await ContestServices.getTestContestDetails(id)
-      console.log(reward)
+      const res = await ContestServices.getProjectDetails(
+        reward.contestDetails.interaction,
+      )
+
+      setSubmissions(res.submissions || [])
+
+      console.log(res)
     } catch (error) {
       console.log(error)
     }
   }
-
-  const getProjectDetails = async () => {
-    try {
-      const projectService = new ContestService()
-      const res = await projectService.getProjectDetails(id)
-      setSubmissions(res.submissions || [])
-      console.log(res)
-    } catch (error) {
-      console.log({ error })
-    }
-  }
-
   useEffect(() => {
     getContestDetails()
-    getProjectDetails()
   }, [])
 
   const handleClaim = async (id: string, userId: string, approved: boolean) => {
@@ -61,18 +55,26 @@ export const ProjectSubmissions = ({ id }: ProjectSubmissionsProps) => {
         userId,
         approved,
       )
+
+      if (response) {
+        await getContestDetails()
+      }
+
       return response
     } catch (error) {
       throw error
     }
   }
 
-  // const getContestDetails = async () => {
-  //   if (!id) return
-  //   const ContestServices = new ContestService()
-  //   const reward = await ContestServices.getContestDetails(id)
-  //   console.log(reward)
-  // }
+  const checkOwnership = async () => {
+    try {
+      const contestService = new ContestService()
+      const isOwnerResponse = await contestService.isProductOwner(id)
+      setIsOwner(isOwnerResponse.isOwner)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <div className="rounded-2xl border border-th-accent-2 bg-th-accent-2/10 p-8">
@@ -132,12 +134,19 @@ export const ProjectSubmissions = ({ id }: ProjectSubmissionsProps) => {
                     {submission.description}
                   </div>
                 </div>
-                <Button
-                  className="col-span-3 mx-auto w-fit items-center space-y-2 p-2 px-6"
-                  onClick={() => handleClaim(id, submission._id, true)}
-                >
-                  {submission.verified ? "Verified" : "Verify"}
-                </Button>
+                <div className="col-span-3 mx-auto">
+                  {submission.verified ? (
+                    <Button disabled>Verified</Button>
+                  ) : (
+                    isOwner && (
+                      <Button
+                        onClick={() => handleClaim(id, submission._id, true)}
+                      >
+                        Verify
+                      </Button>
+                    )
+                  )}
+                </div>
               </div>
             ))
           ) : (
