@@ -347,7 +347,7 @@ export default function RewardDetails({
     console.log(tokenAddress,depositAmountNFT,depositAmountNFT)
     try {
       if (!tokenAddress || !depositAmountNFT) return
-      if (depositAmountNFT !== nftIds.length) return
+      if (depositAmountNFT !== nftAmount1155.length) return
       setLoading(true)
       const approval = checkERC721Approval()
       console.log(approval)
