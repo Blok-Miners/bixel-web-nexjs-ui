@@ -63,6 +63,17 @@ export class ContestService extends BindService {
       throw error
     }
   }
+  public async getTestContestDetails(id: string) {
+    try {
+      return (
+        await this.http.get(`/get-secondary-contest-details/${id}`, {
+          headers: { Authorization: getAccessToken() },
+        })
+      ).data
+    } catch (error) {
+      throw error
+    }
+  }
 
   public async createHoldingsVerificationContest(contestData: ICreateContest) {
     try {

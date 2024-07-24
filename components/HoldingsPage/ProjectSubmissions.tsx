@@ -28,6 +28,16 @@ interface Submission {
 export const ProjectSubmissions = ({ id }: ProjectSubmissionsProps) => {
   const [submissions, setSubmissions] = useState<Submission[]>([])
 
+  const getContestDetails = async () => {
+    const ContestServices = new ContestService()
+    try {
+      const reward = await ContestServices.getTestContestDetails(id)
+      console.log(reward)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const getProjectDetails = async () => {
     try {
       const projectService = new ContestService()
@@ -42,7 +52,7 @@ export const ProjectSubmissions = ({ id }: ProjectSubmissionsProps) => {
   useEffect(() => {
     getContestDetails()
     getProjectDetails()
-  }, [id])
+  }, [])
 
   const handleClaim = async (id: string, userId: string, approved: boolean) => {
     try {
@@ -63,13 +73,6 @@ export const ProjectSubmissions = ({ id }: ProjectSubmissionsProps) => {
   //   const reward = await ContestServices.getContestDetails(id)
   //   console.log(reward)
   // }
-
-  const getContestDetails = async () => {
-    if (!id) return
-    const ContestServices = new ContestService()
-    const reward = await ContestServices.getContests(id)
-    console.log(reward)
-  }
 
   return (
     <div className="rounded-2xl border border-th-accent-2 bg-th-accent-2/10 p-8">
@@ -131,9 +134,7 @@ export const ProjectSubmissions = ({ id }: ProjectSubmissionsProps) => {
                 </div>
                 <Button
                   className="col-span-3 mx-auto w-fit items-center space-y-2 p-2 px-6"
-                  onClick={() =>
-                    handleClaim(id,submission._id, true)
-                  }
+                  onClick={() => handleClaim(id, submission._id, true)}
                 >
                   {submission.verified ? "Verified" : "Verify"}
                 </Button>

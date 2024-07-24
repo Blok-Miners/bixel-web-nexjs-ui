@@ -24,7 +24,7 @@ export default function Info({
         <div className="flex items-center gap-2">
           <FaMapMarkerAlt /> {country}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 truncate">
           <FaEarthAsia />
           <a href={website} target="_blank" rel="noopener noreferrer">
             {website}
