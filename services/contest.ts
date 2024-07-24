@@ -2,6 +2,7 @@ import axios from "axios"
 import BindService from "./bind"
 import {
   ICreateContest,
+  ICreateSurveyContest,
   ISocialMedia,
   ISocialMediaInteraction,
 } from "@/types/services/contest"
@@ -44,6 +45,18 @@ export class ContestService extends BindService {
     try {
       return (
         await this.http.post("/create-bug-bounty-contest", contestData, {
+          headers: { Authorization: getAccessToken() },
+        })
+      ).data
+    } catch (error) {
+      throw new Error("Failed to create contest")
+    }
+  }
+
+  public async createSurveyContest(contestData: ICreateSurveyContest) {
+    try {
+      return (
+        await this.http.post("/create-survey-contest", contestData, {
           headers: { Authorization: getAccessToken() },
         })
       ).data

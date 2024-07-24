@@ -9,6 +9,7 @@ import Holdings from "./Holdings"
 import { ChainService } from "@/services/chain"
 import Registration from "./Registration"
 import { ProjectSubmission } from "./ProjectSubmission"
+import { Survey } from "./Survey"
 
 export default function CreateReward({ productId }: { productId: string }) {
   const chains = new ChainService()
@@ -123,13 +124,23 @@ export default function CreateReward({ productId }: { productId: string }) {
             >
               Registration Verification
             </div>
+            <div
+              className={` ${
+                reward === "Survey" ? "bg-th-black" : "bg-th-black-2"
+              } cursor-pointer rounded-lg p-2 px-4`}
+              onClick={() => {
+                setReward("Survey")
+              }}
+            >
+              Survey
+            </div>
           </div>
         </div>
         <div className="h-[80vh] w-[1000px] rounded-xl bg-th-black-2 p-4">
           {reward === "blockchain" ? (
             <CreateBlockchainReward productId={productId} />
           ) : reward === "social" ? (
-            <CreateSocialReward  productId={productId}/>
+            <CreateSocialReward productId={productId} />
           ) : reward === "Project Submission" ? (
             <ProjectSubmission chain={chain} productId={productId} />
           ) : reward === "Bug Bounty" ? (
@@ -138,6 +149,8 @@ export default function CreateReward({ productId }: { productId: string }) {
             <Holdings chain={chain} productId={productId} />
           ) : reward === "Registration Verification" ? (
             <Registration chain={chain} productId={productId} />
+          ) : reward === "Survey" ? (
+            <Survey chain={chain} productId={productId} />
           ) : null}
         </div>
       </div>

@@ -18,6 +18,15 @@ export interface ICreateContest {
   startDate: Date | null
   endDate: Date | null
 }
+export interface ICreateSurveyContest {
+  formURL: string
+  sheetURL: string
+  productId: string
+  noOfWinners: number
+  mode: ContestModeEnum
+  startDate: Date | null
+  endDate: Date | null
+}
 
 export enum ContestInteractionEnum{
   SMART_CONTRACT = "SMART_CONTRACT",

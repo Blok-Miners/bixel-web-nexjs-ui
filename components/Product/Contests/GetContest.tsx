@@ -5,6 +5,7 @@ import ProjectSubmission from "./ProjectSubmission"
 import { HoldingVerification } from "./HoldingVerification"
 import RegistrationVerification from "./RegistrationVerification"
 import { RewardInteraction } from "@/components/Interactions/RewardInteraction"
+import SurveyCard from "@/components/HoldingsPage/SurveyCard"
 
 interface IGetContest {
   type: ContestInteractionEnum
@@ -38,6 +39,8 @@ export default function GetContest({
       )
     case ContestInteractionEnum.REGISTRATION_VERIFICATION:
       return <RegistrationVerification id={contestId} interactionId={interactionId} />
+    case ContestInteractionEnum.SURVEYS:
+      return <SurveyCard id={contestId} interactionId={interactionId} />
     case ContestInteractionEnum.SOCIAL_MEDIA:
       return <RewardInteraction id={contestId} />
     default:
