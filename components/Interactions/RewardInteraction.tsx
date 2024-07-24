@@ -96,14 +96,14 @@ export const RewardInteraction = ({ id }: { id: string }) => {
       console.log(error)
     }
   }
-  useEffect(() => {
-    getSocialMediaInteractionDetails()
-    allSocialMediaCompletedTasks()
-  }, [allSubmissions,showVerify])
+  // useEffect(() => {
+  //   getSocialMediaInteractionDetails()
+  //   allSocialMediaCompletedTasks()
+  // }, [allSubmissions,showVerify])
 
-  useEffect(() => {
-    allSocialMediaCompletedTasks()
-  }, [])
+  // useEffect(() => {
+  //   allSocialMediaCompletedTasks()
+  // }, [])
 
   return (
     <div>
