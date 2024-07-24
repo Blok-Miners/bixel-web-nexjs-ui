@@ -99,7 +99,7 @@ export const RewardInteraction = ({ id }: { id: string }) => {
   useEffect(() => {
     getSocialMediaInteractionDetails()
     allSocialMediaCompletedTasks()
-  }, [allSubmissions,showVerify])
+  }, [showVerify])
 
   useEffect(() => {
     allSocialMediaCompletedTasks()
