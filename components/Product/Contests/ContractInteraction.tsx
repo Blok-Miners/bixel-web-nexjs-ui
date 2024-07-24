@@ -12,7 +12,7 @@ export const ContractInteraction = ({ id }: { id: string }) => {
   const [Opened, setOpended] = useState(false)
   const [interaction, setInteraction] = useState<ISmartContractInteraction>()
   const [loading, setLoading] = useState(false)
-
+  const [verifyStatus,setVerifyStatus] = useState(false)
   const interactionDetails = async () => {
     try {
       const res = await contestService.getInteractionDetails(id)
@@ -31,10 +31,10 @@ export const ContractInteraction = ({ id }: { id: string }) => {
   const verifyTransaction = async () => {
     setLoading(true)
     try {
-      if (!interaction) return
-      const res = await contestService.verifySmartContractTask(interaction?.id)
-      // console.log(res)
-      // setLoading(false)
+      if (!id) return
+      const res = await contestService.verifySmartContractTask(id)
+      setVerifyStatus(res.success)
+      setLoading(false)
     } catch (error) {
       setLoading(false)
       console.log(error)
@@ -78,7 +78,7 @@ export const ContractInteraction = ({ id }: { id: string }) => {
       </div>
       {Opened ? (
         <Button className="col-span-3 m-2" onClick={verifyTransaction}>
-          {loading ? <Loader2 className="animate-spin" /> : "Verify"}
+          {loading  ? <Loader2 className="animate-spin" /> :  verifyStatus ? "Verified" : "Verify"}
         </Button>
       ) : (
         <>

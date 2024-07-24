@@ -10,6 +10,8 @@ import { FaChevronUp } from "react-icons/fa"
 import { FaChevronDown } from "react-icons/fa"
 import { ScrollArea } from "../ui/scroll-area"
 import { ContestService } from "@/services/contest"
+import { Loader2 } from "lucide-react"
+
 import {
   IFetchSocialMedia,
   ISocialMedia,
@@ -39,6 +41,8 @@ export const RewardInteraction = ({ id }: { id: string }) => {
   const [username, setUsername] = useState<string>("")
   const [opened, setOpened] = useState(false)
   const [allSubmissions, setAllSubmissions] = useState<ISocialSubmissions[]>()
+  const [loading,setLoading] = useState(false)
+  const [showVerify,setShowVerify] = useState(true)
 
   const handleToggle = (index: number) => {
     setExpanded(expanded === index ? null : index) // Toggle the expanded state
@@ -79,20 +83,23 @@ export const RewardInteraction = ({ id }: { id: string }) => {
 
   const verify = async (interactionId: string) => {
     try {
+      setLoading(true)
       const res = await contestService.verifySocialMediaTask(
         interactionId,
         username,
         id,
       )
-      console.log(res)
       setInteractionDetails(res.socialMediaInteractionDetails)
+      setLoading(false)
+      setShowVerify(false)
     } catch (error) {
       console.log(error)
     }
   }
   useEffect(() => {
     getSocialMediaInteractionDetails()
-  }, [allSubmissions])
+    allSocialMediaCompletedTasks()
+  }, [allSubmissions,showVerify])
 
   useEffect(() => {
     allSocialMediaCompletedTasks()
@@ -163,7 +170,7 @@ export const RewardInteraction = ({ id }: { id: string }) => {
                       </Button>
                     )}
                   </div>
-                  {socialMedia.activity !== "VISIT" && expanded === index && (
+                  {socialMedia.activity !== "VISIT" && expanded === index && showVerify  && (
                     <div className="mt-2 w-full space-y-2">
                       <Label>Username</Label>
                       <div className="flex w-full gap-6">
@@ -175,7 +182,7 @@ export const RewardInteraction = ({ id }: { id: string }) => {
                           onChange={(e) => setUsername(e.target.value)}
                         />
                         <Button onClick={() => verify(socialMedia._id)}>
-                          Verify
+                        {loading ? <Loader2 className="animate-spin" /> : "Verify"}
                         </Button>
                       </div>
                     </div>

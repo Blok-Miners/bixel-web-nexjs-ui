@@ -151,7 +151,7 @@ export default function RewardTable() {
                 ))}
               </TableCell>
               <TableCell>
-                {reward.poolInfo.tokenPerWinner} {reward.poolInfo.symbol}
+                {reward.poolInfo?.tokenPerWinner} {reward.poolInfo?.symbol}
               </TableCell>
               <TableCell>
                 {reward.claimed ? (
