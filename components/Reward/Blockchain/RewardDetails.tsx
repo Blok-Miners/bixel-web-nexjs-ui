@@ -39,6 +39,7 @@ import {
   useWriteContract,
 } from "wagmi"
 import { erc1155Abi } from "@/lib/erc1155Abi"
+import { INftType } from "@/types/services/reward"
 
 interface IRewardDetails {
   productId: string
@@ -87,7 +88,7 @@ export default function RewardDetails({
   const [amountPerWinner, setAmountPerWinner] = useState<number | undefined>()
   const [approvalHash, setApprovalHash] = useState<Address | undefined>()
   const [nftIds, setNftsIds] = useState<string[]>([])
-  const [nftType, setNftType] = useState("")
+  const [nftType, setNftType] = useState<INftType>()
   const [loading, setLoading] = useState<boolean>(false)
   const [nftAmount1155, setNftAmount1155] = useState<string[]>([])
   const getAllChain = async () => {
@@ -394,9 +395,9 @@ export default function RewardDetails({
   }
 
   const handleDepositNfts = () => {
-    if (nftType === "ERC-721") {
+    if (nftType === INftType.ERC721) {
       return handleDeposit721()
-    } else if (nftType === "ERC-1155") {
+    } else if (nftType === INftType.ERC1155) {
       console.log(nftAmount1155)
       return handleDeposit1155()
     }
@@ -413,6 +414,7 @@ export default function RewardDetails({
         distributedNFTS: 0,
         contestId,
         totalWinners,
+        nftType:nftType!
       })
       console.log(res)
       setLoading(false)
@@ -458,7 +460,7 @@ export default function RewardDetails({
     if (!ercApprovalReceipt) return
     if (receiptErrorApproval) return
     if (receiptLoadingApproval) return
-    if(nftType === 'ERC-721'){
+    if(nftType === INftType.ERC721){
       erc721Refetch()
       handleDeposit721()
     }
@@ -699,7 +701,7 @@ export default function RewardDetails({
             </div>
             <div className="flex w-full flex-col gap-2">
               <div>NFT type</div>
-              <Select onValueChange={(value) => setNftType(value)}>
+              <Select onValueChange={(value:INftType) => setNftType(value)}>
                 <SelectTrigger
                   className={`flex h-full w-full items-center gap-2 rounded-lg border border-th-accent-2 bg-th-black-2 p-4 hover:bg-opacity-50`}
                 >
@@ -707,10 +709,10 @@ export default function RewardDetails({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="ERC-721" className="text-white">
+                    <SelectItem value={INftType.ERC721} className="text-white">
                       ERC-721
                     </SelectItem>
-                    <SelectItem value="ERC-1155" className="text-white">
+                    <SelectItem value={INftType.ERC1155} className="text-white">
                       ERC-1155
                     </SelectItem>
                   </SelectGroup>
@@ -750,7 +752,7 @@ export default function RewardDetails({
                 placeholder="1,2,3,4,5,6"
               />
             </div>
-            {nftType === "ERC-1155" && (
+            {nftType === INftType.ERC1155 && (
               <div className="col-span-2 flex flex-col gap-2">
                 <div>Amount per Token</div>
                 <Input
