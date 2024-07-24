@@ -22,6 +22,11 @@ export enum AssetTypeEnum {
   NFT = "NFT",
 }
 
+export enum INftType{
+  ERC721 = "ERC721",
+  ERC1155 = "ERC1155",
+}
+
 
 export interface ICreateNFTPool {
   address: Address
@@ -30,4 +35,5 @@ export interface ICreateNFTPool {
   distributedNFTS:number
   contestId:string
   totalWinners: number
+  nftType:INftType
 }
