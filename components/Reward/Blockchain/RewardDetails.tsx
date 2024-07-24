@@ -91,6 +91,8 @@ export default function RewardDetails({
   const [nftType, setNftType] = useState<INftType>()
   const [loading, setLoading] = useState<boolean>(false)
   const [nftAmount1155, setNftAmount1155] = useState<string[]>([])
+  const [tokenPerWinner, setTokenPerWinner] = useState<number | undefined>()
+
   const getAllChain = async () => {
     const chains = new ChainService()
     const allChain = await chains.getChains()
@@ -345,10 +347,10 @@ export default function RewardDetails({
   }
 
   const handleDeposit721 = async () => {
-    console.log(tokenAddress,depositAmountNFT,depositAmountNFT)
+    console.log(tokenAddress, erc721Approved)
     try {
       if (!tokenAddress || !depositAmountNFT) return
-      if (depositAmountNFT !== nftAmount1155.length) return
+      if (totalWinners !== nftIds.length) return
       setLoading(true)
       const approval = checkERC721Approval()
       console.log(approval)
@@ -378,15 +380,16 @@ export default function RewardDetails({
         return
       setLoading(true)
       const approval = checkERC1155Approval()
+      console.log(nftIds, nftAmount1155)
       if (!approval) return handleERC1155Approve()
-        console.log(approval)
+      console.log(approval)
       const hash = await writeContractAsync({
         abi: rewardAbi,
         address: bscDepositContractAddress,
         functionName: "depositNfts1155",
         args: [getAddress(tokenAddress), nftIds, nftAmount1155],
       })
-      console.log(hash,"11555")
+      console.log(hash, "11555")
       setErcTxHash(hash)
     } catch (error) {
       console.log(error)
@@ -405,16 +408,19 @@ export default function RewardDetails({
 
   const handleCreateNftPool = async () => {
     try {
+      console.log(tokenPerWinner)
       if (!totalWinners) return
       const rewardService = new RewardService()
       const res = await rewardService.createNftPool({
         address: getAddress(tokenAddress!),
         chainId: blockchainData.chainDeployed,
         NFTs: nftIds,
+        nftAmount1155: nftAmount1155,
         distributedNFTS: 0,
         contestId,
         totalWinners,
-        nftType:nftType!
+        nftType: nftType!,
+        tokenPerWinner: 1,
       })
       console.log(res)
       setLoading(false)
@@ -460,13 +466,12 @@ export default function RewardDetails({
     if (!ercApprovalReceipt) return
     if (receiptErrorApproval) return
     if (receiptLoadingApproval) return
-    if(nftType === INftType.ERC721){
+    if (nftType === INftType.ERC721) {
       erc721Refetch()
       handleDeposit721()
     }
     erc1155Refetch()
     handleDeposit1155()
-
   }, [ercApprovalReceipt, ercLoadingApproval, ercErrorApproval])
 
   useEffect(() => {
@@ -479,6 +484,8 @@ export default function RewardDetails({
 
   useEffect(() => {
     getAllChain()
+    setDepositAmountNFT(totalWinners)
+    setTokenPerWinner(1)
   }, [])
 
   const handleDeposit = () => {}
@@ -701,7 +708,7 @@ export default function RewardDetails({
             </div>
             <div className="flex w-full flex-col gap-2">
               <div>NFT type</div>
-              <Select onValueChange={(value:INftType) => setNftType(value)}>
+              <Select onValueChange={(value: INftType) => setNftType(value)}>
                 <SelectTrigger
                   className={`flex h-full w-full items-center gap-2 rounded-lg border border-th-accent-2 bg-th-black-2 p-4 hover:bg-opacity-50`}
                 >
@@ -719,18 +726,21 @@ export default function RewardDetails({
                 </SelectContent>
               </Select>
             </div>
-            <div className="col-span-2 flex flex-col gap-2">
+            {/* <div className="col-span-2 flex flex-col gap-2">
               <div>Tokens per winner </div>
               <Input
+              
+                value={1}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const value: any = e.target.value
+                  setTokenPerWinner(value)
                   setDepositAmountNFT(totalWinners ? value * totalWinners : 0)
                 }}
                 type="number"
-                className="px-4 py-6"
+                className="px-4 py-6 hidden"
                 placeholder="Enter amount"
               />
-            </div>
+            </div> */}
             <div className="flex flex-col gap-2">
               <div>Total Winners </div>
               <div className="p-2 text-lg font-semibold">{totalWinners}</div>

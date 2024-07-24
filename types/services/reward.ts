@@ -36,4 +36,6 @@ export interface ICreateNFTPool {
   contestId:string
   totalWinners: number
   nftType:INftType
+  tokenPerWinner:number
+  nftAmount1155:string[]
 }
