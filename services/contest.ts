@@ -176,4 +176,44 @@ export class ContestService extends BindService {
       throw error
     }
   }
+
+  public async getSocialMediaDetails(id: string) {
+    try {
+      return (await this.http.get(`product-social-media-submissions/${id}`))
+        .data
+    } catch (error) {
+      throw error
+    }
+  }
+
+  public async verifyProductsSocialMediaSubmission(id: string , userId: string) {
+    try {
+      const response = await this.http.post(
+        `verify-social-media-submission/${id}`,
+        {userId},
+        {
+          headers: { Authorization: getAccessToken() },
+        },
+      )
+      return response.data
+    } catch (error) {
+      throw error
+    }
+  }
+
+  public async verifyUserProjectSubmission(id: string , userId: string , approved: boolean) {
+    try {
+      const response = await this.http.post(
+        `verify-user-project-submission/${id}`,
+        {userId, approved},
+        {
+          headers: { Authorization: getAccessToken() },
+        },
+      )
+      return response.data
+    } catch (error) {
+      throw error
+    }
+  }
+  
 }

@@ -34,10 +34,6 @@ export default function Page() {
         <div className="text-lg">Reward Table</div>
         <RewardTable />
       </div>
-      <div className="col-span-2 flex flex-col gap-2 rounded-2xl bg-th-black-2 p-4">
-        <div className="text-lg">Social Media Submissions</div>
-        <SocialMediaSubmissions />
-      </div>
     </div>
   )
 }
