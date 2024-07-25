@@ -63,6 +63,7 @@ export const HoldingVerification = ({
 
   useEffect(() => {
     getHoldings()
+    verifySubmission()
   }, [])
 
   const verifyholding = async () => {
@@ -73,10 +74,24 @@ export const HoldingVerification = ({
       if (!response) {
         return
       }
-      setVerified(true)
+      console.log(response)
+      verifySubmission()
       setLoading(false)
     } catch (error) {
       setLoading(false)
+      console.log(error)
+    }
+  }
+
+  const verifySubmission = async () => {
+    const service = new HoldingsService()
+    try {
+      const response = await service.verifyHoldingSubmission(id)
+      console.log(response)
+      if (response.success === true) {
+        setVerified(true)
+      }
+    } catch (error) {
       console.log(error)
     }
   }
@@ -126,13 +141,9 @@ export const HoldingVerification = ({
             </div>
           </div>
           {verified ? (
-            <Button
-              disabled={true}
-              className="col-span-2 m-2"
-              onClick={() => handleButtonClick()}
-            >
+            <div className="col-span-2 rounded-xl bg-th-accent-2/10 p-4 text-center font-bold text-green-600">
               Verified
-            </Button>
+            </div>
           ) : (
             <Button
               className="col-span-2 m-2"

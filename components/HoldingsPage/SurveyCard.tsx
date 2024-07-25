@@ -5,8 +5,11 @@ import { Button } from "../ui/button"
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card"
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
-import { useEffect, useState } from "react"
+import React, { useEffect, useState } from "react"
 import { SurveyService } from "@/services/survey"
+interface IResponse {
+  success: boolean
+}
 
 export default function SurveyCard({
   id,
@@ -18,7 +21,8 @@ export default function SurveyCard({
   const service = new SurveyService()
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<any>()
-  const getRegistrationVerification = async () => {
+  const [email, setEmail] = useState<string>("")
+  const getSurvey = async () => {
     try {
       const res = await service.getSurvey(interactionId)
       if (res) {
@@ -29,32 +33,32 @@ export default function SurveyCard({
     }
   }
 
-  // const verifyRegistration = async () => {
-  //   try {
-  //     const res: IResponse = await service.verifyRegistration(id)
-  //     if (res) {
-  //       if (res.success === true) {
-  //         setVerified(true)
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
+  const verifyRegistration = async () => {
+    try {
+      const res: IResponse = await service.verifyRegistration(id)
+      if (res) {
+        if (res.success === true) {
+          setVerified(true)
+        }
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
   const [verified, setVerified] = useState(false)
 
   useEffect(() => {
-    getRegistrationVerification()
-    // verifyRegistration()
+    getSurvey()
+    verifyRegistration()
   }, [])
 
   const registerSurveySubmission = async () => {
+    if (!email) return
     setLoading(true)
     try {
-      const res = await service.registerSurveySubmission(id)
-      // verifyRegistration()
+      const res = await service.registerSurveySubmission(email, id)
+      verifyRegistration()
       setLoading(false)
-      setVerified(true)
       console.log(res)
     } catch (error) {
       console.log(error)
@@ -62,14 +66,15 @@ export default function SurveyCard({
     }
   }
 
-  const handleVerify = async () => {
+  const handleVerify = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     registerSurveySubmission()
   }
   return (
     <>
       {data && (
         <Card className="flex h-full flex-col">
-          <CardHeader className="text-center font-bold">
+          <CardHeader className="text-center text-xl font-bold">
             Survey
             {/* <div className=" font-light text-th-accent-2"></div> */}
           </CardHeader>
@@ -92,9 +97,23 @@ export default function SurveyCard({
                 Verified
               </div>
             ) : (
-              <Button onClick={handleVerify} className="w-full">
-                {loading ? <Loader2 className="animate-spin" /> : "Verify"}
-              </Button>
+              <form
+                onSubmit={handleVerify}
+                className="flex w-full flex-col gap-4"
+              >
+                <div>Enter your email to verify</div>
+                <Input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  type="email"
+                  placeholder="example@gmail.com"
+                  className="w-full"
+                  required
+                />
+                <Button type="submit" className="w-full">
+                  {loading ? <Loader2 className="animate-spin" /> : "Verify"}
+                </Button>
+              </form>
             )}
           </CardFooter>
         </Card>

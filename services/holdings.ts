@@ -41,4 +41,17 @@ export class HoldingsService extends bind {
       throw error
     }
   }
+  public async verifyHoldingSubmission(id: string) {
+    try {
+      return (
+        await this.http.get(`verify-holdings-submission/${id}`, {
+          headers: {
+            Authorization: getAccessToken(),
+          },
+        })
+      ).data
+    } catch (error) {
+      throw error
+    }
+  }
 }

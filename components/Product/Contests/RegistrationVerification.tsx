@@ -7,6 +7,7 @@ import { useEffect, useState } from "react"
 import { useAccount } from "wagmi"
 import axios from "axios"
 import { Loader2 } from "lucide-react"
+import { Input } from "@/components/ui/input"
 interface IResponse {
   success: boolean
 }
@@ -23,6 +24,7 @@ export default function RegistrationVerification({
   const { address } = useAccount()
   const [loading, setLoading] = useState(false)
   const [verified, setVerified] = useState(false)
+  const [email, setEmail] = useState<string>("")
 
   const getRegistrationVerification = async () => {
     try {
@@ -56,25 +58,28 @@ export default function RegistrationVerification({
   const registerVerification = async () => {
     setLoading(true)
     try {
-      const res = await service.registerSubmission(id)
-      verifyRegistration()
+      const email = data.verificationMode === "email" ? data.email : undefined
+      const res = await service.registerSubmission(id, email)
+      if (res) verifyRegistration()
       setLoading(false)
     } catch (error) {
-      console.log(error)
+      console.error(error)
+    } finally {
       setLoading(false)
     }
   }
 
-  const handleVerify = async () => {
+  const handleVerify = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
     registerVerification()
   }
   return (
     <>
       {data && (
         <Card className="flex h-full flex-col">
-          <CardHeader className="text-center font-bold">
+          <CardHeader className="text-center text-xl font-bold">
             Registration Verification
-            <div className="font-light text-th-accent-2 mt-4">
+            <div className="mt-4 text-base font-light text-th-accent-2">
               {/* ! Description Here from api */}
               {data.description}
             </div>
@@ -98,9 +103,28 @@ export default function RegistrationVerification({
                 Verified
               </div>
             ) : (
-              <Button onClick={handleVerify} className="w-full">
-                {loading ? <Loader2 className="animate-spin" /> : "Verify"}
-              </Button>
+              <form
+                onSubmit={handleVerify}
+                className="flex w-full flex-col gap-4"
+              >
+                {data.verificationMode === "email" && (
+                  <>
+                    <div>Enter your email to verify</div>
+                    <Input
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      type="email"
+                      placeholder="example@gmail.com"
+                      className="w-full"
+                      required
+                    />
+                  </>
+                )}
+
+                <Button type="submit" className="w-full">
+                  {loading ? <Loader2 className="animate-spin" /> : "Verify"}
+                </Button>
+              </form>
             )}
           </CardFooter>
         </Card>

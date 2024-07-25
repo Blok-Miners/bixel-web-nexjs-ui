@@ -27,7 +27,7 @@ export class SurveyService extends bind {
   public async verifyRegistration(id: string) {
     try {
       return (
-        await this.http.get(`verify-registration/${id}`, {
+        await this.http.get(`verify-survey-submission/${id}`, {
           headers: {
             Authorization: getAccessToken(),
           },
@@ -37,12 +37,12 @@ export class SurveyService extends bind {
       throw error
     }
   }
-  public async registerSurveySubmission(id: string) {
+  public async registerSurveySubmission(email: string, id: string) {
     try {
       return (
         await this.http.post(
           `register-survey-submission/${id}`,
-          {},
+          { email },
           {
             headers: {
               Authorization: getAccessToken(),

@@ -37,21 +37,19 @@ export class RegistrationService extends bind {
       throw error
     }
   }
-  public async registerSubmission(id: string) {
+  public async registerSubmission(id: string, email?: string) {
     try {
+      const body = email ? { email } : {};
       return (
-        await this.http.post(
-          `register-registration-submission/${id}`,
-          {},
-          {
-            headers: {
-              Authorization: getAccessToken(),
-            },
+        await this.http.post(`register-registration-submission/${id}`, body, {
+          headers: {
+            Authorization: getAccessToken(),
           },
-        )
-      ).data
+        })
+      ).data;
     } catch (error) {
-      throw error
+      throw error;
     }
   }
+  
 }
