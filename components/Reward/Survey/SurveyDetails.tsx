@@ -54,7 +54,6 @@ export default function SurveyDetails({
               name="sheetURL"
               onChange={handleChange}
               required
-              
             />
           </div>
         </div>
@@ -66,6 +65,18 @@ export default function SurveyDetails({
           <div>Next</div> <FaLongArrowAltRight />
         </Button>
         {step1Error && <div className="text-sm text-red-500">{step1Error}</div>}
+        <div className="flex flex-col gap-2 text-slate-300">
+          <div>Note :</div>
+          <div>
+            <div>- Form URL should be public</div>
+            <div>
+              - In the settings, the responses should collect email address(the
+              selected value should be "Verified")
+            </div>
+            <div>- Form should be linked to the google sheets.</div>
+            <div>- The google sheets access should be public.</div>
+          </div>
+        </div>
       </div>
     </ScrollArea>
   )

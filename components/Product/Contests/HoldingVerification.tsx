@@ -141,7 +141,7 @@ export const HoldingVerification = ({
             </div>
           </div>
           {verified ? (
-            <div className="col-span-2 rounded-xl bg-th-accent-2/10 p-4 text-center font-bold text-green-600">
+            <div className="col-span-2 rounded-xl bg-th-accent-2/10 p-4 text-center mt-auto h-fit font-bold text-green-600">
               Verified
             </div>
           ) : (

@@ -25,7 +25,7 @@ const CanvasGrid: React.FC<CanvasGridProps> = ({
   onSelectSquare,
   setSelectedSquares,
   drawnPixels,
-  imageCache
+  imageCache,
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [context, setContext] = useState<CanvasRenderingContext2D | null>(null)
@@ -40,7 +40,6 @@ const CanvasGrid: React.FC<CanvasGridProps> = ({
   const [offsetY, setOffsetY] = useState(0)
   const [lastPanX, setLastPanX] = useState(0)
   const [lastPanY, setLastPanY] = useState(0)
-
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -249,12 +248,12 @@ const CanvasGrid: React.FC<CanvasGridProps> = ({
         ref={canvasRef}
         width={gridWidth}
         height={gridHeight}
-        className="border-th-accent-2 border"
+        className="border border-th-accent-2"
         onMouseDown={handleCanvasMouseDown}
         onMouseMove={handleCanvasMouseMove}
         onMouseUp={handleCanvasMouseUp}
       ></canvas>
-      <div className="bg-th-black-2 bg border-th-accent-2 absolute bottom-4 right-4 flex flex-col gap-1 rounded border p-1 shadow-sm">
+      <div className="bg absolute bottom-4 right-4 flex flex-col gap-1 rounded border border-th-accent-2 bg-th-black-2 p-1 shadow-sm">
         <Button
           variant={"outline"}
           onClick={handleZoomIn}
@@ -270,7 +269,7 @@ const CanvasGrid: React.FC<CanvasGridProps> = ({
           <Minus />
         </Button>
       </div>
-      <div className="text-th-accent-2 border-th-accent-2 bg-th-black-2 absolute bottom-4 left-4 flex flex-col gap-1 rounded border shadow-sm">
+      <div className="absolute bottom-4 left-4 flex flex-col gap-1 rounded border border-th-accent-2 bg-th-black-2 text-th-accent-2 shadow-sm">
         <label className="flex cursor-pointer items-center gap-2 p-2 text-sm">
           <Checkbox
             checked={isPanning}
