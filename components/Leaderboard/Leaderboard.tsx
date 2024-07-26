@@ -65,6 +65,7 @@ export default function LeaderboardTable({ contestId }: LeaderboardProps) {
       const rewardService = new RewardService()
       const res = await rewardService.distributeLeaderboardRewards(contestId)
       console.log(res)
+      setLoading(false)
     } catch (error) {
       setLoading(false)
       console.log(error)
