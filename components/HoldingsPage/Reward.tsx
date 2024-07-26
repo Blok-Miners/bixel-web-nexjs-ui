@@ -17,7 +17,7 @@ import { Address } from "@/types/web3"
 import { bscDepositContractAddress } from "@/lib/chains"
 import { rewardAbi } from "@/lib/rewardAbi"
 import { parseUnits } from "viem"
-import { Copy, CopyCheck } from "lucide-react"
+import { Check, Copy, CopyCheck } from "lucide-react"
 
 type Reward = {
   id: string
@@ -48,7 +48,12 @@ type Reward = {
 export default function RewardTable() {
   const [rewards, setRewards] = useState<Reward[]>([])
   const [contestId, setContestId] = useState("")
-  const [loading, setLoading] = useState(false)
+  const [loadingRewards, setLoadingRewards] = useState<{
+    [key: string]: boolean
+  }>({})
+  const [copiedCoupons, setCopiedCoupons] = useState<{
+    [key: string]: boolean
+  }>({})
 
   const getRewards = async () => {
     const rewardService = new RewardService()
@@ -144,7 +149,7 @@ export default function RewardTable() {
   }, [contestId])
 
   const handleClaim = async (rewardId: string) => {
-    setLoading(true)
+    setLoadingRewards((prev) => ({ ...prev, [rewardId]: true }))
     const poolInfo = rewards.find((reward) => reward.id === rewardId)
     console.log({ poolInfo })
     try {
@@ -177,7 +182,7 @@ export default function RewardTable() {
         registerClaim(rewardId)
       }
     } catch (error) {
-      setLoading(false)
+      setLoadingRewards((prev) => ({ ...prev, [rewardId]: false }))
     }
   }
 
@@ -190,16 +195,26 @@ export default function RewardTable() {
         reward.id === rewardId ? { ...reward, claimed: true } : reward,
       ),
     )
-    setLoading(false)
+    setLoadingRewards((prev) => ({ ...prev, [rewardId]: false }))
   }
 
   useEffect(() => {
     if (!data) return
-    setLoading(false)
+    setLoadingRewards((prev) => {
+      const newLoadingRewards = { ...prev }
+      Object.keys(newLoadingRewards).forEach((key) => {
+        newLoadingRewards[key] = false
+      })
+      return newLoadingRewards
+    })
   }, [data])
 
-  const copyToClipboard = (coupon: string) => {
+  const copyToClipboard = (rewardId: string, coupon: string) => {
     navigator.clipboard.writeText(coupon)
+    setCopiedCoupons((prev) => ({ ...prev, [rewardId]: true }))
+    setTimeout(() => {
+      setCopiedCoupons((prev) => ({ ...prev, [rewardId]: false }))
+    }, 2000) // Reset copied state after 2 seconds
   }
 
   return (
@@ -217,7 +232,7 @@ export default function RewardTable() {
             <TableRow key={index}>
               <TableCell className="capitalize">
                 {reward.contest.type.split("_").map((text) => (
-                  <span>{text.toLowerCase()} </span>
+                  <span key={text}>{text.toLowerCase()} </span>
                 ))}
               </TableCell>
               <TableCell>
@@ -233,14 +248,22 @@ export default function RewardTable() {
               <TableCell>
                 {reward.claimed ? (
                   reward.rewardPool.assetType === "Coupon" ? (
-                    <div className="flex gap-2">
+                    <div className="flex items-center gap-2">
                       <Button disabled>Claimed</Button>
+
                       <Button
+                        className="h-fit w-fit"
                         onClick={() =>
-                          copyToClipboard(reward.poolInfo?.coupon!)
+                          copyToClipboard(reward.id, reward.poolInfo?.coupon!)
                         }
                       >
-                        <Copy />
+                        <div className="h-5 w-5">
+                          {copiedCoupons[reward.id] ? (
+                            <Check className="h-full w-full" />
+                          ) : (
+                            <Copy className="h-full w-full" />
+                          )}
+                        </div>
                       </Button>
                     </div>
                   ) : (
@@ -248,8 +271,8 @@ export default function RewardTable() {
                   )
                 ) : (
                   <Button
-                    isLoading={loading}
-                    disabled={loading}
+                    isLoading={loadingRewards[reward.id]}
+                    disabled={loadingRewards[reward.id]}
                     onClick={() => handleClaim(reward.id)}
                   >
                     Claim
