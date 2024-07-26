@@ -55,6 +55,7 @@ export default function BugBountyCard({
       contestId,
       submissionId,
     })
+    getBugBounty()
     setIsLoading(false)
   }
 
@@ -84,7 +85,7 @@ export default function BugBountyCard({
             href={bugBounty?.profileURL}
             target="_blank"
             rel="noreferrer noopener"
-            className="col-span-2 rounded-lg bg-th-black/60 p-4 font-medium truncate"
+            className="col-span-2 truncate rounded-lg bg-th-black/60 p-4 font-medium"
           >
             {bugBounty?.profileURL}
           </a>
