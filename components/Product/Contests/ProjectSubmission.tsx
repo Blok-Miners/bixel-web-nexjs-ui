@@ -33,7 +33,7 @@ import { UserProjectSubmissionService } from "@/services/userProjectSubmission"
 import ConfirmationDialog from "@/components/Shared/ConfirmationDialog"
 import { Loader2 } from "lucide-react"
 import { ContestService } from "@/services/contest"
-import { useRouter,usePathname } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 export interface IProjectData {
   projectName: string
   videoURL: string
@@ -185,286 +185,309 @@ const ProjectSubmission = ({
         title={title}
         message={message}
       />
-      <FormProvider {...methods}>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="row-span-2 grid w-full grid-cols-2 gap-4 rounded-2xl bg-th-accent-2/10 p-4"
-        >
-          <span className="col-span-2 rounded-2xl px-4 py-1 text-center text-xl font-bold">
-            Project Submission
-          </span>
-          <div className="col-span-2 h-fit space-y-2 rounded-xl p-2">
-            <span className="text-sm">Description</span>
-            <div className="h-fit rounded-xl bg-th-accent-2/10 p-4 text-base font-medium">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-              Accusantium, voluptas! Itaque ad laborum voluptates, voluptatibus
-              quas quidem tempore!
-            </div>
+
+      <div className="grid w-full grid-cols-2 gap-4 rounded-2xl bg-th-accent-2/10 p-4">
+        <span className="col-span-2 rounded-2xl px-4 py-1 text-center text-xl font-bold">
+          Project Submission
+        </span>
+        <div className="col-span-2 h-fit space-y-2 rounded-xl p-2">
+          <span className="text-sm">Description</span>
+          <div className="h-fit rounded-xl bg-th-accent-2/10 p-4 text-base font-medium">
+            Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            Accusantium, voluptas! Itaque ad laborum voluptates, voluptatibus
+            quas quidem tempore!
           </div>
+        </div>
 
-          <div className="col-span-1 space-y-2 rounded-xl p-2">
-            <span className="text-sm">Start Date</span>
-            <div className="rounded-xl bg-th-accent-2/10 p-4 text-base font-medium">
-              1/1/2024
-            </div>
+        <div className="col-span-1 space-y-2 rounded-xl p-2">
+          <span className="text-sm">Start Date</span>
+          <div className="rounded-xl bg-th-accent-2/10 p-4 text-base font-medium">
+            1/1/2024
           </div>
-
-          <div className="col-span-1 space-y-2 rounded-xl p-2">
-            <span className="text-sm">End Date</span>
-            <div className="rounded-xl bg-th-accent-2/10 p-4 text-base font-medium">
-              1/1/2025
-            </div>
+        </div>
+        <div className="col-span-1 space-y-2 rounded-xl p-2">
+          <span className="text-sm">End Date</span>
+          <div className="rounded-xl bg-th-accent-2/10 p-4 text-base font-medium">
+            1/1/2025
           </div>
+        </div>
 
-          <div className="col-span-2 space-y-2 rounded-xl p-2">
-            <span className="text-sm">Project URL</span>
-            <div className="rounded-xl bg-th-accent-2/10 p-4 text-base font-medium">
-              https://www.projecturl.com
-            </div>
+        <div className="col-span-2 space-y-2 rounded-xl p-2">
+          <span className="text-sm">Project URL</span>
+          <div className="rounded-xl bg-th-accent-2/10 p-4 text-base font-medium">
+            https://www.projecturl.com
           </div>
-
-          <FormField
-            control={control}
-            name="projectName"
-            render={({ field }) => (
-              <FormItem className="col-span-1 space-y-2 rounded-xl p-2">
-                <FormLabel>
-                  Project Name <span className="text-red-500">*</span>
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="Project Name"
-                    className="rounded-lg bg-transparent"
-                  />
-                </FormControl>
-                <FormMessage>{errors.projectName?.message}</FormMessage>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={control}
-            name="videoUrl"
-            render={({ field }) => (
-              <FormItem className="col-span-1 space-y-2 rounded-xl p-2">
-                <FormLabel>
-                  Video URL <span className="text-red-500">*</span>
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="URL"
-                    className="rounded-lg bg-transparent"
-                  />
-                </FormControl>
-                <FormMessage>{errors.videoUrl?.message}</FormMessage>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={control}
-            name="demoUrl"
-            render={({ field }) => (
-              <FormItem className="col-span-1 space-y-2 rounded-xl p-2">
-                <FormLabel>
-                  Demo URL <span className="text-red-500">*</span>
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="URL"
-                    className="rounded-lg bg-transparent"
-                  />
-                </FormControl>
-                <FormMessage>{errors.demoUrl?.message}</FormMessage>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={control}
-            name="githubUrl"
-            render={({ field }) => (
-              <FormItem className="col-span-1 space-y-2 rounded-xl p-2">
-                <FormLabel>
-                  GitHub URL <span className="text-red-500">*</span>
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="URL"
-                    className="rounded-lg bg-transparent"
-                  />
-                </FormControl>
-                <FormMessage>{errors.githubUrl?.message}</FormMessage>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={control}
-            name="contractAddress"
-            render={({ field }) => (
-              <FormItem className="col-span-1 space-y-2 rounded-xl p-2">
-                <FormLabel>
-                  Contract Address <span className="text-red-500">*</span>
-                </FormLabel>
-                <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="Contract Address"
-                    className="rounded-lg bg-transparent"
-                  />
-                </FormControl>
-                <FormMessage>{errors.contractAddress?.message}</FormMessage>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={control}
-            name="chainType"
-            render={({ field }) => (
-              <FormItem className="col-span-1 space-y-2 rounded-xl p-2">
-                <FormLabel>
-                  Select Chain <span className="text-red-500">*</span>
-                </FormLabel>
-                <FormControl>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <SelectTrigger className="w-full rounded-xl border-none bg-th-accent-2/10 text-base font-medium focus:ring-0">
-                      <SelectValue
-                        placeholder="Select"
-                        className="outline-none"
+        </div>
+        {!isOwner && (
+          <FormProvider {...methods}>
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="col-span-2 row-span-2 grid w-full grid-cols-2 gap-4"
+            >
+              <FormField
+                control={control}
+                name="projectName"
+                render={({ field }) => (
+                  <FormItem className="col-span-1 space-y-2 rounded-xl p-2">
+                    <FormLabel>
+                      Project Name <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Project Name"
+                        className="rounded-lg bg-transparent"
                       />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {chain &&
-                          chain.map((item: any, index: any) => {
-                            return (
-                              <SelectItem
-                                key={index}
-                                value={item.id}
-                                className="text-white"
-                              >
-                                {item.name}
-                              </SelectItem>
-                            )
-                          })}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage>{errors.chainType?.message}</FormMessage>
-              </FormItem>
-            )}
-          />
+                    </FormControl>
+                    <FormMessage>{errors.projectName?.message}</FormMessage>
+                  </FormItem>
+                )}
+              />
 
-          <FormField
-            control={control}
-            name="rulesForSubmission"
-            render={({ field }) => (
-              <FormItem className="col-span-2 space-y-2 rounded-xl p-2">
-                <FormLabel>
-                  Project Description <span className="text-red-500">*</span>
-                </FormLabel>
-                <FormControl>
-                  <Textarea
-                    {...field}
-                    placeholder="Project Description"
-                    className="rounded-lg bg-transparent"
-                  />
-                </FormControl>
-                <FormMessage>{errors.rulesForSubmission?.message}</FormMessage>
-              </FormItem>
-            )}
-          />
+              <FormField
+                control={control}
+                name="videoUrl"
+                render={({ field }) => (
+                  <FormItem className="col-span-1 space-y-2 rounded-xl p-2">
+                    <FormLabel>
+                      Video URL <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="URL"
+                        className="rounded-lg bg-transparent"
+                      />
+                    </FormControl>
+                    <FormMessage>{errors.videoUrl?.message}</FormMessage>
+                  </FormItem>
+                )}
+              />
 
-          <div className="col-span-2 space-y-2 rounded-xl p-2">
-            <div className="flex items-center gap-4">
-              <FormLabel>
-                Team Members <span className="text-red-500">*</span>
-              </FormLabel>
-              <Button
-                type="button"
-                className="text-xs"
-                onClick={() => append({ name: "", githubUsername: "" })}
-              >
-                Add Member
-              </Button>
-            </div>
-            <div>
-              {fields.map((item, index) => (
-                <div key={item.id} className="grid grid-cols-6 gap-4 py-2">
-                  <FormField
-                    control={control}
-                    name={`teamMembers.${index}.name`}
-                    render={({ field }) => (
-                      <FormItem className="col-span-3 space-y-2 rounded-xl">
-                        <FormLabel>
-                          Name <span className="text-red-500">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="Name"
-                            className="rounded-lg bg-transparent"
+              <FormField
+                control={control}
+                name="demoUrl"
+                render={({ field }) => (
+                  <FormItem className="col-span-1 space-y-2 rounded-xl p-2">
+                    <FormLabel>
+                      Demo URL <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="URL"
+                        className="rounded-lg bg-transparent"
+                      />
+                    </FormControl>
+                    <FormMessage>{errors.demoUrl?.message}</FormMessage>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={control}
+                name="githubUrl"
+                render={({ field }) => (
+                  <FormItem className="col-span-1 space-y-2 rounded-xl p-2">
+                    <FormLabel>
+                      GitHub URL <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="URL"
+                        className="rounded-lg bg-transparent"
+                      />
+                    </FormControl>
+                    <FormMessage>{errors.githubUrl?.message}</FormMessage>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={control}
+                name="contractAddress"
+                render={({ field }) => (
+                  <FormItem className="col-span-1 space-y-2 rounded-xl p-2">
+                    <FormLabel>
+                      Contract Address <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Contract Address"
+                        className="rounded-lg bg-transparent"
+                      />
+                    </FormControl>
+                    <FormMessage>{errors.contractAddress?.message}</FormMessage>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={control}
+                name="chainType"
+                render={({ field }) => (
+                  <FormItem className="col-span-1 space-y-2 rounded-xl p-2">
+                    <FormLabel>
+                      Select Chain <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <SelectTrigger className="w-full rounded-xl border-none bg-th-accent-2/10 text-base font-medium focus:ring-0">
+                          <SelectValue
+                            placeholder="Select"
+                            className="outline-none"
                           />
-                        </FormControl>
-                        <FormMessage>
-                          {errors.teamMembers?.[index]?.name?.message}
-                        </FormMessage>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={control}
-                    name={`teamMembers.${index}.githubUsername`}
-                    render={({ field }) => (
-                      <FormItem className="col-span-2 space-y-2 rounded-xl">
-                        <FormLabel>
-                          Discord Username{" "}
-                          <span className="text-red-500">*</span>
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="Discord Username"
-                            className="rounded-lg bg-transparent"
-                          />
-                        </FormControl>
-                        <FormMessage>
-                          {errors.teamMembers?.[index]?.githubUsername?.message}
-                        </FormMessage>
-                      </FormItem>
-                    )}
-                  />
-                  <div className="flex items-end">
-                    <Button
-                      type="button"
-                      className="bg-red-700 text-xl text-white hover:bg-red-600"
-                      onClick={() => remove(index)}
-                    >
-                      <MdOutlineDelete />
-                    </Button>
-                  </div>
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            {chain &&
+                              chain.map((item: any, index: any) => {
+                                return (
+                                  <SelectItem
+                                    key={index}
+                                    value={item.id}
+                                    className="text-white"
+                                  >
+                                    {item.name}
+                                  </SelectItem>
+                                )
+                              })}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage>{errors.chainType?.message}</FormMessage>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={control}
+                name="rulesForSubmission"
+                render={({ field }) => (
+                  <FormItem className="col-span-2 space-y-2 rounded-xl p-2">
+                    <FormLabel>
+                      Project Description{" "}
+                      <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        placeholder="Project Description"
+                        className="rounded-lg bg-transparent"
+                      />
+                    </FormControl>
+                    <FormMessage>
+                      {errors.rulesForSubmission?.message}
+                    </FormMessage>
+                  </FormItem>
+                )}
+              />
+
+              <div className="col-span-2 space-y-2 rounded-xl p-2">
+                <div className="flex items-center gap-4">
+                  <FormLabel>
+                    Team Members <span className="text-red-500">*</span>
+                  </FormLabel>
+                  <Button
+                    type="button"
+                    className="text-xs"
+                    onClick={() => append({ name: "", githubUsername: "" })}
+                  >
+                    Add Member
+                  </Button>
                 </div>
-              ))}
-            </div>
-          </div>
+                <div>
+                  {fields.map((item, index) => (
+                    <div key={item.id} className="grid grid-cols-6 gap-4 py-2">
+                      <FormField
+                        control={control}
+                        name={`teamMembers.${index}.name`}
+                        render={({ field }) => (
+                          <FormItem className="col-span-3 space-y-2 rounded-xl">
+                            <FormLabel>
+                              Name <span className="text-red-500">*</span>
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                placeholder="Name"
+                                className="rounded-lg bg-transparent"
+                              />
+                            </FormControl>
+                            <FormMessage>
+                              {errors.teamMembers?.[index]?.name?.message}
+                            </FormMessage>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={control}
+                        name={`teamMembers.${index}.githubUsername`}
+                        render={({ field }) => (
+                          <FormItem className="col-span-2 space-y-2 rounded-xl">
+                            <FormLabel>
+                              Discord Username{" "}
+                              <span className="text-red-500">*</span>
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                placeholder="Discord Username"
+                                className="rounded-lg bg-transparent"
+                              />
+                            </FormControl>
+                            <FormMessage>
+                              {
+                                errors.teamMembers?.[index]?.githubUsername
+                                  ?.message
+                              }
+                            </FormMessage>
+                          </FormItem>
+                        )}
+                      />
+                      <div className="flex items-end">
+                        <Button
+                          type="button"
+                          className="bg-red-700 text-xl text-white hover:bg-red-600"
+                          onClick={() => remove(index)}
+                        >
+                          <MdOutlineDelete />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-          <Button type="submit" className="col-span-2 m-2">
-            {loading ? (
-              <Loader2 className="h-4 w-4 animate-spin" color="white" />
-            ) : (
-              "Submit"
-            )}
-          </Button>
-        {isOwner && <Button onClick={()=>router.push(`${pathname}/${id}/project`)}>View Submission</Button>}
-        </form>
-      </FormProvider>
+              <Button type="submit" className="col-span-2 m-2">
+                {loading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" color="white" />
+                ) : (
+                  "Submit"
+                )}
+              </Button>
+            </form>
+          </FormProvider>
+        )}
+        {isOwner && (
+          <div className="flex flex-col justify-end col-span-2">
+            <Button
+              className=""
+              onClick={() => {
+                router.push(`${pathname}/project/${id}`)
+              }}
+            >
+              View Submission
+            </Button>
+          </div>
+        )}
+      </div>
     </>
   )
 }

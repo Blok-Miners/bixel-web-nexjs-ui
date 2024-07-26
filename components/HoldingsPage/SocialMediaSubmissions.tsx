@@ -30,10 +30,18 @@ export const SocialMediaSubmissions = ({ id }: ProjectSubmissionsProps) => {
       console.log(error)
     }
   }
-  const handleClaim = async (id: string, userId: string,socialMedia:string) => {
+  const handleClaim = async (
+    id: string,
+    userId: string,
+    socialMedia: string,
+  ) => {
     try {
       console.log(id)
-      await new ContestService().verifyProductsSocialMediaSubmission(id, userId,socialMedia)
+      await new ContestService().verifyProductsSocialMediaSubmission(
+        id,
+        userId,
+        socialMedia,
+      )
     } catch (error) {
       console.log(error)
     }
@@ -78,7 +86,11 @@ export const SocialMediaSubmissions = ({ id }: ProjectSubmissionsProps) => {
                   ) : (
                     <Button
                       onClick={() =>
-                        handleClaim(id, submission.user,submission.socialMedia._id)
+                        handleClaim(
+                          id,
+                          submission.user,
+                          submission.socialMedia._id,
+                        )
                       }
                     >
                       Verify

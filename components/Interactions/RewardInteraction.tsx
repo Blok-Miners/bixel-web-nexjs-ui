@@ -4,13 +4,13 @@ import React, { useEffect, useState } from "react"
 import { Label } from "../ui/label"
 import { Button } from "../ui/button"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { Input } from "../ui/input"
 import { FaChevronUp } from "react-icons/fa"
 import { FaChevronDown } from "react-icons/fa"
 import { ScrollArea } from "../ui/scroll-area"
 import { ContestService } from "@/services/contest"
 import { Loader2 } from "lucide-react"
+import { useRouter, usePathname } from "next/navigation"
 
 import {
   IFetchSocialMedia,
@@ -32,6 +32,8 @@ const socialMediaTypes = [
 ]
 
 export const RewardInteraction = ({ id }: { id: string }) => {
+  const router = useRouter()
+  const pathname = usePathname()
   const contestService = new ContestService()
   const Router = useRouter()
   const [expanded, setExpanded] = useState<number | null>(null) // Track which item is expanded
@@ -41,12 +43,27 @@ export const RewardInteraction = ({ id }: { id: string }) => {
   const [username, setUsername] = useState<string>("")
   const [opened, setOpened] = useState(false)
   const [allSubmissions, setAllSubmissions] = useState<ISocialSubmissions[]>()
-  const [loading,setLoading] = useState(false)
-  const [showVerify,setShowVerify] = useState(true)
+  const [loading, setLoading] = useState(false)
+  const [showVerify, setShowVerify] = useState(true)
+  const [isOwner, setIsOwner] = useState(false)
 
   const handleToggle = (index: number) => {
     setExpanded(expanded === index ? null : index) // Toggle the expanded state
   }
+
+  const checkOwnership = async () => {
+    try {
+      const contestService = new ContestService()
+      const isOwnerResponse = await contestService.isProductOwner(id)
+      setIsOwner(isOwnerResponse.isOwner)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    checkOwnership()
+  }, [id])
 
   const handleSubmit = async (
     activity: string,
@@ -170,27 +187,41 @@ export const RewardInteraction = ({ id }: { id: string }) => {
                       </Button>
                     )}
                   </div>
-                  {socialMedia.activity !== "VISIT" && expanded === index && showVerify  && (
-                    <div className="mt-2 w-full space-y-2">
-                      <Label>Username</Label>
-                      <div className="flex w-full gap-6">
-                        <Input
-                          type="text"
-                          className="w-full"
-                          placeholder={`Enter your ${socialMedia.type.toLowerCase()} username`}
-                          value={username}
-                          onChange={(e) => setUsername(e.target.value)}
-                        />
-                        <Button onClick={() => verify(socialMedia._id)}>
-                        {loading ? <Loader2 className="animate-spin" /> : "Verify"}
-                        </Button>
+                  {socialMedia.activity !== "VISIT" &&
+                    expanded === index &&
+                    showVerify && (
+                      <div className="mt-2 w-full space-y-2">
+                        <Label>Username</Label>
+                        <div className="flex w-full gap-6">
+                          <Input
+                            type="text"
+                            className="w-full"
+                            placeholder={`Enter your ${socialMedia.type.toLowerCase()} username`}
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                          />
+                          <Button onClick={() => verify(socialMedia._id)}>
+                            {loading ? (
+                              <Loader2 className="animate-spin" />
+                            ) : (
+                              "Verify"
+                            )}
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                 </div>
               ),
             )}
         </ScrollArea>
+        {isOwner && (
+          <Button
+            className="col-span-2"
+            onClick={() => router.push(`${pathname}/socialMedia/${id}`)}
+          >
+            View Submission
+          </Button>
+        )}
       </div>
     </div>
   )
