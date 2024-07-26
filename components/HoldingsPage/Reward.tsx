@@ -17,6 +17,7 @@ import { Address } from "@/types/web3"
 import { bscDepositContractAddress } from "@/lib/chains"
 import { rewardAbi } from "@/lib/rewardAbi"
 import { parseUnits } from "viem"
+import { Copy, CopyCheck } from "lucide-react"
 
 type Reward = {
   id: string
@@ -25,7 +26,7 @@ type Reward = {
     type: string
   }
   rewardPool: {
-    claimedWinners:number
+    claimedWinners: number
     assetType: AssetTypeEnum
     assetId: string
     id: string
@@ -36,9 +37,10 @@ type Reward = {
     symbol: string
     tokenPerWinner: number
     chainId: string
-    nftType?:string
-    NFTs?:string[]
-    nftAmount1155?:string[]
+    nftType?: string
+    NFTs?: string[]
+    coupon?: string
+    nftAmount1155?: string[]
     _id: string
   }
 }
@@ -51,7 +53,7 @@ export default function RewardTable() {
   const getRewards = async () => {
     const rewardService = new RewardService()
     const reward = await rewardService.getClaimableRewards()
-    console.log(reward,"reward")
+    console.log(reward, "reward")
     setContestId(reward.contestId)
     if (!reward) return
     setRewards(reward)
@@ -97,16 +99,16 @@ export default function RewardTable() {
     }
   }
 
-  const claim721Reward = async(address:Address,tokenId:string)=>{
+  const claim721Reward = async (address: Address, tokenId: string) => {
     try {
-      console.log(address,tokenId)
+      console.log(address, tokenId)
       const tx = await writeContractAsync({
         address: bscDepositContractAddress,
         abi: rewardAbi,
         functionName: "claimNft721",
-        args: [address,tokenId],
+        args: [address, tokenId],
       })
-      console.log(tx,"vfdvjdbvfghd")
+      console.log(tx, "vfdvjdbvfghd")
       setTx(tx)
       return tx
     } catch (error) {
@@ -115,16 +117,20 @@ export default function RewardTable() {
     }
   }
 
-  const claim1155Reward = async(address:Address,tokenId:string,amount:string)=>{
+  const claim1155Reward = async (
+    address: Address,
+    tokenId: string,
+    amount: string,
+  ) => {
     try {
-      console.log(address,tokenId)
+      console.log(address, tokenId)
       const tx = await writeContractAsync({
         address: bscDepositContractAddress,
         abi: rewardAbi,
         functionName: "claimNft1155",
-        args: [address,tokenId,amount],
+        args: [address, tokenId, amount],
       })
-      console.log(tx,"vfdvjdbvfghd")
+      console.log(tx, "vfdvjdbvfghd")
       setTx(tx)
       return tx
     } catch (error) {
@@ -150,24 +156,25 @@ export default function RewardTable() {
           poolInfo.poolInfo.tokenDecimals,
         )
         registerClaim(rewardId, hash)
-      }else if(poolInfo?.rewardPool.assetType === AssetTypeEnum.NFT){
-        if(poolInfo?.poolInfo.nftType === INftType.ERC721){
+      } else if (poolInfo?.rewardPool.assetType === AssetTypeEnum.NFT) {
+        if (poolInfo?.poolInfo.nftType === INftType.ERC721) {
           const tokenId = poolInfo.rewardPool.claimedWinners
           const hash = await claim721Reward(
             poolInfo.poolInfo.address,
-            poolInfo.poolInfo.NFTs![tokenId]
+            poolInfo.poolInfo.NFTs![tokenId],
           )
           registerClaim(rewardId, hash)
-        }else{
-          const tokenId= poolInfo.rewardPool.claimedWinners
+        } else {
+          const tokenId = poolInfo.rewardPool.claimedWinners
           const hash = await claim1155Reward(
             poolInfo.poolInfo.address,
             poolInfo.poolInfo.NFTs![tokenId],
-            poolInfo.poolInfo.nftAmount1155![tokenId]
+            poolInfo.poolInfo.nftAmount1155![tokenId],
           )
           registerClaim(rewardId, hash)
-
         }
+      } else if (poolInfo?.rewardPool.assetType === AssetTypeEnum.Coupon) {
+        registerClaim(rewardId)
       }
     } catch (error) {
       setLoading(false)
@@ -183,12 +190,17 @@ export default function RewardTable() {
         reward.id === rewardId ? { ...reward, claimed: true } : reward,
       ),
     )
+    setLoading(false)
   }
 
   useEffect(() => {
     if (!data) return
     setLoading(false)
   }, [data])
+
+  const copyToClipboard = (coupon: string) => {
+    navigator.clipboard.writeText(coupon)
+  }
 
   return (
     <ScrollArea className="h-[400px] rounded-2xl bg-th-accent-2/10 p-4">
@@ -209,11 +221,31 @@ export default function RewardTable() {
                 ))}
               </TableCell>
               <TableCell>
-                {reward.poolInfo?.tokenPerWinner} {reward.poolInfo?.symbol} {reward.poolInfo?.nftType}
+                {reward.rewardPool?.assetType === "Coupon" ? (
+                  reward.poolInfo?.coupon
+                ) : (
+                  <>
+                    {reward.poolInfo?.tokenPerWinner} {reward.poolInfo?.symbol}{" "}
+                    {reward.poolInfo?.nftType}
+                  </>
+                )}
               </TableCell>
               <TableCell>
                 {reward.claimed ? (
-                  <Button disabled>Claimed</Button>
+                  reward.rewardPool.assetType === "Coupon" ? (
+                    <div className="flex gap-2">
+                      <Button disabled>Claimed</Button>
+                      <Button
+                        onClick={() =>
+                          copyToClipboard(reward.poolInfo?.coupon!)
+                        }
+                      >
+                        <Copy />
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button disabled>Claimed</Button>
+                  )
                 ) : (
                   <Button
                     isLoading={loading}

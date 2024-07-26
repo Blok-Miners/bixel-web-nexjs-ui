@@ -38,7 +38,7 @@ export const ProjectSubmissions = ({ id }: ProjectSubmissionsProps) => {
       )
 
       setSubmissions(res.submissions || [])
-
+      checkOwnership()
       console.log(res)
     } catch (error) {
       console.log(error)
@@ -46,6 +46,7 @@ export const ProjectSubmissions = ({ id }: ProjectSubmissionsProps) => {
   }
   useEffect(() => {
     getContestDetails()
+    checkOwnership()
   }, [])
 
   const handleClaim = async (id: string, userId: string, approved: boolean) => {
@@ -70,6 +71,7 @@ export const ProjectSubmissions = ({ id }: ProjectSubmissionsProps) => {
     try {
       const contestService = new ContestService()
       const isOwnerResponse = await contestService.isProductOwner(id)
+      console.log(isOwnerResponse)
       setIsOwner(isOwnerResponse.isOwner)
     } catch (error) {
       console.log(error)
