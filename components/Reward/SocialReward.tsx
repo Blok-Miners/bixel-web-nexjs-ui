@@ -74,7 +74,6 @@ export default function CreateSocialReward({
       icon: <FaFacebookF />,
       color: "#1877F2",
       content: [
-        { name: "Facebook Entry", value: "Entry" },
         { name: "Visit on Facebook", value: "Visit" },
         { name: "Post on Facebook", value: "Post" },
       ],
@@ -102,7 +101,6 @@ export default function CreateSocialReward({
       icon: <FaXTwitter />,
       color: "#000000",
       content: [
-        { name: "Twitter Entry", value: "Entry" },
         { name: "Post on Twitter", value: "Post" },
         { name: "Visit on Twitter", value: "Visit" },
       ],
