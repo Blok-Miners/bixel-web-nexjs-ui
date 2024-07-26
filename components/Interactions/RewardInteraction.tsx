@@ -220,7 +220,7 @@ export const RewardInteraction = ({
               ),
             )}
         </ScrollArea>
-        {mode === "LEADERBOARD" && isOwner && (
+        {isOwner && (
           <Button
             className="col-span-2"
             onClick={() => router.push(`${pathname}/socialMedia/${id}`)}
@@ -228,7 +228,7 @@ export const RewardInteraction = ({
             View Submission
           </Button>
         )}
-        {isOwner && (
+        {mode === "LEADERBOARD" && isOwner && (
           <Button
             className="col-span-2"
             onClick={() => router.push(`/leaderboard/${id}`)}
