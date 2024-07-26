@@ -288,5 +288,19 @@ export class ContestService extends BindService {
       throw error
     }
   }
+
+  public async getMyVerifiedContractSubmission(id:string){
+    try {
+      const response = await this.http.get(
+        `get-my-verified-contract-submission/${id}`,
+        {
+          headers: { Authorization: getAccessToken() },
+        },
+      )
+      return response.data
+    } catch (error) {
+      throw error
+    }
+  }
   
 }

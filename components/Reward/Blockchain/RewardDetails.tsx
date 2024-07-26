@@ -776,7 +776,12 @@ export default function RewardDetails({
               </div>
             )}
 
-            <Button className="w-fit" onClick={handleDepositNfts}>
+            <Button
+              isLoading={loading}
+              disabled={loading}
+              className="w-fit"
+              onClick={handleDepositNfts}
+            >
               Deposit
             </Button>
           </div>

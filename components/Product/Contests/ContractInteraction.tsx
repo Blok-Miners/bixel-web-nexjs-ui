@@ -40,9 +40,20 @@ export const ContractInteraction = ({ id }: { id: string }) => {
       console.log(error)
     }
   }
+  const mySubmission = async()=>{
+    try {
+      const res = await contestService.getMyVerifiedContractSubmission(id)
+      if(res.success !== true) return
+      setVerifyStatus(res.success)
+      setOpended(true)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   useEffect(() => {
     interactionDetails()
+    mySubmission()
   }, [])
 
   return (
@@ -76,9 +87,13 @@ export const ContractInteraction = ({ id }: { id: string }) => {
           {interaction?.description}
         </div>
       </div>
-      {Opened ? (
+      {Opened ? verifyStatus ? (
+         <div className="col-span-3 w-full rounded-xl bg-th-accent-2/10 h-fit p-4 text-center font-bold text-green-600">
+         Verified
+       </div>
+      ) : (
         <Button className="col-span-3 m-2" onClick={verifyTransaction}>
-          {loading  ? <Loader2 className="animate-spin" /> :  verifyStatus ? "Verified" : "Verify"}
+          {loading  ? <Loader2 className="animate-spin" /> :  "Verify"}
         </Button>
       ) : (
         <>
