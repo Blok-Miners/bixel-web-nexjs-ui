@@ -32,6 +32,8 @@ import { ChainService } from "@/services/chain"
 import { UserProjectSubmissionService } from "@/services/userProjectSubmission"
 import ConfirmationDialog from "@/components/Shared/ConfirmationDialog"
 import { Loader2 } from "lucide-react"
+import { ContestService } from "@/services/contest"
+import { useRouter,usePathname } from "next/navigation"
 export interface IProjectData {
   projectName: string
   videoURL: string
@@ -78,6 +80,8 @@ const ProjectSubmission = ({
   id: string
   projectId: string
 }) => {
+  const router = useRouter()
+  const pathname = usePathname()
   const chains = new ChainService()
   const [chain, setChain] = useState([])
   const getAllChain = async () => {
@@ -86,6 +90,21 @@ const ProjectSubmission = ({
       setChain(allChain)
     }
   }
+  const [isOwner, setIsOwner] = useState(false)
+  const checkOwnership = async () => {
+    try {
+      const contestService = new ContestService()
+      const isOwnerResponse = await contestService.isProductOwner(id)
+      setIsOwner(isOwnerResponse.isOwner)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    checkOwnership()
+  }, [id])
+
   useEffect(() => {
     getAllChain()
   }, [])
@@ -438,11 +457,12 @@ const ProjectSubmission = ({
 
           <Button type="submit" className="col-span-2 m-2">
             {loading ? (
-              <Loader2 className=" h-4 w-4 animate-spin" color="white" />
+              <Loader2 className="h-4 w-4 animate-spin" color="white" />
             ) : (
               "Submit"
             )}
           </Button>
+        {isOwner && <Button onClick={()=>router.push(`${pathname}/${id}/project`)}>View Submission</Button>}
         </form>
       </FormProvider>
     </>

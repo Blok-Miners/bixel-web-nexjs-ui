@@ -259,11 +259,11 @@ export class ContestService extends BindService {
     }
   }
 
-  public async verifyProductsSocialMediaSubmission(id: string , userId: string) {
+  public async verifyProductsSocialMediaSubmission(id: string , userId: string,socialMedia:string) {
     try {
       const response = await this.http.post(
         `verify-social-media-submission/${id}`,
-        {userId},
+        {userId,socialMedia},
         {
           headers: { Authorization: getAccessToken() },
         },
