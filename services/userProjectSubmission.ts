@@ -28,5 +28,19 @@ export class UserProjectSubmissionService extends bind {
       throw error
     }
   }
+  public async getProjectDetails(id:string) {
+    try {
+      return (
+        await this.http.get(`/project-submission/${id}` ,{
+          headers: {
+            Authorization: getAccessToken(),
+            'Content-Type': 'application/json',
+          },
+        })
+      ).data
+    } catch (error) {
+      throw error
+    }
+  }
 
 }
