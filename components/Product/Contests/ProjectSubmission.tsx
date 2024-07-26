@@ -81,9 +81,11 @@ interface IData {
 const ProjectSubmission = ({
   id,
   projectId,
+  mode,
 }: {
   id: string
   projectId: string
+  mode: string
 }) => {
   const router = useRouter()
   const pathname = usePathname()
@@ -200,7 +202,6 @@ const ProjectSubmission = ({
       if (data.chainType) {
         projectData.chain = data.chainType
       }
-
       const res = await service.submitUserProject(projectData, id)
       console.log(res)
       setOpenDialog(true)
@@ -516,7 +517,7 @@ const ProjectSubmission = ({
             </FormProvider>
           )}
           {isOwner && (
-            <div className="col-span-2 flex flex-col flex-grow justify-end">
+            <div className="col-span-2 flex flex-grow flex-col justify-end gap-2">
               <Button
                 className=""
                 onClick={() => {
@@ -525,6 +526,11 @@ const ProjectSubmission = ({
               >
                 View Submission
               </Button>
+              {mode === "LEADERBOARD" && isOwner && (
+                <Button onClick={() => router.push(`/leaderboard/${id}`)}>
+                  Leaderboard
+                </Button>
+              )}
             </div>
           )}
         </div>

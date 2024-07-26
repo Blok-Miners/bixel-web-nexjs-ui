@@ -12,6 +12,7 @@ interface IGetContest {
   contestId: string
   interactionId: string
   ownerId: string
+  mode: string
 }
 
 export default function GetContest({
@@ -19,6 +20,7 @@ export default function GetContest({
   contestId,
   interactionId,
   ownerId,
+  mode,
 }: IGetContest) {
   switch (type) {
     case ContestInteractionEnum.BUG_BOUNTY:
@@ -27,22 +29,41 @@ export default function GetContest({
           contestId={contestId}
           bugBountyId={interactionId}
           ownerId={ownerId}
+          mode={mode}
         />
       )
     case ContestInteractionEnum.SMART_CONTRACT:
-      return <ContractInteraction id={contestId} />
+      return <ContractInteraction id={contestId} mode={mode} />
     case ContestInteractionEnum.PROJECT_SUBMISSION:
-      return <ProjectSubmission id={contestId} projectId={interactionId} />
+      return (
+        <ProjectSubmission
+          id={contestId}
+          projectId={interactionId}
+          mode={mode}
+        />
+      )
     case ContestInteractionEnum.HOLDINGS_VERIFICATION:
       return (
-        <HoldingVerification id={contestId} interactionId={interactionId} />
+        <HoldingVerification
+          id={contestId}
+          interactionId={interactionId}
+          mode={mode}
+        />
       )
     case ContestInteractionEnum.REGISTRATION_VERIFICATION:
-      return <RegistrationVerification id={contestId} interactionId={interactionId} />
+      return (
+        <RegistrationVerification
+          id={contestId}
+          interactionId={interactionId}
+          mode={mode}
+        />
+      )
     case ContestInteractionEnum.SURVEYS:
-      return <SurveyCard id={contestId} interactionId={interactionId} />
+      return (
+        <SurveyCard id={contestId} interactionId={interactionId} mode={mode} />
+      )
     case ContestInteractionEnum.SOCIAL_MEDIA:
-      return <RewardInteraction id={contestId} />
+      return <RewardInteraction id={contestId} mode={mode} />
     default:
       return <></>
   }

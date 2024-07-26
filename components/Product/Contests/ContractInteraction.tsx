@@ -6,13 +6,20 @@ import { ContestService } from "@/services/contest"
 import { ISmartContractInteraction } from "@/types/services/smartContractInteraction"
 import { Address } from "@/types/web3"
 import { Loader2 } from "lucide-react"
+import { useRouter } from "next/navigation"
 
-export const ContractInteraction = ({ id }: { id: string }) => {
+export const ContractInteraction = ({
+  id,
+  mode,
+}: {
+  id: string
+  mode: string
+}) => {
   const contestService = new ContestService()
   const [Opened, setOpended] = useState(false)
   const [interaction, setInteraction] = useState<ISmartContractInteraction>()
   const [loading, setLoading] = useState(false)
-  const [verifyStatus,setVerifyStatus] = useState(false)
+  const [verifyStatus, setVerifyStatus] = useState(false)
   const interactionDetails = async () => {
     try {
       const res = await contestService.getInteractionDetails(id)
@@ -25,6 +32,17 @@ export const ContractInteraction = ({ id }: { id: string }) => {
       })
     } catch (e) {
       console.log(e)
+    }
+  }
+  const router = useRouter()
+  const [isOwner, setIsOwner] = useState(false)
+  const checkOwnership = async () => {
+    try {
+      const contestService = new ContestService()
+      const isOwnerResponse = await contestService.isProductOwner(id)
+      setIsOwner(isOwnerResponse.isOwner)
+    } catch (error) {
+      console.log(error)
     }
   }
 
@@ -40,10 +58,10 @@ export const ContractInteraction = ({ id }: { id: string }) => {
       console.log(error)
     }
   }
-  const mySubmission = async()=>{
+  const mySubmission = async () => {
     try {
       const res = await contestService.getMyVerifiedContractSubmission(id)
-      if(res.success !== true) return
+      if (res.success !== true) return
       setVerifyStatus(res.success)
       setOpended(true)
     } catch (error) {
@@ -54,6 +72,7 @@ export const ContractInteraction = ({ id }: { id: string }) => {
   useEffect(() => {
     interactionDetails()
     mySubmission()
+    checkOwnership()
   }, [])
 
   return (
@@ -63,7 +82,7 @@ export const ContractInteraction = ({ id }: { id: string }) => {
       </span>
       <div className="col-span-3 space-y-2 rounded-xl p-2 text-sm">
         <span className="w-full text-center">Contract Address</span>
-        <div className="rounded-xl bg-th-accent-2/10 p-4 text-base font-medium truncate">
+        <div className="truncate rounded-xl bg-th-accent-2/10 p-4 text-base font-medium">
           {interaction?.contractAddress}
         </div>
       </div>
@@ -73,10 +92,10 @@ export const ContractInteraction = ({ id }: { id: string }) => {
           {interaction?.chain}
         </div>
       </div>
-      <div className="col-span-2 space-y-2 rounded-xl p-2 ">
+      <div className="col-span-2 space-y-2 rounded-xl p-2">
         <span className="text-sm">Interaction URL</span>
 
-        <div className="rounded-xl bg-th-accent-2/10 p-4 text-base font-medium truncate">
+        <div className="truncate rounded-xl bg-th-accent-2/10 p-4 text-base font-medium">
           {interaction?.url}
         </div>
       </div>
@@ -87,14 +106,16 @@ export const ContractInteraction = ({ id }: { id: string }) => {
           {interaction?.description}
         </div>
       </div>
-      {Opened ? verifyStatus ? (
-         <div className="col-span-3 w-full rounded-xl bg-th-accent-2/10 h-fit p-4 text-center font-bold text-green-600">
-         Verified
-       </div>
-      ) : (
-        <Button className="col-span-3 m-2" onClick={verifyTransaction}>
-          {loading  ? <Loader2 className="animate-spin" /> :  "Verify"}
-        </Button>
+      {Opened ? (
+        verifyStatus ? (
+          <div className="col-span-3 h-fit w-full rounded-xl bg-th-accent-2/10 p-4 text-center font-bold text-green-600">
+            Verified
+          </div>
+        ) : (
+          <Button className="col-span-3 m-2" onClick={verifyTransaction}>
+            {loading ? <Loader2 className="animate-spin" /> : "Verify"}
+          </Button>
+        )
       ) : (
         <>
           <a
@@ -107,6 +128,14 @@ export const ContractInteraction = ({ id }: { id: string }) => {
             <Button className="col-span-3 m-2 w-full">Open</Button>
           </a>
         </>
+      )}
+      {mode === "LEADERBOARD" && isOwner && (
+        <Button
+          className="col-span-3"
+          onClick={() => router.push(`/leaderboard/${id}`)}
+        >
+          Leaderboard
+        </Button>
       )}
     </div>
   )

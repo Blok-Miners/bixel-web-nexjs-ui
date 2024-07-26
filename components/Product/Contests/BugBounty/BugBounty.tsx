@@ -10,16 +10,21 @@ import { Check, X } from "lucide-react"
 import { useAccount } from "wagmi"
 import { BugBountyService } from "@/services/bugbounty"
 import { BugBounty, BugBountySubmission } from "@/types/services/bugBounty"
+import { ContestService } from "@/services/contest"
+import { useRouter } from "next/navigation"
 
 export default function BugBountyCard({
   contestId,
   bugBountyId,
   ownerId,
+  mode,
 }: {
   contestId: string
   bugBountyId: string
   ownerId: string
+  mode: string
 }) {
+  const router = useRouter()
   const [verify, setVerify] = useState(false)
   const [open, setOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -60,9 +65,20 @@ export default function BugBountyCard({
   }
 
   const reset = () => {}
+  const [isOwner, setIsOwner] = useState(false)
+  const checkOwnership = async () => {
+    try {
+      const contestService = new ContestService()
+      const isOwnerResponse = await contestService.isProductOwner(contestId)
+      setIsOwner(isOwnerResponse.isOwner)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   useEffect(() => {
     getBugBounty()
+    checkOwnership()
   }, [])
 
   return (
@@ -146,15 +162,22 @@ export default function BugBountyCard({
         </ScrollArea>
       </CardContent>
       <CardFooter>
-        <Button
-          className="w-full"
-          onClick={() => {
-            reset()
-            setOpen(true)
-          }}
-        >
-          Submit Bug Report
-        </Button>
+        <div className="flex w-full flex-col gap-4">
+          <Button
+            className="w-full"
+            onClick={() => {
+              reset()
+              setOpen(true)
+            }}
+          >
+            Submit Bug Report
+          </Button>
+          {mode === "LEADERBOARD" && isOwner && (
+            <Button onClick={() => router.push(`/leaderboard/${contestId}`)}>
+              Leaderboard
+            </Button>
+          )}
+        </div>
         <BugDialog
           info={info}
           readonly={readOnly}

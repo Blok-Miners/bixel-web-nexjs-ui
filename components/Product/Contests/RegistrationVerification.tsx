@@ -8,6 +8,8 @@ import { useAccount } from "wagmi"
 import axios from "axios"
 import { Loader2 } from "lucide-react"
 import { Input } from "@/components/ui/input"
+import { useRouter } from "next/navigation"
+import { ContestService } from "@/services/contest"
 interface IResponse {
   success: boolean
 }
@@ -15,9 +17,11 @@ interface IResponse {
 export default function RegistrationVerification({
   id,
   interactionId,
+  mode,
 }: {
   id: string
   interactionId: string
+  mode: string
 }) {
   const service = new RegistrationService()
   const [data, setData] = useState<any>()
@@ -50,9 +54,22 @@ export default function RegistrationVerification({
     }
   }
 
+  const router = useRouter()
+  const [isOwner, setIsOwner] = useState(false)
+  const checkOwnership = async () => {
+    try {
+      const contestService = new ContestService()
+      const isOwnerResponse = await contestService.isProductOwner(id)
+      setIsOwner(isOwnerResponse.isOwner)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   useEffect(() => {
     getRegistrationVerification()
     verifyRegistration()
+    checkOwnership()
   }, [])
 
   const registerVerification = async () => {
@@ -97,7 +114,7 @@ export default function RegistrationVerification({
               Follow the link and register on to the platform
             </span>
           </CardContent>
-          <CardFooter>
+          <CardFooter className="flex flex-col gap-2">
             {verified ? (
               <div className="w-full rounded-xl bg-th-accent-2/10 p-4 text-center font-bold text-green-600">
                 Verified
@@ -125,6 +142,14 @@ export default function RegistrationVerification({
                   {loading ? <Loader2 className="animate-spin" /> : "Verify"}
                 </Button>
               </form>
+            )}
+            {mode === "LEADERBOARD" && isOwner && (
+              <Button
+                className="w-full"
+                onClick={() => router.push(`/leaderboard/${id}`)}
+              >
+                Leaderboard
+              </Button>
             )}
           </CardFooter>
         </Card>

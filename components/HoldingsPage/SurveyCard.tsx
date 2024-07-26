@@ -7,6 +7,8 @@ import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import React, { useEffect, useState } from "react"
 import { SurveyService } from "@/services/survey"
+import { ContestService } from "@/services/contest"
+import { useRouter } from "next/navigation"
 interface IResponse {
   success: boolean
 }
@@ -14,9 +16,11 @@ interface IResponse {
 export default function SurveyCard({
   id,
   interactionId,
+  mode,
 }: {
   id: string
   interactionId: string
+  mode: string
 }) {
   const service = new SurveyService()
   const [loading, setLoading] = useState(false)
@@ -28,6 +32,17 @@ export default function SurveyCard({
       if (res) {
         setData(res)
       }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  const router = useRouter()
+  const [isOwner, setIsOwner] = useState(false)
+  const checkOwnership = async () => {
+    try {
+      const contestService = new ContestService()
+      const isOwnerResponse = await contestService.isProductOwner(id)
+      setIsOwner(isOwnerResponse.isOwner)
     } catch (error) {
       console.log(error)
     }
@@ -50,6 +65,7 @@ export default function SurveyCard({
   useEffect(() => {
     getSurvey()
     verifyRegistration()
+    checkOwnership()
   }, [])
 
   const registerSurveySubmission = async () => {
@@ -91,7 +107,7 @@ export default function SurveyCard({
               Follow the link and fill the form
             </span>
           </CardContent>
-          <CardFooter>
+          <CardFooter className="flex flex-col gap-4">
             {verified ? (
               <div className="w-full rounded-xl bg-th-accent-2/10 p-4 text-center font-bold text-green-600">
                 Verified
@@ -114,6 +130,14 @@ export default function SurveyCard({
                   {loading ? <Loader2 className="animate-spin" /> : "Verify"}
                 </Button>
               </form>
+            )}
+            {mode === "LEADERBOARD" && isOwner && (
+              <Button
+                className="w-full"
+                onClick={() => router.push(`/leaderboard/${id}`)}
+              >
+                Leaderboard
+              </Button>
             )}
           </CardFooter>
         </Card>

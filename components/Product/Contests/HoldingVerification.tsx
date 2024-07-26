@@ -13,6 +13,8 @@ import { HoldingsService } from "@/services/holdings"
 import { Loader2 } from "lucide-react"
 
 import { ChainService } from "@/services/chain"
+import { useRouter } from "next/navigation"
+import { ContestService } from "@/services/contest"
 interface IdataProps {
   assetType: string
   chain: string
@@ -28,9 +30,11 @@ interface IdataProps {
 export const HoldingVerification = ({
   id,
   interactionId,
+  mode,
 }: {
   id: string
   interactionId: string
+  mode: string
 }) => {
   const [assetType, setAssetType] = useState("")
   const [data, setData] = useState<IdataProps | undefined>(undefined)
@@ -64,6 +68,7 @@ export const HoldingVerification = ({
   useEffect(() => {
     getHoldings()
     verifySubmission()
+    checkOwnership()
   }, [])
 
   const verifyholding = async () => {
@@ -96,8 +101,21 @@ export const HoldingVerification = ({
     }
   }
 
+  const router = useRouter()
+  const [isOwner, setIsOwner] = useState(false)
+  const checkOwnership = async () => {
+    try {
+      const contestService = new ContestService()
+      const isOwnerResponse = await contestService.isProductOwner(id)
+      setIsOwner(isOwnerResponse.isOwner)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const handleButtonClick = () => {
     verifyholding()
+
     console.log("Selected Asset Type:", assetType)
   }
 
@@ -141,7 +159,7 @@ export const HoldingVerification = ({
             </div>
           </div>
           {verified ? (
-            <div className="col-span-2 rounded-xl bg-th-accent-2/10 p-4 text-center mt-auto h-fit font-bold text-green-600">
+            <div className="col-span-2 mt-auto h-fit rounded-xl bg-th-accent-2/10 p-4 text-center font-bold text-green-600">
               Verified
             </div>
           ) : (
@@ -150,6 +168,11 @@ export const HoldingVerification = ({
               onClick={() => handleButtonClick()}
             >
               {loading ? <Loader2 className="animate-spin" /> : "Verify"}
+            </Button>
+          )}
+          {mode === "LEADERBOARD" && isOwner && (
+            <Button className="col-span-2" onClick={() => router.push(`/leaderboard/${id}`)}>
+              Leaderboard
             </Button>
           )}
         </div>

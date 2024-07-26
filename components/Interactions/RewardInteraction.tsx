@@ -31,7 +31,13 @@ const socialMediaTypes = [
   { name: "LinkedIn", link: "https://www.linkedin.com" },
 ]
 
-export const RewardInteraction = ({ id }: { id: string }) => {
+export const RewardInteraction = ({
+  id,
+  mode,
+}: {
+  id: string
+  mode: string
+}) => {
   const router = useRouter()
   const pathname = usePathname()
   const contestService = new ContestService()
@@ -214,12 +220,20 @@ export const RewardInteraction = ({ id }: { id: string }) => {
               ),
             )}
         </ScrollArea>
-        {isOwner && (
+        {mode === "LEADERBOARD" && isOwner && (
           <Button
             className="col-span-2"
             onClick={() => router.push(`${pathname}/socialMedia/${id}`)}
           >
             View Submission
+          </Button>
+        )}
+        {isOwner && (
+          <Button
+            className="col-span-2"
+            onClick={() => router.push(`/leaderboard/${id}`)}
+          >
+            Leaderboard
           </Button>
         )}
       </div>

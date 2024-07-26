@@ -25,6 +25,7 @@ export default function Contests({
       type: ContestInteractionEnum
       interaction: string
       _id: string
+      mode: string
     }[]
   >([])
   const getAllContests = async () => {
@@ -57,6 +58,7 @@ export default function Contests({
           interactionId={contest.interaction}
           type={contest.type}
           key={contest._id}
+          mode= {contest.mode}
         />
       ))}
     </div>
