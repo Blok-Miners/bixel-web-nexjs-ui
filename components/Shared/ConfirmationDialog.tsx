@@ -45,7 +45,9 @@ export default function ConfirmationDialog({
               <Button type="submit">{linkText}</Button>
             </Link>
           )}
-          <Button type="submit">Save changes</Button>
+          <DialogClose>
+            <Button type="submit">Close</Button>
+          </DialogClose>
         </DialogFooter>
       </DialogContent>
     </Dialog>
