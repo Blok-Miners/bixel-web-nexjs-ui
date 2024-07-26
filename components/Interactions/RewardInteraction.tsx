@@ -41,13 +41,12 @@ export const RewardInteraction = ({
   const router = useRouter()
   const pathname = usePathname()
   const contestService = new ContestService()
-  const Router = useRouter()
   const [expanded, setExpanded] = useState<number | null>(null) // Track which item is expanded
   const [interactionDetails, setInteractionDetails] =
     useState<ISocialMediaInteraction>()
   const [socialMedias, setSocialMedias] = useState<IFetchSocialMedia[]>()
   const [username, setUsername] = useState<string>("")
-  const [opened, setOpened] = useState(false)
+  const [opened, setOpened] = useState<{ [key: number]: boolean }>({}) // Track open state for each item
   const [allSubmissions, setAllSubmissions] = useState<ISocialSubmissions[]>()
   const [loading, setLoading] = useState(false)
   const [showVerify, setShowVerify] = useState(true)
@@ -77,9 +76,9 @@ export const RewardInteraction = ({
     interactionId: string,
     url: string,
   ) => {
-    if (!opened) {
+    if (!opened[index]) {
       window.open(url)
-      setOpened(true)
+      setOpened((prev) => ({ ...prev, [index]: true }))
     }
     if (activity !== "VISIT") return handleToggle(index)
     await verify(interactionId)
@@ -117,8 +116,10 @@ export const RewardInteraction = ({
       setShowVerify(false)
     } catch (error) {
       console.log(error)
+      setLoading(false)
     }
   }
+
   useEffect(() => {
     getSocialMediaInteractionDetails()
     allSocialMediaCompletedTasks()
@@ -167,7 +168,7 @@ export const RewardInteraction = ({
                     ) : (
                       <Button
                         variant={"ghost"}
-                        className="bg-none p-2 px-3"
+                        className={`bg-none p-2 px-3 ${opened[index] ? (socialMedia.activity === "VISIT" ? `text-green-500` : ``) : ``}`}
                         onClick={() =>
                           handleSubmit(
                             socialMedia.activity,
@@ -177,7 +178,7 @@ export const RewardInteraction = ({
                           )
                         }
                       >
-                        {opened ? (
+                        {opened[index] ? (
                           socialMedia.activity !== "VISIT" ? (
                             expanded === index ? (
                               <FaChevronUp className="h-4 w-4" />

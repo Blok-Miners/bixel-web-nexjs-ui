@@ -370,11 +370,11 @@ export default function RewardDetails({
   }
 
   const handleDeposit1155 = async () => {
-    console.log(tokenAddress, erc1155Approved)
+    console.log(tokenAddress, erc1155Approved,typeof depositAmountNFT,nftIds.length)
     try {
       if (!tokenAddress || !depositAmountNFT) return
       if (
-        depositAmountNFT !== nftIds.length &&
+        depositAmountNFT !== nftIds.length ||
         nftAmount1155.length !== nftIds.length
       )
         return
