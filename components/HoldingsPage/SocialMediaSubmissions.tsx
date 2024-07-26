@@ -12,6 +12,7 @@ import {
 import { Button } from "../ui/button"
 import { ScrollArea } from "../ui/scroll-area"
 import { ContestService } from "@/services/contest"
+import { Loader2 } from "lucide-react"
 
 interface ProjectSubmissionsProps {
   id: string
@@ -20,6 +21,7 @@ interface ProjectSubmissionsProps {
 export const SocialMediaSubmissions = ({ id }: ProjectSubmissionsProps) => {
   const [isOwner, setIsOwner] = useState(false)
   const [submissions, setSubmissions] = useState<any[]>([])
+  const [loading,setLoading]= useState(false)
 
   const fetchSocialMediaSubmissions = async () => {
     try {
@@ -30,18 +32,16 @@ export const SocialMediaSubmissions = ({ id }: ProjectSubmissionsProps) => {
       console.log(error)
     }
   }
-  const handleClaim = async (
-    id: string,
-    userId: string,
-    socialMedia: string,
-  ) => {
+  const handleVerifySubmission= async (id: string, userId: string,socialMedia:string) => {
     try {
-      console.log(id)
-      await new ContestService().verifyProductsSocialMediaSubmission(
-        id,
-        userId,
-        socialMedia,
-      )
+      setLoading(true)
+      const res = await new ContestService().verifyProductsSocialMediaSubmission(id, userId,socialMedia)
+      if(res.success === true){
+        fetchSocialMediaSubmissions()
+        setLoading(false)
+      }
+      setLoading(false)
+
     } catch (error) {
       console.log(error)
     }
@@ -81,19 +81,16 @@ export const SocialMediaSubmissions = ({ id }: ProjectSubmissionsProps) => {
                 <TableCell>{submission.socialMedia.activity}</TableCell>
                 <TableCell>{submission.username}</TableCell>
                 <TableCell>
-                  {submission.verified ? (
+                  {submission.verified  ? (
                     <Button disabled>Verified</Button>
                   ) : (
+                    isOwner && 
                     <Button
                       onClick={() =>
-                        handleClaim(
-                          id,
-                          submission.user,
-                          submission.socialMedia._id,
-                        )
+                        handleVerifySubmission(id, submission.user,submission.socialMedia._id)
                       }
                     >
-                      Verify
+                     {loading ? <Loader2 className="animate-spin" /> : "Verify"}
                     </Button>
                   )}
                 </TableCell>
