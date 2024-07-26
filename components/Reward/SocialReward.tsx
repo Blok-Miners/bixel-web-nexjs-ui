@@ -93,7 +93,7 @@ export default function CreateSocialReward({
       icon: <FaLinkedinIn />,
       color: "#0077B5",
       content: [
-        { name: "Visit a Profile", value: "View" },
+        { name: "Visit a Profile", value: "Visit" },
         { name: "Post on Linkedn", value: "Post" },
       ],
     },
@@ -105,7 +105,6 @@ export default function CreateSocialReward({
         { name: "Twitter Entry", value: "Entry" },
         { name: "Post on Twitter", value: "Post" },
         { name: "Visit on Twitter", value: "Visit" },
-        { name: "Post on Twitter", value: "Post" },
       ],
     },
     {
