@@ -21,7 +21,7 @@ interface ProjectSubmissionsProps {
 export const SocialMediaSubmissions = ({ id }: ProjectSubmissionsProps) => {
   const [isOwner, setIsOwner] = useState(false)
   const [submissions, setSubmissions] = useState<any[]>([])
-  const [loading,setLoading]= useState(false)
+  const [loading, setLoading] = useState<{ [key: string]: boolean }>({})
 
   const fetchSocialMediaSubmissions = async () => {
     try {
@@ -32,18 +32,18 @@ export const SocialMediaSubmissions = ({ id }: ProjectSubmissionsProps) => {
       console.log(error)
     }
   }
-  const handleVerifySubmission= async (id: string, userId: string,socialMedia:string) => {
-    try {
-      setLoading(true)
-      const res = await new ContestService().verifyProductsSocialMediaSubmission(id, userId,socialMedia)
-      if(res.success === true){
-        fetchSocialMediaSubmissions()
-        setLoading(false)
-      }
-      setLoading(false)
 
+  const handleVerifySubmission = async (submissionId: string, userId: string, socialMedia: string) => {
+    try {
+      setLoading((prev) => ({ ...prev, [submissionId]: true }))
+      const res = await new ContestService().verifyProductsSocialMediaSubmission(id, userId, socialMedia)
+      if (res.success === true) {
+        fetchSocialMediaSubmissions()
+      }
+      setLoading((prev) => ({ ...prev, [submissionId]: false }))
     } catch (error) {
       console.log(error)
+      setLoading((prev) => ({ ...prev, [submissionId]: false }))
     }
   }
 
@@ -81,16 +81,16 @@ export const SocialMediaSubmissions = ({ id }: ProjectSubmissionsProps) => {
                 <TableCell>{submission.socialMedia.activity}</TableCell>
                 <TableCell>{submission.username}</TableCell>
                 <TableCell>
-                  {submission.verified  ? (
+                  {submission.verified ? (
                     <Button disabled>Verified</Button>
                   ) : (
-                    isOwner && 
+                    isOwner &&
                     <Button
                       onClick={() =>
-                        handleVerifySubmission(id, submission.user,submission.socialMedia._id)
+                        handleVerifySubmission(submission._id, submission.user, submission.socialMedia._id)
                       }
                     >
-                     {loading ? <Loader2 className="animate-spin" /> : "Verify"}
+                      {loading[submission._id] ? <Loader2 className="animate-spin" /> : "Verify"}
                     </Button>
                   )}
                 </TableCell>

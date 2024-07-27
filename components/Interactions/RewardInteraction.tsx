@@ -3,10 +3,8 @@
 import React, { useEffect, useState } from "react"
 import { Label } from "../ui/label"
 import { Button } from "../ui/button"
-import Link from "next/link"
 import { Input } from "../ui/input"
-import { FaChevronUp } from "react-icons/fa"
-import { FaChevronDown } from "react-icons/fa"
+import { FaChevronUp, FaChevronDown } from "react-icons/fa"
 import { ScrollArea } from "../ui/scroll-area"
 import { ContestService } from "@/services/contest"
 import { Loader2 } from "lucide-react"
@@ -14,51 +12,30 @@ import { useRouter, usePathname } from "next/navigation"
 
 import {
   IFetchSocialMedia,
-  ISocialMedia,
   ISocialMediaInteraction,
   ISocialSubmissions,
 } from "@/types/services/contest"
-import { userAgent } from "next/server"
 
-const socialMediaTypes = [
-  { name: "Facebook", link: "https://www.facebook.com" },
-  { name: "Instagram", link: "https://www.instagram.com" },
-  { name: "Twitter", link: "https://www.twitter.com" },
-  { name: "LinkedIn", link: "https://www.linkedin.com" },
-  { name: "Facebook", link: "https://www.facebook.com" },
-  { name: "Instagram", link: "https://www.instagram.com" },
-  { name: "Twitter", link: "https://www.twitter.com" },
-  { name: "LinkedIn", link: "https://www.linkedin.com" },
-]
-
-export const RewardInteraction = ({
-  id,
-  mode,
-}: {
-  id: string
-  mode: string
-}) => {
+export const RewardInteraction = ({ id, mode }: { id: string; mode: string }) => {
   const router = useRouter()
   const pathname = usePathname()
   const contestService = new ContestService()
-  const [expanded, setExpanded] = useState<number | null>(null) // Track which item is expanded
-  const [interactionDetails, setInteractionDetails] =
-    useState<ISocialMediaInteraction>()
+  const [expanded, setExpanded] = useState<number | null>(null)
+  const [interactionDetails, setInteractionDetails] = useState<ISocialMediaInteraction>()
   const [socialMedias, setSocialMedias] = useState<IFetchSocialMedia[]>()
   const [username, setUsername] = useState<string>("")
-  const [opened, setOpened] = useState<{ [key: number]: boolean }>({}) // Track open state for each item
+  const [opened, setOpened] = useState<{ [key: number]: boolean }>({})
   const [allSubmissions, setAllSubmissions] = useState<ISocialSubmissions[]>()
   const [loading, setLoading] = useState(false)
   const [showVerify, setShowVerify] = useState(true)
   const [isOwner, setIsOwner] = useState(false)
 
   const handleToggle = (index: number) => {
-    setExpanded(expanded === index ? null : index) // Toggle the expanded state
+    setExpanded(expanded === index ? null : index)
   }
 
   const checkOwnership = async () => {
     try {
-      const contestService = new ContestService()
       const isOwnerResponse = await contestService.isProductOwner(id)
       setIsOwner(isOwnerResponse.isOwner)
     } catch (error) {
@@ -80,8 +57,12 @@ export const RewardInteraction = ({
       window.open(url)
       setOpened((prev) => ({ ...prev, [index]: true }))
     }
-    if (activity !== "VISIT") return handleToggle(index)
-    await verify(interactionId)
+    if (activity === "VISIT") {
+      await verify(interactionId)
+    } else {
+      handleToggle(index)
+    }
+    setShowVerify(true)
   }
 
   const getSocialMediaInteractionDetails = async () => {
@@ -106,11 +87,7 @@ export const RewardInteraction = ({
   const verify = async (interactionId: string) => {
     try {
       setLoading(true)
-      const res = await contestService.verifySocialMediaTask(
-        interactionId,
-        username,
-        id,
-      )
+      const res = await contestService.verifySocialMediaTask(interactionId, username, id)
       setInteractionDetails(res.socialMediaInteractionDetails)
       setLoading(false)
       setShowVerify(false)
@@ -128,6 +105,7 @@ export const RewardInteraction = ({
   useEffect(() => {
     allSocialMediaCompletedTasks()
   }, [])
+  console.log(showVerify)
 
   return (
     <div>
@@ -145,95 +123,79 @@ export const RewardInteraction = ({
 
         <ScrollArea className="col-span-2 h-[25rem] rounded-2xl border border-th-accent-2/10 p-4 text-xl font-bold">
           {socialMedias &&
-            socialMedias.map(
-              (socialMedia: IFetchSocialMedia, index: number) => (
-                <div
-                  key={index}
-                  className="my-4 flex flex-col items-center justify-between gap-4 rounded-xl bg-th-accent-2/10 p-4 text-base font-medium"
-                >
-                  <div className="flex w-full items-center justify-between">
-                    <div className="text-start capitalize">
-                      {socialMedia.type.toLowerCase()}
-                    </div>
-                    {allSubmissions?.some(
-                      (item) => item.socialMedia === socialMedia._id,
-                    ) ? (
-                      allSubmissions?.filter(
-                        (item) => item.socialMedia === socialMedia._id,
-                      )?.[0]?.verified ? (
-                        <div className="text-green-500">Verified</div>
-                      ) : (
-                        <div className="text-red-500">Pending</div>
-                      )
+            socialMedias.map((socialMedia: IFetchSocialMedia, index: number) => (
+              <div
+                key={index}
+                className="my-4 flex flex-col items-center justify-between gap-4 rounded-xl bg-th-accent-2/10 p-4 text-base font-medium"
+              >
+                <div className="flex w-full items-center justify-between">
+                  <div className="text-start capitalize">
+                    {socialMedia.type.toLowerCase()}
+                  </div>
+                  {allSubmissions?.some((item) => item.socialMedia === socialMedia._id) ? (
+                    allSubmissions?.filter((item) => item.socialMedia === socialMedia._id)?.[0]?.verified ? (
+                      <div className="text-green-500">Verified</div>
                     ) : (
-                      <Button
-                        variant={"ghost"}
-                        className={`bg-none p-2 px-3 ${opened[index] ? (socialMedia.activity === "VISIT" ? `text-green-500` : ``) : ``}`}
-                        onClick={() =>
-                          handleSubmit(
-                            socialMedia.activity,
-                            index,
-                            socialMedia._id,
-                            socialMedia.url,
-                          )
-                        }
-                      >
-                        {opened[index] ? (
-                          socialMedia.activity !== "VISIT" ? (
-                            expanded === index ? (
-                              <FaChevronUp className="h-4 w-4" />
-                            ) : (
-                              <FaChevronDown className="h-4 w-4" />
-                            )
+                      <div className="text-red-500">Pending</div>
+                    )
+                  ) : (
+                    <Button
+                      variant={"ghost"}
+                      className={`bg-none p-2 px-3 ${
+                        opened[index] ? (socialMedia.activity === "VISIT" ? `text-green-500` : ``) : ``
+                      }`}
+                      onClick={() =>
+                        handleSubmit(
+                          socialMedia.activity,
+                          index,
+                          socialMedia._id,
+                          socialMedia.url,
+                        )
+                      }
+                    >
+                      {opened[index] ? (
+                        socialMedia.activity !== "VISIT" ? (
+                          expanded === index ? (
+                            <FaChevronUp className="h-4 w-4" onClick={()=>setShowVerify(false)} />
                           ) : (
-                            "Verified"
+                            <FaChevronDown className="h-4 w-4" onClick={()=>setShowVerify(true)}/>
                           )
                         ) : (
-                          "Open"
-                        )}
-                      </Button>
-                    )}
-                  </div>
-                  {socialMedia.activity !== "VISIT" &&
-                    expanded === index &&
-                    showVerify && (
-                      <div className="mt-2 w-full space-y-2">
-                        <Label>Username</Label>
-                        <div className="flex w-full gap-6">
-                          <Input
-                            type="text"
-                            className="w-full"
-                            placeholder={`Enter your ${socialMedia.type.toLowerCase()} username`}
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                          />
-                          <Button onClick={() => verify(socialMedia._id)}>
-                            {loading ? (
-                              <Loader2 className="animate-spin" />
-                            ) : (
-                              "Verify"
-                            )}
-                          </Button>
-                        </div>
-                      </div>
-                    )}
+                          "Verified"
+                        )
+                      ) : (
+                        "Open"
+                      )}
+                    </Button>
+                  )}
                 </div>
-              ),
-            )}
+                {socialMedia.activity !== "VISIT" && expanded === index && showVerify && (
+                  <div className="mt-2 w-full space-y-2">
+                    <Label>Username</Label>
+                    <div className="flex w-full gap-6">
+                      <Input
+                        type="text"
+                        className="w-full"
+                        placeholder={`Enter your ${socialMedia.type.toLowerCase()} username`}
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                      />
+                      <Button onClick={() => verify(socialMedia._id)}>
+                        {loading ? <Loader2 className="animate-spin" /> : "Verify"}
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
         </ScrollArea>
         {isOwner && (
-          <Button
-            className="col-span-2"
-            onClick={() => router.push(`${pathname}/socialMedia/${id}`)}
-          >
+          <Button className="col-span-2" onClick={() => router.push(`${pathname}/socialMedia/${id}`)}>
             View Submission
           </Button>
         )}
         {mode === "LEADERBOARD" && isOwner && (
-          <Button
-            className="col-span-2"
-            onClick={() => router.push(`/leaderboard/${id}`)}
-          >
+          <Button className="col-span-2" onClick={() => router.push(`/leaderboard/${id}`)}>
             Leaderboard
           </Button>
         )}
