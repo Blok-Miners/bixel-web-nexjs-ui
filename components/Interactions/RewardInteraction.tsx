@@ -14,14 +14,23 @@ import {
   IFetchSocialMedia,
   ISocialMediaInteraction,
   ISocialSubmissions,
+  SocialMediaEnum,
 } from "@/types/services/contest"
+import { getAccessToken } from "@/lib/utils"
 
-export const RewardInteraction = ({ id, mode }: { id: string; mode: string }) => {
+export const RewardInteraction = ({
+  id,
+  mode,
+}: {
+  id: string
+  mode: string
+}) => {
   const router = useRouter()
   const pathname = usePathname()
   const contestService = new ContestService()
   const [expanded, setExpanded] = useState<number | null>(null)
-  const [interactionDetails, setInteractionDetails] = useState<ISocialMediaInteraction>()
+  const [interactionDetails, setInteractionDetails] =
+    useState<ISocialMediaInteraction>()
   const [socialMedias, setSocialMedias] = useState<IFetchSocialMedia[]>()
   const [username, setUsername] = useState<string>("")
   const [opened, setOpened] = useState<{ [key: number]: boolean }>({})
@@ -48,17 +57,15 @@ export const RewardInteraction = ({ id, mode }: { id: string; mode: string }) =>
   }, [id])
 
   const handleSubmit = async (
-    activity: string,
+    socialMedia: IFetchSocialMedia,
     index: number,
-    interactionId: string,
-    url: string,
   ) => {
     if (!opened[index]) {
-      window.open(url)
+      window.open(socialMedia.url)
       setOpened((prev) => ({ ...prev, [index]: true }))
     }
-    if (activity === "VISIT") {
-      await verify(interactionId)
+    if (socialMedia.activity === "VISIT") {
+      await verify(socialMedia)
     } else {
       handleToggle(index)
     }
@@ -84,11 +91,24 @@ export const RewardInteraction = ({ id, mode }: { id: string; mode: string }) =>
     }
   }
 
-  const verify = async (interactionId: string) => {
+  const verify = async (socialMedia: IFetchSocialMedia) => {
     try {
       setLoading(true)
-      const res = await contestService.verifySocialMediaTask(interactionId, username, id)
-      setInteractionDetails(res.socialMediaInteractionDetails)
+      const res = await contestService.verifySocialMediaTask(
+        socialMedia._id,
+        username,
+        id,
+      )
+      if (
+        socialMedia.type === SocialMediaEnum.DISCORD &&
+        socialMedia.activity === "JOIN" &&
+        res.success === true
+      ) {
+        router.push(
+          `https://discord.com/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}&response_type=code&redirect_uri=${process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI}&state=${JSON.stringify(res.submission)}&scope=guilds`,
+        )
+      }
+      // setInteractionDetails(res.socialMediaInteractionDetails)
       setLoading(false)
       setShowVerify(false)
     } catch (error) {
@@ -123,79 +143,101 @@ export const RewardInteraction = ({ id, mode }: { id: string; mode: string }) =>
 
         <ScrollArea className="col-span-2 h-[25rem] rounded-2xl border border-th-accent-2/10 p-4 text-xl font-bold">
           {socialMedias &&
-            socialMedias.map((socialMedia: IFetchSocialMedia, index: number) => (
-              <div
-                key={index}
-                className="my-4 flex flex-col items-center justify-between gap-4 rounded-xl bg-th-accent-2/10 p-4 text-base font-medium"
-              >
-                <div className="flex w-full items-center justify-between">
-                  <div className="text-start capitalize">
-                    {socialMedia.type.toLowerCase()}
-                  </div>
-                  {allSubmissions?.some((item) => item.socialMedia === socialMedia._id) ? (
-                    allSubmissions?.filter((item) => item.socialMedia === socialMedia._id)?.[0]?.verified ? (
-                      <div className="text-green-500">Verified</div>
+            socialMedias.map(
+              (socialMedia: IFetchSocialMedia, index: number) => (
+                <div
+                  key={index}
+                  className="my-4 flex flex-col items-center justify-between gap-4 rounded-xl bg-th-accent-2/10 p-4 text-base font-medium"
+                >
+                  <div className="flex w-full items-center justify-between">
+                    <div className="text-start capitalize">
+                      {socialMedia.type.toLowerCase()}
+                    </div>
+                    {allSubmissions?.some(
+                      (item) => item.socialMedia === socialMedia._id,
+                    ) ?  (
+                       allSubmissions?.filter(
+                        (item) => item.socialMedia === socialMedia._id,
+                      )?.[0]?.verified ? (
+                        <div className="text-green-500">Verified</div>
+                      ) : (
+
+                        <div className="text-red-500">Pending</div>
+                      )
                     ) : (
-                      <div className="text-red-500">Pending</div>
-                    )
-                  ) : (
-                    <Button
-                      variant={"ghost"}
-                      className={`bg-none p-2 px-3 ${
-                        opened[index] ? (socialMedia.activity === "VISIT" ? `text-green-500` : ``) : ``
-                      }`}
-                      onClick={() =>
-                        handleSubmit(
-                          socialMedia.activity,
-                          index,
-                          socialMedia._id,
-                          socialMedia.url,
-                        )
-                      }
-                    >
-                      {opened[index] ? (
-                        socialMedia.activity !== "VISIT" ? (
-                          expanded === index ? (
-                            <FaChevronUp className="h-4 w-4" onClick={()=>setShowVerify(false)} />
+                      <Button
+                        variant={"ghost"}
+                        className={`bg-none p-2 px-3 ${
+                          opened[index]
+                            ? socialMedia.activity === "VISIT"
+                              ? `text-green-500`
+                              : ``
+                            : ``
+                        }`}
+                        onClick={() => handleSubmit(socialMedia, index)}
+                      >
+                        {opened[index] ? (
+                          socialMedia.activity !== "VISIT" ? (
+                            expanded === index ? (
+                              <FaChevronUp
+                                className="h-4 w-4"
+                                onClick={() => setShowVerify(false)}
+                              />
+                            ) : (
+                              <FaChevronDown
+                                className="h-4 w-4"
+                                onClick={() => setShowVerify(true)}
+                              />
+                            )
                           ) : (
-                            <FaChevronDown className="h-4 w-4" onClick={()=>setShowVerify(true)}/>
+                            "Verified"
                           )
                         ) : (
-                          "Verified"
-                        )
-                      ) : (
-                        "Open"
-                      )}
-                    </Button>
-                  )}
-                </div>
-                {socialMedia.activity !== "VISIT" && expanded === index && showVerify && (
-                  <div className="mt-2 w-full space-y-2">
-                    <Label>Username</Label>
-                    <div className="flex w-full gap-6">
-                      <Input
-                        type="text"
-                        className="w-full"
-                        placeholder={`Enter your ${socialMedia.type.toLowerCase()} username`}
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                      />
-                      <Button onClick={() => verify(socialMedia._id)}>
-                        {loading ? <Loader2 className="animate-spin" /> : "Verify"}
+                          "Open"
+                        )}
                       </Button>
-                    </div>
+                    )}
                   </div>
-                )}
-              </div>
-            ))}
+                  {socialMedia.activity !== "VISIT" &&
+                    expanded === index &&
+                    showVerify && (
+                      <div className="mt-2 w-full space-y-2">
+                        <Label>Username</Label>
+                        <div className="flex w-full gap-6">
+                          <Input
+                            type="text"
+                            className="w-full"
+                            placeholder={`Enter your ${socialMedia.type.toLowerCase()} username`}
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                          />
+                          <Button onClick={() => verify(socialMedia)}>
+                            {loading ? (
+                              <Loader2 className="animate-spin" />
+                            ) : (
+                              "Verify"
+                            )}
+                          </Button>
+                        </div>
+                      </div>
+                    )}
+                </div>
+              ),
+            )}
         </ScrollArea>
         {isOwner && (
-          <Button className="col-span-2" onClick={() => router.push(`${pathname}/socialMedia/${id}`)}>
+          <Button
+            className="col-span-2"
+            onClick={() => router.push(`${pathname}/socialMedia/${id}`)}
+          >
             View Submission
           </Button>
         )}
         {mode === "LEADERBOARD" && isOwner && (
-          <Button className="col-span-2" onClick={() => router.push(`/leaderboard/${id}`)}>
+          <Button
+            className="col-span-2"
+            onClick={() => router.push(`/leaderboard/${id}`)}
+          >
             Leaderboard
           </Button>
         )}
