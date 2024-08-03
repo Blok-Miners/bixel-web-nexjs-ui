@@ -61,6 +61,8 @@ export interface ISocialMedia {
   type:string,
   url:string,
   activity:string
+  botToken?:string
+  chatId?:string
 }
 
 export interface IChain {

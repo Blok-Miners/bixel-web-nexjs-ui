@@ -17,6 +17,7 @@ import {
   SocialMediaEnum,
 } from "@/types/services/contest"
 import { getAccessToken } from "@/lib/utils"
+import SocialMediaDisplay from "./SocialMediaDisplay"
 
 export const RewardInteraction = ({
   id,
@@ -84,7 +85,8 @@ export const RewardInteraction = ({
 
   const allSocialMediaCompletedTasks = async () => {
     try {
-      const res = await contestService.isSocialMediaTaskVerified(id)
+      const res = await contestService.allSocialMediaTaskCompleted(id)
+      // console.log(res)
       setAllSubmissions(res)
     } catch (error) {
       console.log(error)
@@ -99,16 +101,6 @@ export const RewardInteraction = ({
         username,
         id,
       )
-      if (
-        socialMedia.type === SocialMediaEnum.DISCORD &&
-        socialMedia.activity === "JOIN" &&
-        res.success === true
-      ) {
-        router.push(
-          `https://discord.com/oauth2/authorize?client_id=${process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID}&response_type=code&redirect_uri=${process.env.NEXT_PUBLIC_DISCORD_REDIRECT_URI}&state=${JSON.stringify(res.submission)}&scope=guilds`,
-        )
-      }
-      // setInteractionDetails(res.socialMediaInteractionDetails)
       setLoading(false)
       setShowVerify(false)
     } catch (error) {
@@ -125,7 +117,7 @@ export const RewardInteraction = ({
   useEffect(() => {
     allSocialMediaCompletedTasks()
   }, [])
-  console.log(showVerify)
+  // console.log(showVerify)
 
   return (
     <div>
@@ -153,15 +145,22 @@ export const RewardInteraction = ({
                     <div className="text-start capitalize">
                       {socialMedia.type.toLowerCase()}
                     </div>
-                    {allSubmissions?.some(
-                      (item) => item.socialMedia === socialMedia._id,
-                    ) ?  (
-                       allSubmissions?.filter(
+                    {(socialMedia.type === SocialMediaEnum.DISCORD ||
+                      socialMedia.type === SocialMediaEnum.TELEGRAM) &&
+                    socialMedia.activity === "JOIN" ? (
+                      <SocialMediaDisplay
+                        socialMedia={socialMedia}
+                        contestId={id}
+                        allSubmissions={allSubmissions!}
+                      />
+                    ) : allSubmissions?.some(
+                        (item) => item.socialMedia === socialMedia._id,
+                      ) ? (
+                      allSubmissions?.filter(
                         (item) => item.socialMedia === socialMedia._id,
                       )?.[0]?.verified ? (
                         <div className="text-green-500">Verified</div>
                       ) : (
-
                         <div className="text-red-500">Pending</div>
                       )
                     ) : (

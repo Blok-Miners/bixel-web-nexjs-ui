@@ -38,6 +38,8 @@ interface AddedItem {
   link: string
   color: string
   icon: JSX.Element
+  botToken?:string
+  chatId?: string
 }
 
 export default function CreateSocialReward({
@@ -148,6 +150,8 @@ export default function CreateSocialReward({
         type: social.name.toUpperCase(),
         url: social.link,
         activity: social.value.toUpperCase(),
+        botToken:social.botToken,
+        chatId:social.chatId
       }
       return formattedSocialMedia
     })

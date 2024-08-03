@@ -168,13 +168,14 @@ export class ContestService extends BindService {
     }
   }
 
-  public async verifySocialMediaTask(id:string,username:string,contestId:string){
+  public async verifySocialMediaTask(id:string,username:string,contestId:string,telegramUserId?:number){
     try {
       return (
         await this.http.post(
           `/verify-social-media-task/${id}`,
           { url:username,
-            contestId
+            contestId,
+            telegramUserId
            },
           {
             headers: { Authorization: getAccessToken() },
@@ -186,14 +187,10 @@ export class ContestService extends BindService {
     }
   }
 
-  public async isSocialMediaTaskVerified(contestId:string){
+  public async allSocialMediaTaskCompleted(contestId:string){
     try {
       return (
-        await this.http.post(`is-social-media-task-verified`, 
-          {
-            contestId
-          }
-          ,{
+        await this.http.get(`all-social-media-completed-tasks/${contestId}`,{
           headers: { Authorization: getAccessToken() },
         })
       ).data

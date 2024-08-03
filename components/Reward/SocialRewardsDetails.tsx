@@ -26,6 +26,8 @@ interface AddedItem {
   color: string
   link: string
   icon: JSX.Element
+  botToken?: string
+  chatId?: string
 }
 
 interface SocialRewardsDetailsProps {
@@ -48,17 +50,23 @@ export default function SocialRewardsDetails({
   description,
 }: SocialRewardsDetailsProps) {
   const [linkValue, setLink] = useState("")
-  const handleLinkChange = (
+  const handleChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     index: number,
   ) => {
     const newAdded = [...added]
-    newAdded[index].link = e.target.value
+    if (e.target.name === "link") {
+      newAdded[index].link = e.target.value
+    } else if (e.target.name === "token") {
+      newAdded[index].botToken = e.target.value
+    }else if(e.target.name === 'chat_id'){
+      newAdded[index].chatId = e.target.value;
+    }
     setAdded(newAdded)
   }
 
   return (
-    <div className="flex flex-col gap-6  overflow-y-auto">
+    <div className="flex flex-col gap-6 overflow-y-auto">
       <div className="text-2xl font-bold">
         <div className="space-y-2 rounded-xl">
           <Label>Description</Label>
@@ -140,8 +148,29 @@ export default function SocialRewardsDetails({
                 className="bg-slate-400"
                 placeholder="https://"
                 value={item.link}
-                onChange={(e) => handleLinkChange(e, index)}
+                name={"link"}
+                onChange={(e) => handleChange(e, index)}
               />
+              {item.name === "Telegram" && item.value === "Join" && (
+                <>
+                  <div>Token</div>
+                  <Input
+                    className="bg-slate-400"
+                    placeholder="7309088510:AAFULd0u9N3AroXD5iX91rvb9mc0q1asqOm"
+                    value={item.botToken}
+                    name={"token"}
+                    onChange={(e) => handleChange(e, index)}
+                  />
+                  <div>Chat Id</div>
+                  <Input
+                    name={"chat_id"}
+                    className="bg-slate-400"
+                    placeholder="-1002175934486"
+                    value={item.chatId}
+                    onChange={(e) => handleChange(e, index)}
+                  />
+                </>
+              )}
             </div>
           </div>
         ))}
