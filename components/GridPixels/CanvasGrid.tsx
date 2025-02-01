@@ -145,12 +145,13 @@ const CanvasGrid: React.FC<CanvasGridProps> = ({
   }
 
   const handleZoomIn = () => {
-    const newScale = Math.min(scale * 1.5, 10) // Adjust zoom factor as needed
+    const newScale = Math.min(scale * 1.5, 100) // Adjust zoom factor as needed
     setScale(newScale)
   }
 
   const handleZoomOut = () => {
-    const newScale = Math.max(scale / 1.5, 0.1) // Adjust zoom factor as needed
+    const newScale = Math.max(scale / 1.5, 1) // Adjust zoom factor as needed
+    console.log({newScale})
     setScale(newScale <= 1 ? 1 : newScale)
   }
 
@@ -191,8 +192,9 @@ const CanvasGrid: React.FC<CanvasGridProps> = ({
     if (!canvas || !context) return
 
     if (isPanning) {
-      const dx = event.clientX - lastPanX
-      const dy = event.clientY - lastPanY
+      const sensitivityFactor = 2.8 // Adjust this factor as needed
+      const dx = (event.clientX - lastPanX) * sensitivityFactor // Increased sensitivity
+      const dy = (event.clientY - lastPanY) * sensitivityFactor // Increased sensitivity
       let newOffsetX = offsetX + dx
       let newOffsetY = offsetY + dy
 
@@ -242,16 +244,110 @@ const CanvasGrid: React.FC<CanvasGridProps> = ({
     setSelectedSquares({})
   }
 
+  const handleCanvasTouchStart = (
+    event: React.TouchEvent<HTMLCanvasElement>,
+  ) => {
+    // event.preventDefault() // Prevent default touch behavior
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    setMouseDown(true)
+    if (isPanning) {
+      setLastPanX(event.touches[0].clientX)
+      setLastPanY(event.touches[0].clientY)
+    } else {
+      const rect = canvas.getBoundingClientRect()
+      const scaleX = canvas.width / rect.width
+      const scaleY = canvas.height / rect.height
+
+      const clickX =
+        ((event.touches[0].clientX - rect.left) * scaleX - offsetX) / scale
+      const clickY =
+        ((event.touches[0].clientY - rect.top) * scaleY - offsetY) / scale
+
+      setStartX(Math.floor(clickX / squareSize))
+      setStartY(Math.floor(clickY / squareSize))
+      setEndX(Math.floor(clickX / squareSize))
+      setEndY(Math.floor(clickY / squareSize))
+
+      // Clear previous selection
+      clearSelection()
+    }
+  }
+
+  const handleCanvasTouchMove = (
+    event: React.TouchEvent<HTMLCanvasElement>,
+  ) => {
+    // event.preventDefault() // Prevent default touch behavior
+    if (!mouseDown) return
+
+    const canvas = canvasRef.current
+    if (!canvas || !context) return
+
+    if (isPanning) {
+      const sensitivityFactor = 6.8 // Adjust this factor as needed
+      const dx = (event.touches[0].clientX - lastPanX) * sensitivityFactor // Increased sensitivity
+      const dy = (event.touches[0].clientY - lastPanY) * sensitivityFactor // Increased sensitivity
+      let newOffsetX = offsetX + dx
+      let newOffsetY = offsetY + dy
+
+      // Boundary checks
+      const maxOffsetX = Math.max(0, gridWidth * scale - canvas.width)
+      const maxOffsetY = Math.max(0, gridHeight * scale - canvas.height)
+
+      newOffsetX = Math.min(Math.max(newOffsetX, -maxOffsetX), 0)
+      newOffsetY = Math.min(Math.max(newOffsetY, -maxOffsetY), 0)
+
+      setOffsetX(newOffsetX)
+      setOffsetY(newOffsetY)
+      setLastPanX(event.touches[0].clientX)
+      setLastPanY(event.touches[0].clientY)
+    } else {
+      const rect = canvas.getBoundingClientRect()
+      const scaleX = canvas.width / rect.width
+      const scaleY = canvas.height / rect.height
+
+      const clickX =
+        ((event.touches[0].clientX - rect.left) * scaleX - offsetX) / scale
+      const clickY =
+        ((event.touches[0].clientY - rect.top) * scaleY - offsetY) / scale
+
+      setEndX(Math.floor(clickX / squareSize))
+      setEndY(Math.floor(clickY / squareSize))
+    }
+  }
+
+  const handleCanvasTouchEnd = () => {
+    setMouseDown(false)
+
+    if (!isPanning) {
+      // Select squares within the selection box
+      const minX = Math.min(startX, endX)
+      const maxX = Math.max(startX, endX)
+      const minY = Math.min(startY, endY)
+      const maxY = Math.max(startY, endY)
+
+      for (let y = minY; y <= maxY; y++) {
+        for (let x = minX; x <= maxX; x++) {
+          onSelectSquare({ x, y })
+        }
+      }
+    }
+  }
+
   return (
-    <div className="relative mx-auto aspect-auto w-fit">
+    <div className="max-w-screen max-h-hScreen relative mx-auto aspect-[10/16]">
       <canvas
         ref={canvasRef}
         width={gridWidth}
         height={gridHeight}
-        className="border border-th-accent-2"
+        className="md:max-h-hScreen aspect-[10/16] max-h-full w-full border border-th-accent-2 md:w-auto block touch-none"
         onMouseDown={handleCanvasMouseDown}
         onMouseMove={handleCanvasMouseMove}
         onMouseUp={handleCanvasMouseUp}
+        onTouchStart={handleCanvasTouchStart}
+        onTouchMove={handleCanvasTouchMove}
+        onTouchEnd={handleCanvasTouchEnd}
       ></canvas>
       <div className="bg absolute bottom-4 right-4 flex flex-col gap-1 rounded border border-th-accent-2 bg-th-black-2 p-1 shadow-sm">
         <Button

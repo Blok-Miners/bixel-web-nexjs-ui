@@ -3,10 +3,10 @@ import type { Config } from "tailwindcss"
 const config = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
   ],
   prefix: "",
   theme: {
@@ -24,6 +24,12 @@ const config = {
         "th-black-2": "#2C3333",
         "th-accent": "#64DFDF",
         "th-accent-2": "#76ABAE",
+      },
+      maxHeight: {
+        hScreen: "calc(100vh - 6rem)",
+      },
+      height: {
+        hScreen: "calc(100vh - 6rem)",
       },
       keyframes: {
         "accordion-down": {

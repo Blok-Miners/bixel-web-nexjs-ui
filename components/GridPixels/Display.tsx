@@ -13,9 +13,10 @@ import { contractAddress } from "@/lib/payment"
 import { formatUnits } from "viem"
 
 export default function Display() {
-  const gridWidth = window.innerWidth * 0.75
-  const gridHeight = gridWidth * (10 / 16)
-  const squareSize = gridHeight / 250
+  // const gridWidth = window.innerWidth * 0.75
+  const gridWidth = 2500
+  const gridHeight = 4000
+  const squareSize = 10
   const [open, setOpen] = useState(false)
   const [drawnPixels, setDrawnPixels] = useState<DrawnPixels>({})
   const { selectedSquares, setSelectedSquares, handleSelectSquare } =
